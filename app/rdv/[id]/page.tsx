@@ -49,7 +49,7 @@ export default async function PageFicheRdv({
       <header className="flex items-center gap-2 px-4 pt-6 pb-2">
         <Link
           href="/"
-          className="flex h-11 w-11 items-center justify-center rounded-full text-neutral-500 active:bg-neutral-100"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-encre-douce active:bg-surface-douce"
           aria-label="Retour"
         >
           ←
@@ -61,7 +61,7 @@ export default async function PageFicheRdv({
 
       <div className="flex flex-col gap-5 px-5 pt-2">
         {rdv.annule && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700">
+          <p className="rounded-lg bg-rouge-doux px-3 py-2 text-sm font-medium text-rouge">
             RDV annulé
           </p>
         )}
@@ -70,33 +70,33 @@ export default async function PageFicheRdv({
           <p className="text-lg font-medium">
             {formaterDateLongue(rdv.debut)} à {formaterHeure(rdv.debut)}
           </p>
-          <p className="text-neutral-500">{formaterDuree(rdv.duree_min)}</p>
+          <p className="text-encre-douce">{formaterDuree(rdv.duree_min)}</p>
         </section>
 
         {rdv.projet && (
           <section>
-            <h2 className="mb-1 text-sm font-medium text-neutral-500">Projet</h2>
+            <h2 className="mb-1 text-sm font-medium text-encre-douce">Projet</h2>
             <p className="whitespace-pre-wrap">{rdv.projet}</p>
           </section>
         )}
 
         {rdv.emplacement && (
           <section>
-            <h2 className="mb-1 text-sm font-medium text-neutral-500">Emplacement</h2>
+            <h2 className="mb-1 text-sm font-medium text-encre-douce">Emplacement</h2>
             <p>{rdv.emplacement}</p>
           </section>
         )}
 
         {urlsPhotos.length > 0 && (
           <section>
-            <h2 className="mb-1 text-sm font-medium text-neutral-500">
+            <h2 className="mb-1 text-sm font-medium text-encre-douce">
               Photos d&apos;inspiration
             </h2>
             <div className="grid grid-cols-2 gap-2">
               {urlsPhotos.map((url) => (
                 <div
                   key={url}
-                  className="relative aspect-square overflow-hidden rounded-xl bg-neutral-100"
+                  className="relative aspect-square overflow-hidden rounded-xl bg-surface-douce"
                 >
                   <Image
                     src={url}
@@ -112,18 +112,18 @@ export default async function PageFicheRdv({
         )}
 
         <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium text-neutral-500">Contact</h2>
+          <h2 className="text-sm font-medium text-encre-douce">Contact</h2>
           {rdv.client_tel && <p>{rdv.client_tel}</p>}
           {rdv.client_email && <p>{rdv.client_email}</p>}
         </section>
 
         <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium text-neutral-500">Tarif</h2>
+          <h2 className="text-sm font-medium text-encre-douce">Tarif</h2>
           <p>
             {rdv.tarif_estime ? `${rdv.tarif_estime} € estimé` : "Non estimé"}
           </p>
           {rdv.acompte_montant ? (
-            <p className={rdv.acompte_paye ? "text-neutral-600" : "text-red-600"}>
+            <p className={rdv.acompte_paye ? "text-encre-douce" : "text-rouge"}>
               Acompte {rdv.acompte_montant} € — {rdv.acompte_paye ? "payé" : "non payé"}
             </p>
           ) : null}
@@ -135,7 +135,7 @@ export default async function PageFicheRdv({
           {rdv.client_tel && (
             <a
               href={`tel:${rdv.client_tel}`}
-              className="flex h-11 flex-1 items-center justify-center rounded-lg border border-neutral-300 font-medium"
+              className="flex h-11 flex-1 items-center justify-center rounded-lg bg-surface font-medium shadow-legere"
             >
               Appeler
             </a>
@@ -143,7 +143,7 @@ export default async function PageFicheRdv({
           {rdv.client_tel && (
             <a
               href={`sms:${rdv.client_tel}`}
-              className="flex h-11 flex-1 items-center justify-center rounded-lg border border-neutral-300 font-medium"
+              className="flex h-11 flex-1 items-center justify-center rounded-lg bg-surface font-medium shadow-legere"
             >
               Écrire
             </a>
@@ -153,7 +153,7 @@ export default async function PageFicheRdv({
         <section className="flex gap-3">
           <Link
             href={`/rdv/${rdv.id}/modifier`}
-            className="flex h-11 flex-1 items-center justify-center rounded-lg bg-neutral-900 font-medium text-white"
+            className="flex h-11 flex-1 items-center justify-center rounded-lg bg-encre font-medium text-sur-encre shadow-legere"
           >
             Modifier
           </Link>
@@ -162,21 +162,21 @@ export default async function PageFicheRdv({
 
         {precedents.length > 0 && (
           <section>
-            <h2 className="mb-2 text-sm font-medium text-neutral-500">
+            <h2 className="mb-2 text-sm font-medium text-encre-douce">
               Séances précédentes
             </h2>
-            <ul className="flex flex-col divide-y divide-neutral-100 overflow-hidden rounded-xl border border-neutral-100">
+            <ul className="flex flex-col divide-y divide-ligne overflow-hidden rounded-xl bg-surface shadow-legere">
               {precedents.map((p) => (
                 <li key={p.id}>
                   <Link
                     href={`/rdv/${p.id}`}
-                    className="flex min-h-[56px] flex-col justify-center px-4 py-2 active:bg-neutral-50"
+                    className="flex min-h-[56px] flex-col justify-center px-4 py-2 active:bg-surface-douce"
                   >
                     <span className="font-medium">
                       {formaterDateLongue(p.debut)}
                     </span>
                     {p.projet && (
-                      <span className="truncate text-sm text-neutral-500">
+                      <span className="truncate text-sm text-encre-douce">
                         {p.projet}
                       </span>
                     )}

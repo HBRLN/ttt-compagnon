@@ -4,8 +4,8 @@
   "description": "Le compagnon de RDV du tatoueur indépendant",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#171717",
+  "background_color": "#faf7f2",
+  "theme_color": "#1d1d1f",
   "orientation": "portrait",
   "icons": [
     {

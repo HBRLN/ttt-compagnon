@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { creerClientNavigateur } from "@/lib/supabase/client";
+import Loader from "@/components/Loader";
 
 export default function PageNouveauMotDePasse() {
   const router = useRouter();
@@ -45,7 +46,7 @@ export default function PageNouveauMotDePasse() {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-3 px-6 text-center">
         <h1 className="text-xl font-semibold">Mot de passe changé</h1>
-        <p className="text-neutral-600">On t&apos;emmène sur l&apos;appli...</p>
+        <p className="text-encre-douce">On t&apos;emmène sur l&apos;appli...</p>
       </div>
     );
   }
@@ -61,7 +62,7 @@ export default function PageNouveauMotDePasse() {
           placeholder="Nouveau mot de passe"
           value={motDePasse}
           onChange={(e) => setMotDePasse(e.target.value)}
-          className="h-12 rounded-lg border border-neutral-300 px-4 text-base"
+          className="h-12 rounded-lg border border-ligne px-4 text-base"
         />
         <input
           type="password"
@@ -69,15 +70,16 @@ export default function PageNouveauMotDePasse() {
           placeholder="Confirme le mot de passe"
           value={confirmation}
           onChange={(e) => setConfirmation(e.target.value)}
-          className="h-12 rounded-lg border border-neutral-300 px-4 text-base"
+          className="h-12 rounded-lg border border-ligne px-4 text-base"
         />
-        {erreur && <p className="text-sm text-red-600">{erreur}</p>}
+        {erreur && <p className="text-sm text-rouge">{erreur}</p>}
         <button
           type="submit"
           disabled={enCours}
-          className="h-12 rounded-lg bg-neutral-900 text-base font-medium text-white disabled:opacity-50"
+          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-encre text-base font-medium text-sur-encre shadow-legere disabled:opacity-50"
         >
-          {enCours ? "..." : "Valider"}
+          {enCours && <Loader taille={18} />}
+          {enCours ? "" : "Valider"}
         </button>
       </form>
     </div>

@@ -8,6 +8,7 @@ import {
   seDeconnecter,
 } from "@/lib/actions/profil";
 import type { Profil } from "@/lib/types";
+import Loader from "@/components/Loader";
 
 export default function FormulaireReglages({
   profil,
@@ -72,7 +73,7 @@ export default function FormulaireReglages({
       <header className="flex items-center gap-2 px-4 pt-6 pb-2">
         <Link
           href="/"
-          className="flex h-11 w-11 items-center justify-center rounded-full text-neutral-500 active:bg-neutral-100"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-encre-douce active:bg-surface-douce"
           aria-label="Retour"
         >
           ←
@@ -81,7 +82,7 @@ export default function FormulaireReglages({
       </header>
 
       <div className="flex flex-col gap-4 px-5 pt-2">
-        <p className="text-sm text-neutral-500">Connecté en tant que {email}</p>
+        <p className="text-sm text-encre-douce">Connecté en tant que {email}</p>
 
         <Champ label="Nom d'artiste">
           <input
@@ -152,29 +153,30 @@ export default function FormulaireReglages({
             type="button"
             onClick={enregistrer}
             disabled={enCours}
-            className="h-12 rounded-lg bg-neutral-900 text-base font-medium text-white disabled:opacity-50"
+            className="flex h-12 items-center justify-center gap-2 rounded-lg bg-encre text-base font-medium text-sur-encre shadow-legere disabled:opacity-50"
           >
+            {enCours && <Loader taille={18} />}
             {enCours ? "Enregistrement..." : "Enregistrer"}
           </button>
         )}
 
-        <hr className="my-2 border-neutral-200" />
+        <hr className="my-2 border-ligne" />
 
         <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium text-neutral-500">
+          <h2 className="text-sm font-medium text-encre-douce">
             Abonnement à l&apos;agenda
           </h2>
-          <p className="break-all rounded-lg bg-neutral-50 p-3 font-mono text-sm text-neutral-600">
+          <p className="break-all rounded-lg bg-surface-douce p-3 font-mono text-sm text-encre-douce">
             {lienIcs}
           </p>
           <button
             type="button"
             onClick={copierLien}
-            className="h-11 rounded-lg border border-neutral-300 font-medium"
+            className="h-11 rounded-lg bg-surface font-medium shadow-legere"
           >
             {copie ? "Copié !" : "Copier"}
           </button>
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-encre-douce">
             Colle ce lien dans Réglages → Calendrier → Comptes → Ajouter un
             abonnement (iPhone), ou dans Google Agenda → Autres agendas → À partir
             de l&apos;URL.
@@ -182,22 +184,22 @@ export default function FormulaireReglages({
           <button
             type="button"
             onClick={regenererLien}
-            className="mt-1 self-start text-sm font-medium text-red-600"
+            className="mt-1 self-start text-sm font-medium text-rouge"
           >
             Régénérer le lien
           </button>
         </section>
 
-        <hr className="my-2 border-neutral-200" />
+        <hr className="my-2 border-ligne" />
 
-        <Link href="/confidentialite" className="text-sm text-neutral-500 underline">
+        <Link href="/confidentialite" className="text-sm text-encre-douce underline">
           Confidentialité
         </Link>
 
         <button
           type="button"
           onClick={() => seDeconnecter()}
-          className="mt-4 h-11 rounded-lg border border-neutral-300 font-medium text-neutral-700"
+          className="mt-4 h-11 rounded-lg bg-surface font-medium text-encre-douce shadow-legere"
         >
           Se déconnecter
         </button>
@@ -208,9 +210,16 @@ export default function FormulaireReglages({
           min-height: 44px;
           width: 100%;
           border-radius: 0.5rem;
-          border: 1px solid #d4d4d4;
+          border: 1px solid var(--ligne);
+          background: var(--surface);
+          color: var(--encre);
           padding: 0.5rem 0.75rem;
           font-size: 1rem;
+          font-family: inherit;
+          box-shadow: var(--ombre-legere);
+        }
+        .champ::placeholder {
+          color: var(--encre-douce);
         }
       `}</style>
     </div>
@@ -220,7 +229,7 @@ export default function FormulaireReglages({
 function Champ({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-sm font-medium text-neutral-600">{label}</span>
+      <span className="text-sm font-medium text-encre-douce">{label}</span>
       {children}
     </label>
   );

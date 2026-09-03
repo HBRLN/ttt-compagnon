@@ -69,7 +69,7 @@ export default async function PageAccueil({
         <h1 className="text-xl font-semibold">Compagnon</h1>
         <Link
           href="/reglages"
-          className="flex h-11 w-11 items-center justify-center rounded-full text-neutral-500 active:bg-neutral-100"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-encre-douce active:bg-surface-douce"
           aria-label="Réglages"
         >
           <IconeReglages />
@@ -89,8 +89,10 @@ export default async function PageAccueil({
               <Link
                 key={onglet.cle}
                 href={href}
-                className={`flex h-9 items-center rounded-full px-3 text-sm font-medium ${
-                  actif ? "bg-neutral-900 text-white" : "text-neutral-500"
+                className={`flex h-9 items-center rounded-full px-3 text-sm font-medium transition-shadow ${
+                  actif
+                    ? "bg-encre text-sur-encre shadow-legere"
+                    : "text-encre-douce"
                 }`}
               >
                 {onglet.label}
@@ -103,7 +105,7 @@ export default async function PageAccueil({
 
       {groupes.length === 0 ? (
         <div className="flex flex-1 items-center justify-center px-6">
-          <p className="text-neutral-500">
+          <p className="text-encre-douce">
             {vue === "avenir" && !mois
               ? "Rien de prévu."
               : "Aucun RDV sur cette période."}
@@ -113,17 +115,17 @@ export default async function PageAccueil({
         <div className="flex flex-col gap-6 px-5 pt-4">
           {groupes.map(([jour, rdvsDuJour]) => (
             <section key={jour}>
-              <h2 className="mb-2 text-sm font-medium text-neutral-500">
+              <h2 className="mb-2 text-sm font-medium text-encre-douce">
                 {etiquetteJour(rdvsDuJour[0].debut)}
               </h2>
-              <ul className="flex flex-col divide-y divide-neutral-100 overflow-hidden rounded-xl border border-neutral-100">
+              <ul className="flex flex-col divide-y divide-ligne overflow-hidden rounded-xl bg-surface shadow-legere">
                 {rdvsDuJour.map((rdv) => (
                   <li key={rdv.id}>
                     <Link
                       href={`/rdv/${rdv.id}`}
-                      className="flex min-h-[64px] items-center gap-3 px-4 py-3 active:bg-neutral-50"
+                      className="flex min-h-[64px] items-center gap-3 px-4 py-3 active:bg-surface-douce"
                     >
-                      <span className="w-14 shrink-0 text-sm font-medium tabular-nums text-neutral-700">
+                      <span className="w-14 shrink-0 text-sm font-medium tabular-nums text-encre-douce">
                         {formaterHeure(rdv.debut)}
                       </span>
                       <span className="flex min-w-0 flex-1 flex-col">
@@ -131,14 +133,14 @@ export default async function PageAccueil({
                           {rdv.client_prenom}
                         </span>
                         {rdv.projet && (
-                          <span className="truncate text-sm text-neutral-500">
+                          <span className="truncate text-sm text-encre-douce">
                             {rdv.projet}
                           </span>
                         )}
                       </span>
                       {rdv.acompte_montant && !rdv.acompte_paye ? (
                         <span
-                          className="h-2.5 w-2.5 shrink-0 rounded-full bg-red-500"
+                          className="h-2.5 w-2.5 shrink-0 rounded-full bg-rouge"
                           aria-label="Acompte non payé"
                           title="Acompte non payé"
                         />
@@ -154,7 +156,7 @@ export default async function PageAccueil({
 
       <Link
         href="/rdv/nouveau"
-        className="fixed bottom-8 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-neutral-900 text-3xl font-light text-white shadow-lg active:bg-neutral-800"
+        className="fixed bottom-8 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-encre text-3xl font-light text-sur-encre shadow-flottante active:opacity-90"
         aria-label="Nouveau RDV"
       >
         +

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import Loader from "@/components/Loader";
 import { rechercherClientParTel, type ChampsRdv } from "@/lib/actions/rdv";
 import { creerClientNavigateur } from "@/lib/supabase/client";
 import type { Rdv } from "@/lib/types";
@@ -195,7 +196,7 @@ export default function FormulaireRdv({
       <header className="flex items-center gap-2 px-4 pt-6 pb-2">
         <Link
           href={rdvInitial ? `/rdv/${rdvInitial.id}` : "/"}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-neutral-500 active:bg-neutral-100"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-encre-douce active:bg-surface-douce"
           aria-label="Retour"
         >
           ←
@@ -222,7 +223,7 @@ export default function FormulaireRdv({
             className="champ"
           />
           {historique && (
-            <p className="mt-1 text-sm text-neutral-500">
+            <p className="mt-1 text-sm text-encre-douce">
               Déjà venu·e — {historique.nbSeances} séance
               {historique.nbSeances > 1 ? "s" : ""}
             </p>
@@ -283,7 +284,7 @@ export default function FormulaireRdv({
         </Champ>
 
         <div className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-neutral-600">
+          <span className="text-sm font-medium text-encre-douce">
             Photos d&apos;inspiration
           </span>
           <div
@@ -296,8 +297,8 @@ export default function FormulaireRdv({
             onClick={() => inputFichierRef.current?.click()}
             className={`flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed p-6 text-center text-sm transition-colors ${
               survolDepot
-                ? "border-neutral-900 bg-neutral-50"
-                : "border-neutral-300 text-neutral-500"
+                ? "border-encre bg-surface-douce"
+                : "border-ligne text-encre-douce"
             }`}
           >
             <span>Glisse des photos ici, ou touche pour choisir</span>
@@ -314,14 +315,16 @@ export default function FormulaireRdv({
             />
           </div>
           {envoiPhotoEnCours && (
-            <p className="text-sm text-neutral-500">Envoi...</p>
+            <p className="flex items-center gap-2 text-sm text-encre-douce">
+              <Loader taille={14} /> Envoi...
+            </p>
           )}
           {photos.length > 0 && (
             <div className="grid grid-cols-3 gap-2">
               {photos.map((photo) => (
                 <div
                   key={photo.chemin}
-                  className="relative aspect-square overflow-hidden rounded-lg bg-neutral-100"
+                  className="relative aspect-square overflow-hidden rounded-lg bg-surface-douce"
                 >
                   <Image
                     src={photo.apercu}
@@ -347,7 +350,7 @@ export default function FormulaireRdv({
         <button
           type="button"
           onClick={() => setPlusDeDetails((v) => !v)}
-          className="py-2 text-left text-sm font-medium text-neutral-500"
+          className="py-2 text-left text-sm font-medium text-encre-douce"
         >
           {plusDeDetails ? "− Moins de détails" : "+ Plus de détails"}
         </button>
@@ -407,13 +410,14 @@ export default function FormulaireRdv({
           </div>
         )}
 
-        {erreur && <p className="text-sm text-red-600">{erreur}</p>}
+        {erreur && <p className="text-sm text-rouge">{erreur}</p>}
 
         <button
           type="submit"
           disabled={enCours}
-          className="mt-2 h-12 rounded-lg bg-neutral-900 text-base font-medium text-white disabled:opacity-50"
+          className="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-encre text-base font-medium text-sur-encre shadow-legere disabled:opacity-50"
         >
+          {enCours && <Loader taille={18} />}
           {enCours ? "Enregistrement..." : "Enregistrer"}
         </button>
       </form>
@@ -423,9 +427,16 @@ export default function FormulaireRdv({
           min-height: 44px;
           width: 100%;
           border-radius: 0.5rem;
-          border: 1px solid #d4d4d4;
+          border: 1px solid var(--ligne);
+          background: var(--surface);
+          color: var(--encre);
           padding: 0.5rem 0.75rem;
           font-size: 1rem;
+          font-family: inherit;
+          box-shadow: var(--ombre-legere);
+        }
+        .champ::placeholder {
+          color: var(--encre-douce);
         }
       `}</style>
     </div>
@@ -435,7 +446,7 @@ export default function FormulaireRdv({
 function Champ({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-sm font-medium text-neutral-600">{label}</span>
+      <span className="text-sm font-medium text-encre-douce">{label}</span>
       {children}
     </label>
   );

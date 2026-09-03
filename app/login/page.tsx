@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { creerClientNavigateur } from "@/lib/supabase/client";
+import Loader from "@/components/Loader";
 
 type Mode = "connexion" | "inscription" | "oubli";
 
@@ -128,7 +129,7 @@ function FormulaireConnexion() {
           placeholder="ton@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-12 rounded-lg border border-neutral-300 px-4 text-base"
+          className="h-12 rounded-lg border border-ligne px-4 text-base"
         />
 
         {mode !== "oubli" && (
@@ -138,7 +139,7 @@ function FormulaireConnexion() {
             placeholder="Mot de passe"
             value={motDePasse}
             onChange={(e) => setMotDePasse(e.target.value)}
-            className="h-12 rounded-lg border border-neutral-300 px-4 text-base"
+            className="h-12 rounded-lg border border-ligne px-4 text-base"
           />
         )}
 
@@ -149,12 +150,12 @@ function FormulaireConnexion() {
             placeholder="Confirme le mot de passe"
             value={confirmation}
             onChange={(e) => setConfirmation(e.target.value)}
-            className="h-12 rounded-lg border border-neutral-300 px-4 text-base"
+            className="h-12 rounded-lg border border-ligne px-4 text-base"
           />
         )}
 
         {message && (
-          <p className={`text-sm ${message.erreur ? "text-red-600" : "text-green-700"}`}>
+          <p className={`text-sm ${message.erreur ? "text-rouge" : "text-green-700"}`}>
             {message.texte}
           </p>
         )}
@@ -162,10 +163,11 @@ function FormulaireConnexion() {
         <button
           type="submit"
           disabled={enCours}
-          className="h-12 rounded-lg bg-neutral-900 text-base font-medium text-white disabled:opacity-50"
+          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-encre text-base font-medium text-sur-encre shadow-legere disabled:opacity-50"
         >
+          {enCours && <Loader taille={18} />}
           {enCours
-            ? "..."
+            ? ""
             : mode === "connexion"
               ? "Se connecter"
               : mode === "inscription"
@@ -177,16 +179,16 @@ function FormulaireConnexion() {
       <div className="flex flex-col items-center gap-2 text-sm">
         {mode === "connexion" && (
           <>
-            <button onClick={() => changerMode("oubli")} className="text-neutral-500 underline">
+            <button onClick={() => changerMode("oubli")} className="text-encre-douce underline">
               Mot de passe oublié ?
             </button>
-            <button onClick={() => changerMode("inscription")} className="text-neutral-500 underline">
+            <button onClick={() => changerMode("inscription")} className="text-encre-douce underline">
               Créer un compte
             </button>
           </>
         )}
         {mode !== "connexion" && (
-          <button onClick={() => changerMode("connexion")} className="text-neutral-500 underline">
+          <button onClick={() => changerMode("connexion")} className="text-encre-douce underline">
             Retour à la connexion
           </button>
         )}

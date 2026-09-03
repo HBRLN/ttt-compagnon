@@ -30,8 +30,8 @@ function chunk(type, data) {
 }
 
 function genererPng(taille) {
-  const fond = [23, 23, 23]; // neutral-900
-  const pastille = [250, 250, 250];
+  const fond = [29, 29, 31]; // --encre
+  const pastille = [250, 247, 242]; // --fond
   const centre = taille / 2;
   const rayon = taille * 0.28;
 

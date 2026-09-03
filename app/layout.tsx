@@ -1,14 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Archivo } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Founders Grotesk est une police sous licence (Klim Type Foundry) —
+// non disponible sans les fichiers achetés. Archivo est une grotesque
+// gratuite de la même famille, en attendant.
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
 });
 
@@ -34,16 +32,13 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#171717",
+  themeColor: "#1d1d1f",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="fr"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-white text-neutral-900">
+    <html lang="fr" className={`${archivo.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col bg-fond text-encre font-sans">
         {children}
       </body>
     </html>
