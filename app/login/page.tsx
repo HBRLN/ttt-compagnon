@@ -79,6 +79,9 @@ function FormulaireConnexion() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password: motDePasse,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/confirm`,
+        },
       });
       setEnCours(false);
       if (error) {
@@ -100,7 +103,7 @@ function FormulaireConnexion() {
 
     // mode === "oubli"
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/confirm`,
+      redirectTo: `${window.location.origin}/auth/confirm?next=/auth/nouveau-mot-de-passe`,
     });
     setEnCours(false);
     if (error) {

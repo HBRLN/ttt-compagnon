@@ -2,8 +2,14 @@ import { type EmailOtpType } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 import { creerClientServeur } from "@/lib/supabase/server";
 
-function destination(type: string | null): string {
-  return type === "recovery" ? "/auth/nouveau-mot-de-passe" : "/";
+// Le paramètre "type" que Supabase renvoie n'est pas fiable pour deviner
+// la destination (absent sur certains liens PKCE) : on indique donc
+// nous-mêmes, via "next" dans le lien envoyé (voir app/login/page.tsx),
+// où renvoyer une fois la session établie.
+function destination(searchParams: URLSearchParams): string {
+  const next = searchParams.get("next");
+  if (next && next.startsWith("/")) return next;
+  return searchParams.get("type") === "recovery" ? "/auth/nouveau-mot-de-passe" : "/";
 }
 
 // Callback des emails d'auth (confirmation d'inscription, réinitialisation
@@ -20,9 +26,7 @@ export async function GET(request: NextRequest) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(
-        `${origin}${destination(searchParams.get("type"))}`
-      );
+      return NextResponse.redirect(`${origin}${destination(searchParams)}`);
     }
     return NextResponse.redirect(
       `${origin}/login?erreur=${encodeURIComponent(error.message)}`
@@ -34,7 +38,7 @@ export async function GET(request: NextRequest) {
   if (token_hash && type) {
     const { error } = await supabase.auth.verifyOtp({ token_hash, type });
     if (!error) {
-      return NextResponse.redirect(`${origin}${destination(type)}`);
+      return NextResponse.redirect(`${origin}${destination(searchParams)}`);
     }
     return NextResponse.redirect(
       `${origin}/login?erreur=${encodeURIComponent(error.message)}`
