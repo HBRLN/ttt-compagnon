@@ -10,11 +10,12 @@ function destination(type: string | null): string {
   return type === "recovery" ? "/auth/nouveau-mot-de-passe" : "/";
 }
 
-// Supabase peut renvoyer ce lien sous deux formes selon la configuration
+// Supabase peut renvoyer ce lien sous trois formes selon la configuration
 // du projet : les jetons dans le fragment de l'URL (#access_token=...),
-// ou un token_hash + type dans la query string. On gère les deux ici,
-// côté client, plutôt que de parier sur l'une des deux. Sert à la fois à
-// la réinitialisation de mot de passe et à la confirmation d'inscription.
+// un token_hash + type dans la query string, ou un code PKCE (?code=...).
+// On gère les trois ici, côté client, plutôt que de parier sur une seule.
+// Sert à la fois à la réinitialisation de mot de passe et à la
+// confirmation d'inscription.
 export default function PageConfirmation() {
   const router = useRouter();
   const [erreur, setErreur] = useState<string | null>(null);
@@ -48,6 +49,17 @@ export default function PageConfirmation() {
         const { error } = await supabase.auth.verifyOtp({ token_hash, type });
         if (!error) {
           router.replace(destination(type));
+          return;
+        }
+        setErreur(error.message);
+        return;
+      }
+
+      const code = recherche.get("code");
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (!error) {
+          router.replace(destination(recherche.get("type")));
           return;
         }
         setErreur(error.message);
