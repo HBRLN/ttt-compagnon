@@ -5,7 +5,7 @@ import type { Rdv } from "@/lib/types";
 import NavBar from "@/components/NavBar";
 
 function formaterMontant(montant: number): string {
-  return `${montant.toLocaleString("fr-FR")} €`;
+  return `${Math.round(montant).toLocaleString("fr-FR")} €`;
 }
 
 export default async function PageDashboard() {
@@ -21,6 +21,8 @@ export default async function PageDashboard() {
   const maintenant = new Date();
   const debutMoisCourant = new Date(maintenant.getFullYear(), maintenant.getMonth(), 1);
   const finMoisCourant = new Date(maintenant.getFullYear(), maintenant.getMonth() + 1, 1);
+  const debutMoisIso = debutMoisCourant.toISOString().slice(0, 10);
+  const finMoisIso = finMoisCourant.toISOString().slice(0, 10);
 
   const { data: rdvsMoisCourant } = await supabase
     .from("rdv")
@@ -30,23 +32,55 @@ export default async function PageDashboard() {
     .gte("debut", debutMoisCourant.toISOString())
     .lt("debut", finMoisCourant.toISOString());
 
-  const gainsRealises = (rdvsMoisCourant || [])
+  const { data: gainsMoisCourant } = await supabase
+    .from("gain")
+    .select("montant, date")
+    .eq("tatoueur_id", userData.user!.id)
+    .gte("date", debutMoisIso)
+    .lt("date", finMoisIso);
+
+  const { data: depensesMoisCourant } = await supabase
+    .from("depense")
+    .select("montant")
+    .eq("tatoueur_id", userData.user!.id)
+    .gte("date", debutMoisIso)
+    .lt("date", finMoisIso);
+
+  const nombreRdvMois = rdvsMoisCourant?.length || 0;
+
+  const gainsRdvRealises = (rdvsMoisCourant || [])
     .filter((r) => new Date(r.debut) <= maintenant)
     .reduce((somme, r) => somme + (r.tarif_estime || 0), 0);
-  const gainsPrevisionnels = (rdvsMoisCourant || []).reduce(
+  const gainsRdvTotal = (rdvsMoisCourant || []).reduce(
     (somme, r) => somme + (r.tarif_estime || 0),
     0
   );
-  const nombreRdvMois = rdvsMoisCourant?.length || 0;
 
-  const { data: prochains } = await supabase
+  const gainsManuelsRealises = (gainsMoisCourant || [])
+    .filter((g) => new Date(`${g.date}T00:00:00`) <= maintenant)
+    .reduce((somme, g) => somme + g.montant, 0);
+  const gainsManuelsTotal = (gainsMoisCourant || []).reduce(
+    (somme, g) => somme + g.montant,
+    0
+  );
+
+  const depensesTotal = (depensesMoisCourant || []).reduce(
+    (somme, d) => somme + d.montant,
+    0
+  );
+
+  const gainsDuMois = gainsRdvRealises + gainsManuelsRealises;
+  const estimationMois = gainsRdvTotal + gainsManuelsTotal - depensesTotal;
+
+  const { data: prochainRdv } = await supabase
     .from("rdv")
     .select("*")
     .eq("tatoueur_id", userData.user!.id)
     .eq("annule", false)
     .gte("debut", maintenant.toISOString())
     .order("debut", { ascending: true })
-    .limit(3);
+    .limit(1)
+    .maybeSingle();
 
   return (
     <div className="flex min-h-dvh flex-col pb-36">
@@ -63,52 +97,50 @@ export default async function PageDashboard() {
         </Link>
       </header>
 
-      <div className="grid grid-cols-2 gap-3 px-5">
-        <div className="col-span-2 rounded-2xl bg-accent p-5 text-sur-accent shadow-legere">
-          <p className="text-sm font-medium opacity-80">Gains du mois</p>
-          <p className="mt-2 text-4xl font-semibold">{formaterMontant(gainsRealises)}</p>
+      <div className="flex flex-col gap-3 px-5">
+        {prochainRdv ? (
+          <Link
+            href={`/rdv/${prochainRdv.id}`}
+            className="rounded-2xl bg-accent p-5 text-sur-accent shadow-legere active:opacity-90"
+          >
+            <p className="text-sm font-medium opacity-80">Prochain RDV</p>
+            <p className="mt-2 text-2xl font-semibold">
+              {(prochainRdv as Rdv).client_prenom}
+            </p>
+            <p className="mt-1 text-sm opacity-90">
+              {formaterDateCourte((prochainRdv as Rdv).debut)} à{" "}
+              {formaterHeure((prochainRdv as Rdv).debut)}
+              {(prochainRdv as Rdv).projet ? ` · ${(prochainRdv as Rdv).projet}` : ""}
+            </p>
+          </Link>
+        ) : (
+          <div className="rounded-2xl bg-accent p-5 text-sur-accent shadow-legere">
+            <p className="text-sm font-medium opacity-80">Prochain RDV</p>
+            <p className="mt-2 text-lg font-semibold">Rien de prévu.</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-2xl bg-surface p-4 shadow-legere">
+            <p className="text-xs font-medium text-encre-douce">RDV ce mois</p>
+            <p className="mt-2 text-2xl font-semibold">{nombreRdvMois}</p>
+          </div>
+
+          <div className="rounded-2xl bg-surface p-4 shadow-legere">
+            <p className="text-xs font-medium text-encre-douce">Gains du mois</p>
+            <p className="mt-2 text-2xl font-semibold">{formaterMontant(gainsDuMois)}</p>
+          </div>
         </div>
 
         <div className="rounded-2xl bg-surface p-4 shadow-legere">
-          <p className="text-xs font-medium text-encre-douce">Prévision fin de mois</p>
-          <p className="mt-2 text-2xl font-semibold">{formaterMontant(gainsPrevisionnels)}</p>
-        </div>
-
-        <div className="rounded-2xl bg-surface p-4 shadow-legere">
-          <p className="text-xs font-medium text-encre-douce">RDV ce mois</p>
-          <p className="mt-2 text-2xl font-semibold">{nombreRdvMois}</p>
-        </div>
-
-        <div className="col-span-2 rounded-2xl bg-surface p-4 shadow-legere">
-          <p className="mb-3 text-xs font-medium text-encre-douce">
-            Prochains rendez-vous
+          <p className="text-xs font-medium text-encre-douce">Estimation du mois</p>
+          <p
+            className={`mt-2 text-2xl font-semibold ${
+              estimationMois < 0 ? "text-rouge" : ""
+            }`}
+          >
+            {formaterMontant(estimationMois)}
           </p>
-          {prochains && prochains.length > 0 ? (
-            <ul className="flex flex-col gap-3">
-              {(prochains as Rdv[]).map((rdv) => (
-                <li key={rdv.id}>
-                  <Link
-                    href={`/rdv/${rdv.id}`}
-                    className="-mx-1 flex items-center gap-3 rounded-lg px-1 py-1 active:bg-surface-douce"
-                  >
-                    <span className="w-24 shrink-0 text-sm font-medium text-encre-douce">
-                      {formaterDateCourte(rdv.debut)} · {formaterHeure(rdv.debut)}
-                    </span>
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="truncate font-medium">{rdv.client_prenom}</span>
-                      {rdv.projet && (
-                        <span className="truncate text-sm text-encre-douce">
-                          {rdv.projet}
-                        </span>
-                      )}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-encre-douce">Rien de prévu.</p>
-          )}
         </div>
       </div>
 
