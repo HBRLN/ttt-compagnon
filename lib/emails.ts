@@ -1,6 +1,6 @@
 import type { Profil, Rdv } from "@/lib/types";
 import {
-  formaterDateLongue,
+  formaterDateCourte,
   formaterDuree,
   formaterHeure,
   formaterJour,
@@ -36,7 +36,7 @@ function signature(profil: Profil): string {
 
 export function emailConfirmation(rdv: Rdv, profil: Profil): Email {
   const jour = formaterJour(rdv.debut);
-  const date = formaterDateLongue(rdv.debut);
+  const date = formaterDateCourte(rdv.debut);
   const heure = formaterHeure(rdv.debut);
   const acompteDu = rdv.acompte_montant && !rdv.acompte_paye;
 
@@ -79,7 +79,7 @@ export function emailConfirmation(rdv: Rdv, profil: Profil): Email {
 
 export function emailRappel(rdv: Rdv, profil: Profil): Email {
   const jour = formaterJour(rdv.debut);
-  const date = formaterDateLongue(rdv.debut);
+  const date = formaterDateCourte(rdv.debut);
   const heure = formaterHeure(rdv.debut);
   const acompteDu = rdv.acompte_montant && !rdv.acompte_paye;
 

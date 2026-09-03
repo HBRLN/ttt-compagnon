@@ -39,9 +39,8 @@ function formaterHeure(iso: string) {
   }).format(new Date(iso));
 }
 
-function formaterDateLongue(iso: string) {
+function formaterDateCourte(iso: string) {
   return new Intl.DateTimeFormat("fr-FR", {
-    weekday: "long",
     day: "numeric",
     month: "long",
     timeZone: FUSEAU,
@@ -66,7 +65,7 @@ function signature(profil: Profil) {
 
 function emailRappel(rdv: Rdv, profil: Profil) {
   const jour = formaterJour(rdv.debut);
-  const date = formaterDateLongue(rdv.debut);
+  const date = formaterDateCourte(rdv.debut);
   const heure = formaterHeure(rdv.debut);
   const acompteDu = rdv.acompte_montant && !rdv.acompte_paye;
 
