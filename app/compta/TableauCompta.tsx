@@ -8,6 +8,7 @@ import type { Depense, Gain, Rdv } from "@/lib/types";
 
 type Vue = "mois" | "annee";
 type Formulaire = "depense" | "gain" | null;
+type Mouvement = (Depense | Gain) & { type: "gain" | "depense" };
 
 const MOIS_LABELS = [
   "Jan",
@@ -141,6 +142,11 @@ export default function TableauCompta({
     filtreMois === "" ? gains : gains.filter((g) => moisDeLaDate(g.date) === Number(filtreMois));
   const periodeListe =
     filtreMois === "" ? "de l'année" : `— ${MOIS_COMPLETS[Number(filtreMois)]}`;
+
+  const mouvementsAffiches: Mouvement[] = [
+    ...gainsAffiches.map((g) => ({ ...g, type: "gain" as const })),
+    ...depensesAffichees.map((d) => ({ ...d, type: "depense" as const })),
+  ].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
   function changerVue(v: Vue) {
     setVue(v);
@@ -286,13 +292,6 @@ export default function TableauCompta({
         )}
       </section>
 
-      <div className="rounded-2xl bg-surface p-4 shadow-legere">
-        <p className="text-xs font-medium text-encre-douce">
-          Récap dépenses {vue === "mois" ? "du mois" : "de l'année"}
-        </p>
-        <p className="mt-1 text-xl font-semibold">{formaterMontant(totalDepenses)}</p>
-      </div>
-
       <select
         value={filtreMois}
         onChange={(e) => surChangementFiltre(e.target.value)}
@@ -306,23 +305,15 @@ export default function TableauCompta({
         ))}
       </select>
 
-      {gainsAffiches.length > 0 && (
+      {mouvementsAffiches.length > 0 ? (
         <ListeMouvements
-          titre={`Gains ajoutés ${periodeListe}`}
-          lignes={gainsAffiches}
-          onSupprimer={(id) => startTransition(() => supprimerGain(id))}
+          titre={`Mouvements ${periodeListe}`}
+          mouvements={mouvementsAffiches}
+          onSupprimer={(m) =>
+            startTransition(() => (m.type === "gain" ? supprimerGain(m.id) : supprimerDepense(m.id)))
+          }
         />
-      )}
-
-      {depensesAffichees.length > 0 && (
-        <ListeMouvements
-          titre={`Dépenses ${periodeListe}`}
-          lignes={depensesAffichees}
-          onSupprimer={(id) => startTransition(() => supprimerDepense(id))}
-        />
-      )}
-
-      {gainsAffiches.length === 0 && depensesAffichees.length === 0 && (
+      ) : (
         <p className="text-sm text-encre-douce">Rien à afficher pour cette période.</p>
       )}
 
@@ -410,30 +401,36 @@ function FormulaireMontant({
 
 function ListeMouvements({
   titre,
-  lignes,
+  mouvements,
   onSupprimer,
 }: {
   titre: string;
-  lignes: (Depense | Gain)[];
-  onSupprimer: (id: string) => void;
+  mouvements: Mouvement[];
+  onSupprimer: (m: Mouvement) => void;
 }) {
   return (
     <section className="flex flex-col gap-2">
       <h2 className="text-sm font-medium text-encre-douce">{titre}</h2>
       <ul className="flex flex-col gap-2">
-        {lignes.map((l) => (
+        {mouvements.map((m) => (
           <li
-            key={l.id}
+            key={`${m.type}-${m.id}`}
             className="flex items-center gap-3 rounded-xl bg-surface px-4 py-3 shadow-legere"
           >
             <span className="w-14 shrink-0 text-sm text-encre-douce">
-              {formaterDateDepense(l.date)}
+              {formaterDateDepense(m.date)}
             </span>
-            <span className="min-w-0 flex-1 truncate font-medium">{l.libelle}</span>
-            <span className="shrink-0 font-medium">{formaterMontant(l.montant)}</span>
+            <span className="min-w-0 flex-1 truncate font-medium">{m.libelle}</span>
+            <span
+              className={`shrink-0 font-medium ${
+                m.type === "gain" ? "text-vert" : "text-rouge"
+              }`}
+            >
+              {formaterMontant(m.montant)}
+            </span>
             <button
               type="button"
-              onClick={() => onSupprimer(l.id)}
+              onClick={() => onSupprimer(m)}
               className="shrink-0 text-encre-douce"
               aria-label="Supprimer cette ligne"
             >
