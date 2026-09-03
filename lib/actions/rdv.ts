@@ -115,6 +115,7 @@ export async function creerRdv(champs: ChampsRdv) {
   }
 
   revalidatePath("/");
+  revalidatePath("/rdv");
   redirect(`/rdv/${rdv.id}`);
 }
 
@@ -132,6 +133,7 @@ export async function modifierRdv(id: string, champs: ChampsRdv) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/");
+  revalidatePath("/rdv");
   revalidatePath(`/rdv/${id}`);
   redirect(`/rdv/${id}`);
 }
@@ -148,6 +150,7 @@ export async function annulerRdv(id: string) {
     .eq("tatoueur_id", userData.user.id);
 
   revalidatePath("/");
+  revalidatePath("/rdv");
   revalidatePath(`/rdv/${id}`);
 }
 

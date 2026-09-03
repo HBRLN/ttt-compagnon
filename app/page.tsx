@@ -1,51 +1,22 @@
 import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
-import { cleJour, etiquetteJour, formaterDateCourte, formaterHeure } from "@/lib/date";
+import { formaterDateCourte, formaterHeure } from "@/lib/date";
 import type { Rdv } from "@/lib/types";
-import SelecteurMois from "@/components/SelecteurMois";
-import OngletsRdv from "@/components/OngletsRdv";
+import NavBar from "@/components/NavBar";
 
 function formaterMontant(montant: number): string {
   return `${montant.toLocaleString("fr-FR")} €`;
 }
 
-type Vue = "avenir" | "passes" | "annules";
-
-const ONGLETS: { cle: Vue; label: string }[] = [
-  { cle: "avenir", label: "À venir" },
-  { cle: "passes", label: "Passés" },
-  { cle: "annules", label: "Annulés" },
-];
-
-function limitesMois(mois: string): { debut: Date; fin: Date } | null {
-  const correspondance = mois.match(/^(\d{4})-(\d{2})$/);
-  if (!correspondance) return null;
-  const annee = Number(correspondance[1]);
-  const moisIndex = Number(correspondance[2]) - 1;
-  return {
-    debut: new Date(annee, moisIndex, 1),
-    fin: new Date(annee, moisIndex + 1, 1),
-  };
-}
-
-export default async function PageAccueil({
-  searchParams,
-}: {
-  searchParams: Promise<{ vue?: string; mois?: string }>;
-}) {
-  const parametres = await searchParams;
-  const vue: Vue =
-    parametres.vue === "passes" || parametres.vue === "annules"
-      ? parametres.vue
-      : "avenir";
-  const mois = parametres.mois || "";
-  const bornesMois = mois ? limitesMois(mois) : null;
-
+export default async function PageDashboard() {
   const supabase = await creerClientServeur();
   const { data: userData } = await supabase.auth.getUser();
 
-  const debutAujourdhui = new Date();
-  debutAujourdhui.setHours(0, 0, 0, 0);
+  const { data: profil } = await supabase
+    .from("profil")
+    .select("nom_artiste")
+    .eq("id", userData.user!.id)
+    .single();
 
   const maintenant = new Date();
   const debutMoisCourant = new Date(maintenant.getFullYear(), maintenant.getMonth(), 1);
@@ -77,31 +48,12 @@ export default async function PageAccueil({
     .order("debut", { ascending: true })
     .limit(3);
 
-  let requete = supabase
-    .from("rdv")
-    .select("*")
-    .eq("tatoueur_id", userData.user!.id)
-    .eq("annule", vue === "annules");
-
-  if (bornesMois) {
-    requete = requete
-      .gte("debut", bornesMois.debut.toISOString())
-      .lt("debut", bornesMois.fin.toISOString());
-  } else if (vue === "avenir") {
-    requete = requete.gte("debut", debutAujourdhui.toISOString());
-  } else if (vue === "passes") {
-    requete = requete.lt("debut", debutAujourdhui.toISOString());
-  }
-
-  const croissant = vue === "avenir";
-  const { data: rdvs } = await requete.order("debut", { ascending: croissant });
-
-  const groupes = grouperParJour((rdvs as Rdv[]) || []);
-
   return (
-    <div className="flex min-h-dvh flex-col pb-28">
-      <header className="flex items-center justify-between px-5 pt-6 pb-2">
-        <h1 className="text-xl font-semibold">Compagnon</h1>
+    <div className="flex min-h-dvh flex-col pb-36">
+      <header className="flex items-center justify-between px-5 pt-6 pb-4">
+        <h1 className="text-xl font-semibold">
+          Coucou {profil?.nom_artiste || ""} !
+        </h1>
         <Link
           href="/reglages"
           className="flex h-11 w-11 items-center justify-center rounded-full text-encre-douce active:bg-surface-douce"
@@ -111,145 +63,66 @@ export default async function PageAccueil({
         </Link>
       </header>
 
-      <section className="grid grid-cols-3 gap-2 px-5 pb-3">
-        <div className="rounded-xl bg-surface p-3 shadow-legere">
-          <p className="text-xs font-medium text-encre-douce">Gains du mois</p>
-          <p className="mt-1 text-lg font-semibold">{formaterMontant(gainsRealises)}</p>
+      <div className="grid grid-cols-2 gap-3 px-5">
+        <div className="col-span-2 rounded-2xl bg-accent p-5 text-sur-accent shadow-legere">
+          <p className="text-sm font-medium opacity-80">Gains du mois</p>
+          <p className="mt-2 text-4xl font-semibold">{formaterMontant(gainsRealises)}</p>
         </div>
-        <div className="rounded-xl bg-surface p-3 shadow-legere">
-          <p className="text-xs font-medium text-encre-douce">Prévision mois</p>
-          <p className="mt-1 text-lg font-semibold">{formaterMontant(gainsPrevisionnels)}</p>
+
+        <div className="rounded-2xl bg-surface p-4 shadow-legere">
+          <p className="text-xs font-medium text-encre-douce">Prévision fin de mois</p>
+          <p className="mt-2 text-2xl font-semibold">{formaterMontant(gainsPrevisionnels)}</p>
         </div>
-        <div className="rounded-xl bg-surface p-3 shadow-legere">
+
+        <div className="rounded-2xl bg-surface p-4 shadow-legere">
           <p className="text-xs font-medium text-encre-douce">RDV ce mois</p>
-          <p className="mt-1 text-lg font-semibold">{nombreRdvMois}</p>
+          <p className="mt-2 text-2xl font-semibold">{nombreRdvMois}</p>
         </div>
-      </section>
 
-      {prochains && prochains.length > 0 && (
-        <section className="px-5 pb-3">
-          <h2 className="mb-2 text-sm font-medium text-encre-douce">
+        <div className="col-span-2 rounded-2xl bg-surface p-4 shadow-legere">
+          <p className="mb-3 text-xs font-medium text-encre-douce">
             Prochains rendez-vous
-          </h2>
-          <ul className="flex flex-col gap-2">
-            {(prochains as Rdv[]).map((rdv) => (
-              <li
-                key={rdv.id}
-                className="overflow-hidden rounded-xl bg-surface shadow-legere"
-              >
-                <Link
-                  href={`/rdv/${rdv.id}`}
-                  className="flex min-h-[64px] items-center gap-3 px-4 py-3 active:bg-surface-douce"
-                >
-                  <span className="w-24 shrink-0 text-sm font-medium text-encre-douce">
-                    {formaterDateCourte(rdv.debut)} · {formaterHeure(rdv.debut)}
-                  </span>
-                  <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate font-medium">{rdv.client_prenom}</span>
-                    {rdv.projet && (
-                      <span className="truncate text-sm text-encre-douce">
-                        {rdv.projet}
-                      </span>
-                    )}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      <div className="flex flex-wrap items-center justify-between gap-2 px-5 pb-2">
-        <OngletsRdv
-          actif={vue}
-          onglets={ONGLETS.map((onglet) => {
-            const params = new URLSearchParams();
-            if (onglet.cle !== "avenir") params.set("vue", onglet.cle);
-            if (mois) params.set("mois", mois);
-            const requeteParams = params.toString();
-            return {
-              cle: onglet.cle,
-              label: onglet.label,
-              href: requeteParams ? `/?${requeteParams}` : "/",
-            };
-          })}
-        />
-        <SelecteurMois moisActuel={mois} />
-      </div>
-
-      {groupes.length === 0 ? (
-        <div className="flex flex-1 items-center justify-center px-6">
-          <p className="text-encre-douce">
-            {vue === "avenir" && !mois
-              ? "Rien de prévu."
-              : "Aucun RDV sur cette période."}
           </p>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-6 px-5 pt-4">
-          {groupes.map(([jour, rdvsDuJour]) => (
-            <section key={jour}>
-              <h2 className="mb-2 text-sm font-medium text-encre-douce">
-                {etiquetteJour(rdvsDuJour[0].debut)}
-              </h2>
-              <ul className="flex flex-col gap-2">
-                {rdvsDuJour.map((rdv) => (
-                  <li
-                    key={rdv.id}
-                    className="overflow-hidden rounded-xl bg-surface shadow-legere"
+          {prochains && prochains.length > 0 ? (
+            <ul className="flex flex-col gap-3">
+              {(prochains as Rdv[]).map((rdv) => (
+                <li key={rdv.id}>
+                  <Link
+                    href={`/rdv/${rdv.id}`}
+                    className="-mx-1 flex items-center gap-3 rounded-lg px-1 py-1 active:bg-surface-douce"
                   >
-                    <Link
-                      href={`/rdv/${rdv.id}`}
-                      className="flex min-h-[64px] items-center gap-3 px-4 py-3 active:bg-surface-douce"
-                    >
-                      <span className="w-14 shrink-0 text-sm font-medium tabular-nums text-encre-douce">
-                        {formaterHeure(rdv.debut)}
-                      </span>
-                      <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="truncate font-medium">
-                          {rdv.client_prenom}
+                    <span className="w-24 shrink-0 text-sm font-medium text-encre-douce">
+                      {formaterDateCourte(rdv.debut)} · {formaterHeure(rdv.debut)}
+                    </span>
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate font-medium">{rdv.client_prenom}</span>
+                      {rdv.projet && (
+                        <span className="truncate text-sm text-encre-douce">
+                          {rdv.projet}
                         </span>
-                        {rdv.projet && (
-                          <span className="truncate text-sm text-encre-douce">
-                            {rdv.projet}
-                          </span>
-                        )}
-                      </span>
-                      {rdv.acompte_montant && !rdv.acompte_paye ? (
-                        <span
-                          className="h-2.5 w-2.5 shrink-0 rounded-full bg-rouge"
-                          aria-label="Acompte non payé"
-                          title="Acompte non payé"
-                        />
-                      ) : null}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
+                      )}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-encre-douce">Rien de prévu.</p>
+          )}
         </div>
-      )}
+      </div>
 
       <Link
         href="/rdv/nouveau"
-        className="fixed bottom-8 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-3xl font-light text-sur-accent shadow-flottante active:opacity-90"
+        className="fixed bottom-24 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-3xl font-light text-sur-accent shadow-flottante active:opacity-90"
         aria-label="Nouveau RDV"
       >
         +
       </Link>
+
+      <NavBar />
     </div>
   );
-}
-
-function grouperParJour(rdvs: Rdv[]): [string, Rdv[]][] {
-  const carte = new Map<string, Rdv[]>();
-  for (const rdv of rdvs) {
-    const cle = cleJour(rdv.debut);
-    if (!carte.has(cle)) carte.set(cle, []);
-    carte.get(cle)!.push(rdv);
-  }
-  return Array.from(carte.entries());
 }
 
 function IconeReglages() {

@@ -48,7 +48,7 @@ export default async function PageFicheRdv({
     <div className="flex min-h-dvh flex-col pb-10">
       <header className="flex items-center gap-2 px-4 pt-6 pb-2">
         <Link
-          href="/"
+          href="/rdv"
           className="flex h-11 w-11 items-center justify-center rounded-full text-2xl text-encre-douce active:bg-surface-douce"
           aria-label="Retour"
         >
