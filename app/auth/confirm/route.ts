@@ -14,7 +14,10 @@ export async function GET(request: NextRequest) {
     if (!error) {
       return NextResponse.redirect(`${origin}/`);
     }
+    return NextResponse.redirect(
+      `${origin}/login?erreur=${encodeURIComponent(error.message)}`
+    );
   }
 
-  return NextResponse.redirect(`${origin}/login`);
+  return NextResponse.redirect(`${origin}/login?erreur=lien_incomplet`);
 }

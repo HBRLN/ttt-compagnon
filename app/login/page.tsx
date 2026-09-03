@@ -1,12 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { creerClientNavigateur } from "@/lib/supabase/client";
 
-export default function PageConnexion() {
+function traduireErreurLien(erreur: string): string {
+  if (erreur === "lien_incomplet") {
+    return "Ce lien de connexion est incomplet — réessaie de le copier depuis l'email, ou redemande-en un nouveau.";
+  }
+  if (/expired/i.test(erreur)) {
+    return "Ce lien a expiré. Redemande-en un nouveau ci-dessous.";
+  }
+  if (/already been used|used|invalid/i.test(erreur)) {
+    return "Ce lien a déjà été utilisé (souvent parce qu'une appli de messagerie l'a ouvert automatiquement avant toi). Redemande-en un nouveau et clique dessus directement, sans passer par un aperçu.";
+  }
+  return `Ce lien de connexion n'a pas fonctionné (${erreur}). Redemande-en un nouveau ci-dessous.`;
+}
+
+function FormulaireConnexion() {
+  const parametres = useSearchParams();
+  const erreurLien = parametres.get("erreur");
+
   const [email, setEmail] = useState("");
   const [envoye, setEnvoye] = useState(false);
-  const [erreur, setErreur] = useState<string | null>(null);
+  const [erreur, setErreur] = useState<string | null>(
+    erreurLien ? traduireErreurLien(erreurLien) : null
+  );
   const [enCours, setEnCours] = useState(false);
 
   async function envoyerLien(e: React.FormEvent) {
@@ -25,7 +44,7 @@ export default function PageConnexion() {
     setEnCours(false);
 
     if (error) {
-      setErreur("Impossible d'envoyer le lien. Réessaie dans un instant.");
+      setErreur(`Impossible d'envoyer le lien (${error.message}). Réessaie dans un instant.`);
       return;
     }
 
@@ -66,5 +85,13 @@ export default function PageConnexion() {
         </button>
       </form>
     </div>
+  );
+}
+
+export default function PageConnexion() {
+  return (
+    <Suspense fallback={null}>
+      <FormulaireConnexion />
+    </Suspense>
   );
 }
