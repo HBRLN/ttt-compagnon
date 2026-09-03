@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const ONGLETS = [
   { href: "/", label: "Dashboard", icone: IconeAccueil },
   { href: "/rdv", label: "RDV", icone: IconeCalendrier },
+  { href: "/compta", label: "Compta", icone: IconeCompta },
 ];
 
 export default function NavBar() {
@@ -19,7 +20,7 @@ export default function NavBar() {
           <Link
             key={href}
             href={href}
-            className={`flex flex-col items-center gap-1 rounded-lg px-6 py-1.5 text-xs font-medium ${
+            className={`flex flex-col items-center gap-1 rounded-lg px-4 py-1.5 text-xs font-medium ${
               actif ? "text-accent" : "text-encre-douce"
             }`}
           >
@@ -65,6 +66,23 @@ function IconeCalendrier() {
       <rect x="3.5" y="5" width="17" height="16" rx="2.5" />
       <path d="M3.5 10h17" />
       <path d="M8 3v4M16 3v4" />
+    </svg>
+  );
+}
+
+function IconeCompta() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 20V10M11 20V4M18 20v-7" />
     </svg>
   );
 }

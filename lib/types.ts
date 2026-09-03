@@ -33,6 +33,15 @@ export type Rdv = {
   cree_le: string;
 };
 
+export type Depense = {
+  id: string;
+  tatoueur_id: string;
+  libelle: string;
+  montant: number;
+  date: string;
+  cree_le: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -50,6 +59,16 @@ export type Database = {
           debut: string;
         };
         Update: Partial<Rdv>;
+        Relationships: [];
+      };
+      depense: {
+        Row: Depense;
+        Insert: Partial<Depense> & {
+          tatoueur_id: string;
+          libelle: string;
+          montant: number;
+        };
+        Update: Partial<Depense>;
         Relationships: [];
       };
     };
