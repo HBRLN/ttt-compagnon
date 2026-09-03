@@ -1,0 +1,4 @@
+project_id = "compagnon"
+
+[functions.relances]
+verify_jwt = true
