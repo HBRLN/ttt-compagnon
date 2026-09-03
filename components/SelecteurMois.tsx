@@ -38,7 +38,7 @@ export default function SelecteurMois({ moisActuel }: { moisActuel: string }) {
     <select
       value={moisActuel}
       onChange={(e) => surChangement(e.target.value)}
-      className="h-9 rounded-lg border border-ligne bg-surface px-2 text-sm text-encre-douce"
+      className="h-9 rounded-lg bg-surface px-2 text-sm text-encre-douce shadow-legere"
     >
       <option value="">Tous les mois</option>
       {options.map((m) => (

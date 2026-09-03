@@ -26,7 +26,7 @@ export default function ChampMotDePasse({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-12 w-full rounded-lg border border-ligne bg-surface pl-4 pr-12 text-base text-encre shadow-legere"
+        className="h-12 w-full rounded-lg bg-surface pl-4 pr-12 text-base text-encre shadow-legere"
       />
       <button
         type="button"

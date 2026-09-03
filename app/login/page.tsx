@@ -130,7 +130,7 @@ function FormulaireConnexion() {
           placeholder="ton@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-12 rounded-lg border border-ligne bg-surface px-4 text-base text-encre shadow-legere"
+          className="h-12 rounded-lg bg-surface px-4 text-base text-encre shadow-legere"
         />
 
         {mode !== "oubli" && (

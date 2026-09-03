@@ -110,9 +110,12 @@ export default async function PageAccueil({
               <h2 className="mb-2 text-sm font-medium text-encre-douce">
                 {etiquetteJour(rdvsDuJour[0].debut)}
               </h2>
-              <ul className="flex flex-col divide-y divide-ligne overflow-hidden rounded-xl bg-surface shadow-legere">
+              <ul className="flex flex-col gap-2">
                 {rdvsDuJour.map((rdv) => (
-                  <li key={rdv.id}>
+                  <li
+                    key={rdv.id}
+                    className="overflow-hidden rounded-xl bg-surface shadow-legere"
+                  >
                     <Link
                       href={`/rdv/${rdv.id}`}
                       className="flex min-h-[64px] items-center gap-3 px-4 py-3 active:bg-surface-douce"

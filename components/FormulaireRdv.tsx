@@ -295,10 +295,8 @@ export default function FormulaireRdv({
             onDragLeave={() => setSurvolDepot(false)}
             onDrop={surDepot}
             onClick={() => inputFichierRef.current?.click()}
-            className={`flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed p-6 text-center text-sm transition-colors ${
-              survolDepot
-                ? "border-accent bg-surface-douce"
-                : "border-ligne text-encre-douce"
+            className={`flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg p-6 text-center text-sm shadow-legere transition-colors ${
+              survolDepot ? "bg-surface text-encre" : "bg-surface-douce text-encre-douce"
             }`}
           >
             <span>Glisse des photos ici, ou touche pour choisir</span>
@@ -430,7 +428,6 @@ export default function FormulaireRdv({
           max-width: 100%;
           box-sizing: border-box;
           border-radius: 0.5rem;
-          border: 1px solid var(--ligne);
           background: var(--surface);
           color: var(--encre);
           padding: 0.5rem 0.75rem;

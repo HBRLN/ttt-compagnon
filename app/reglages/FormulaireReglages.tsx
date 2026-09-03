@@ -171,8 +171,6 @@ export default function FormulaireReglages({
           </button>
         )}
 
-        <hr className="my-2 border-ligne" />
-
         <section className="flex flex-col gap-2">
           <h2 className="text-sm font-medium text-encre-douce">
             Abonnement à l&apos;agenda
@@ -201,8 +199,6 @@ export default function FormulaireReglages({
           </button>
         </section>
 
-        <hr className="my-2 border-ligne" />
-
         <Link href="/confidentialite" className="text-sm text-encre-douce underline">
           Confidentialité
         </Link>
@@ -224,7 +220,6 @@ export default function FormulaireReglages({
           max-width: 100%;
           box-sizing: border-box;
           border-radius: 0.5rem;
-          border: 1px solid var(--ligne);
           background: var(--surface);
           color: var(--encre);
           padding: 0.5rem 0.75rem;

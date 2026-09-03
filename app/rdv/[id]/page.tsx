@@ -165,9 +165,12 @@ export default async function PageFicheRdv({
             <h2 className="mb-2 text-sm font-medium text-encre-douce">
               Séances précédentes
             </h2>
-            <ul className="flex flex-col divide-y divide-ligne overflow-hidden rounded-xl bg-surface shadow-legere">
+            <ul className="flex flex-col gap-2">
               {precedents.map((p) => (
-                <li key={p.id}>
+                <li
+                  key={p.id}
+                  className="overflow-hidden rounded-xl bg-surface shadow-legere"
+                >
                   <Link
                     href={`/rdv/${p.id}`}
                     className="flex min-h-[56px] flex-col justify-center px-4 py-2 active:bg-surface-douce"

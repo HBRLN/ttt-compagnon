@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  /* Palette inspirée de Material Design 3 (thème clair) : fond gris
-     très pâle, cartes blanches, accent beige-marron chaud, ombres
-     douces plutôt que les niveaux d'élévation Material bruts. */
-  --fond: #f8f9fa;
-  --surface: #ffffff;
-  --surface-douce: #f1f3f4;
-  --encre: #202124;
-  --encre-douce: #5f6368;
-  --ligne: #dadce0;
+  /* Palette inspirée de Material Design 3 (thème clair) : blancs et
+     gris légèrement chauds, cartes distinguées par l'ombre plutôt que
+     par un contour, accent beige-marron. */
+  --fond: #faf8f5;
+  --surface: #fffdfa;
+  --surface-douce: #f2ede6;
+  --encre: #2a2521;
+  --encre-douce: #6b6259;
+  --ligne: #e2dad0;
   --accent: #8c6a4f;
   --sur-accent: #ffffff;
   --rouge: #d93025;

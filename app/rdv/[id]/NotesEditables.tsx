@@ -35,7 +35,7 @@ export default function NotesEditables({
         onChange={(e) => surChangement(e.target.value)}
         onBlur={enregistrer}
         placeholder="Rien pour l'instant"
-        className="w-full resize-none rounded-lg border border-ligne bg-surface p-3 text-base shadow-legere"
+        className="w-full resize-none rounded-lg bg-surface p-3 text-base shadow-legere"
       />
       {!enregistre && (
         <p className="mt-1 text-sm text-encre-douce">
