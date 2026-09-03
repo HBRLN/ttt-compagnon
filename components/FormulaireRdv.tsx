@@ -204,7 +204,10 @@ export default function FormulaireRdv({
         <h1 className="text-lg font-semibold">{titre}</h1>
       </header>
 
-      <form onSubmit={soumettre} className="flex flex-col gap-4 px-5 pt-2">
+      <form
+        onSubmit={soumettre}
+        className={`flex flex-col gap-4 px-5 pt-2 ${!rdvInitial ? "animate-fade-in-up" : ""}`}
+      >
         <Champ label="Prénom">
           <input
             required

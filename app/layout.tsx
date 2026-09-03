@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
+import TransitionFabProvider from "@/components/TransitionFabProvider";
 import "./globals.css";
 
 // Roboto : la police maison de Google, utilisée dans tout Material Design.
@@ -38,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" className={`${roboto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-fond text-encre font-sans">
-        {children}
+        <TransitionFabProvider>{children}</TransitionFabProvider>
       </body>
     </html>
   );

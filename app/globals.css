@@ -3,14 +3,14 @@
 :root {
   /* Palette inspirée de Material Design 3 (thème clair) : blancs et
      gris légèrement chauds, cartes distinguées par l'ombre plutôt que
-     par un contour, accent corail. */
+     par un contour, accent marron chaud. */
   --fond: #faf8f5;
   --surface: #fffdfa;
   --surface-douce: #f2ede6;
   --encre: #2a2521;
   --encre-douce: #6b6259;
   --ligne: #e2dad0;
-  --accent: #f0563c;
+  --accent: #8c6a4f;
   --sur-accent: #fffdfa;
   --rouge: #d93025;
   --rouge-doux: #fce8e6;

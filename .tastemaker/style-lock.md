@@ -3,7 +3,7 @@
 ## Design Read
 - artifact: app shell (mobile-first PWA, single-user business tool)
 - audience: one independent tattoo artist, daily use on phone
-- visual-language: warm Material Design 3 (light), coral accent
+- visual-language: warm Material Design 3 (light), warm brown accent
 - mode: extension (established over many iterations, not greenfield)
 - screens: Dashboard, RDV (list/detail/form), Compta (chart + ledger), Réglages, Login — all app shell / transactional / data view / settings, **no marketing/narrative screens**. Macrostructure/narrative-arc steps (tastemaker Step 2.5) don't apply here.
 
@@ -15,11 +15,11 @@
 | `--surface-douce` | `#f2ede6` | recessed surfaces (inputs inside cards, hover) |
 | `--encre` | `#2a2521` | primary text |
 | `--encre-douce` | `#6b6259` | secondary text |
-| `--accent` | `#f0563c` | primary actions, active tab, hero card (coral, user-specified) |
+| `--accent` | `#8c6a4f` | primary actions, active tab, hero card (warm brown, user-specified) |
 | `--sur-accent` | `#fffdfa` | text on accent |
 | `--rouge` / `--vert` | `#d93025` / `#1e8e3e` | negative / positive amounts (Compta), errors |
 
-**Known contrast note**: `--sur-accent` on `--accent` ≈ 3.4:1 — clears the WCAG UI-component floor (3:1) but not the normal-text floor (4.5:1). Accepted as-is (small internal tool, not under formal a11y audit) rather than re-darkening a hue the user explicitly picked. Flag before introducing new white-on-accent body text.
+`--sur-accent` on `--accent` ≈ 4.9:1 — clears the WCAG normal-text floor (4.5:1), no open contrast finding.
 
 No categorical/sequential/diverging palette needed — every chart is single-series (net per period) using rouge/vert as a status pair, not a categorical scale.
 
@@ -37,6 +37,7 @@ No categorical/sequential/diverging palette needed — every chart is single-ser
 - Bar-chart grow uses `transform: scaleY()` (not `height`) to avoid layout-triggering animation.
 - Global `prefers-reduced-motion: reduce` override in `globals.css` (near-instant transitions/animations); `CompteurAnime` separately skips its rAF easing under reduced motion since a CSS override can't stop a JS loop.
 - No `loading.tsx` — navigations keep the previous screen mounted until the next is ready, no full-screen blank/spinner interstitial (explicit user preference).
+- One deliberate exception to the otherwise-restrained app-shell motion: the "+" FAB (`BoutonNouveauRdv` + `TransitionFabProvider`, mounted in the root layout so it survives the route change) does a two-phase full-screen circle wipe — accent color expands from the FAB, then a second white circle expands from the same point revealing `/rdv/nouveau` underneath, timed with that form's own `animate-fade-in-up` entrance. Explicit user request, not a default to replicate on other actions.
 
 ## Assets
 - All icons are hand-drawn inline SVG (`stroke="currentColor"`, `strokeWidth="2"`), no icon library. Intentional — keep this convention for new icons rather than introducing Iconify/Lucide.

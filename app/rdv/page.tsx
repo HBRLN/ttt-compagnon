@@ -5,6 +5,7 @@ import type { Rdv } from "@/lib/types";
 import SelecteurMois from "@/components/SelecteurMois";
 import OngletsRdv from "@/components/OngletsRdv";
 import NavBar from "@/components/NavBar";
+import BoutonNouveauRdv from "@/components/BoutonNouveauRdv";
 
 type Vue = "avenir" | "passes" | "annules";
 
@@ -150,13 +151,7 @@ export default async function PageRdv({
         </div>
       )}
 
-      <Link
-        href="/rdv/nouveau"
-        className="fixed bottom-24 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-3xl font-light text-sur-accent shadow-flottante transition-transform duration-150 active:scale-90 active:opacity-90"
-        aria-label="Nouveau RDV"
-      >
-        +
-      </Link>
+      <BoutonNouveauRdv />
 
       <NavBar />
     </div>
