@@ -1,6 +1,8 @@
 -- Purge RGPD : les rendez-vous de plus de 3 ans n'ont plus de raison d'être
 -- conservés. Cron mensuel, premier jour du mois à 3h du matin.
 
+create extension if not exists pg_cron with schema extensions;
+
 create or replace function public.purger_vieux_rdv()
 returns void
 language sql
