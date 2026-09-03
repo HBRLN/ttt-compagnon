@@ -1,19 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { creerClientNavigateur } from "@/lib/supabase/client";
 
 type Mode = "connexion" | "inscription" | "oubli";
 
-export default function PageConnexion() {
+function traduireErreurLien(erreur: string): string {
+  if (erreur === "lien_incomplet") {
+    return "Ce lien est incomplet — réessaie de le copier depuis l'email, ou redemande-en un nouveau.";
+  }
+  if (/expired/i.test(erreur)) {
+    return "Ce lien a expiré. Redemande-en un nouveau ci-dessous.";
+  }
+  return `Ce lien n'a pas fonctionné (${erreur}). Redemande-en un nouveau ci-dessous.`;
+}
+
+function FormulaireConnexion() {
   const router = useRouter();
+  const parametres = useSearchParams();
+  const erreurLien = parametres.get("erreur");
+
   const [mode, setMode] = useState<Mode>("connexion");
   const [email, setEmail] = useState("");
   const [motDePasse, setMotDePasse] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [message, setMessage] = useState<{ texte: string; erreur: boolean } | null>(
-    null
+    erreurLien ? { texte: traduireErreurLien(erreurLien), erreur: true } : null
   );
   const [enCours, setEnCours] = useState(false);
 
@@ -176,5 +189,13 @@ export default function PageConnexion() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function PageConnexion() {
+  return (
+    <Suspense fallback={null}>
+      <FormulaireConnexion />
+    </Suspense>
   );
 }
