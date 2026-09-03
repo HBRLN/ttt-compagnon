@@ -2,6 +2,7 @@ import { Resend } from "resend";
 
 export async function envoyerEmail(params: {
   a: string;
+  de: string;
   repondreA?: string | null;
   objet: string;
   texte: string;
@@ -14,7 +15,7 @@ export async function envoyerEmail(params: {
   const resend = new Resend(cleApi);
 
   return resend.emails.send({
-    from: process.env.RESEND_FROM || "Compagnon <onboarding@resend.dev>",
+    from: params.de,
     to: params.a,
     replyTo: params.repondreA || undefined,
     subject: params.objet,

@@ -8,6 +8,23 @@ import {
 
 type Email = { objet: string; texte: string };
 
+// L'adresse technique d'envoi reste unique pour toute l'appli (imposé par
+// Resend tant qu'un domaine par tatoueur n'est pas vérifié), mais le nom
+// affiché est celui du tatoueur — et "Répondre" atterrit dans sa vraie
+// boîte grâce à profil.email_reponse.
+function adresseExpedition(): string {
+  const explicite = process.env.RESEND_FROM_ADDRESS;
+  if (explicite) return explicite;
+  const brut = process.env.RESEND_FROM || "onboarding@resend.dev";
+  const correspondance = brut.match(/<(.+)>/);
+  return correspondance ? correspondance[1] : brut;
+}
+
+export function construireExpediteur(profil: Profil): string {
+  const nom = profil.nom_artiste || "Compagnon";
+  return `${nom} <${adresseExpedition()}>`;
+}
+
 function pied(profil: Profil): string {
   const nom = profil.nom_artiste || "ton tatoueur";
   return `Tu reçois ce message parce que tu as pris rendez-vous avec ${nom}. Tes coordonnées ne servent qu'à ça et ne sont transmises à personne.`;

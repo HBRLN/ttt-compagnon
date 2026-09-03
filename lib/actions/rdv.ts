@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { creerClientServeur } from "@/lib/supabase/server";
-import { emailConfirmation } from "@/lib/emails";
+import { construireExpediteur, emailConfirmation } from "@/lib/emails";
 import { envoyerEmail } from "@/lib/resend";
 import type { Rdv } from "@/lib/types";
 
@@ -96,6 +96,7 @@ export async function creerRdv(champs: ChampsRdv) {
         const { objet, texte } = emailConfirmation(rdv as Rdv, profil);
         await envoyerEmail({
           a: rdv.client_email,
+          de: construireExpediteur(profil),
           repondreA: profil.email_reponse,
           objet,
           texte,

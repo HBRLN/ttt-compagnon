@@ -114,8 +114,26 @@ function emailSoins(rdv: Rdv, profil: Profil) {
   return { objet: "Ton tatouage — les premiers jours", texte: lignes.join("\n") };
 }
 
+// L'adresse technique d'envoi reste unique pour toute l'appli (imposé par
+// Resend tant qu'un domaine par tatoueur n'est pas vérifié), mais le nom
+// affiché est celui du tatoueur — et "Répondre" atterrit dans sa vraie
+// boîte grâce à profil.email_reponse.
+function adresseExpedition(): string {
+  const explicite = Deno.env.get("RESEND_FROM_ADDRESS");
+  if (explicite) return explicite;
+  const brut = Deno.env.get("RESEND_FROM") || "onboarding@resend.dev";
+  const correspondance = brut.match(/<(.+)>/);
+  return correspondance ? correspondance[1] : brut;
+}
+
+function construireExpediteur(profil: Profil): string {
+  const nom = profil.nom_artiste || "Compagnon";
+  return `${nom} <${adresseExpedition()}>`;
+}
+
 async function envoyerEmail(cleResend: string, params: {
   a: string;
+  de: string;
   repondreA?: string | null;
   objet: string;
   texte: string;
@@ -127,7 +145,7 @@ async function envoyerEmail(cleResend: string, params: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: Deno.env.get("RESEND_FROM") || "Compagnon <onboarding@resend.dev>",
+      from: params.de,
       to: params.a,
       reply_to: params.repondreA || undefined,
       subject: params.objet,
@@ -186,6 +204,7 @@ Deno.serve(async (_req) => {
       const { objet, texte } = emailRappel(rdv, profil);
       await envoyerEmail(cleResend, {
         a: rdv.client_email!,
+        de: construireExpediteur(profil),
         repondreA: profil.email_reponse,
         objet,
         texte,
@@ -226,6 +245,7 @@ Deno.serve(async (_req) => {
       const { objet, texte } = emailSoins(rdv, profil);
       await envoyerEmail(cleResend, {
         a: rdv.client_email!,
+        de: construireExpediteur(profil),
         repondreA: profil.email_reponse,
         objet,
         texte,
