@@ -198,7 +198,7 @@ export default function FormulaireRdv({
   const anime = !rdvInitial;
   const classeEntree = anime ? "animate-fade-in-up" : "";
   function styleEntree(n: number): React.CSSProperties | undefined {
-    return anime ? { animationDelay: `${n * 25}ms` } : undefined;
+    return anime ? { animationDelay: `${n * 15}ms`, animationDuration: "200ms" } : undefined;
   }
 
   return (

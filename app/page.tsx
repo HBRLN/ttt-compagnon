@@ -8,7 +8,10 @@ import BoutonNouveauRdv from "@/components/BoutonNouveauRdv";
 
 export default async function PageDashboard() {
   const supabase = await creerClientServeur();
-  const { data: userData } = await supabase.auth.getUser();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const userId = session!.user.id;
 
   const maintenant = new Date();
   const debutMoisCourant = new Date(maintenant.getFullYear(), maintenant.getMonth(), 1);
@@ -23,30 +26,30 @@ export default async function PageDashboard() {
     { data: depensesMoisCourant },
     { data: prochainRdv },
   ] = await Promise.all([
-    supabase.from("profil").select("nom_artiste").eq("id", userData.user!.id).single(),
+    supabase.from("profil").select("nom_artiste").eq("id", userId).single(),
     supabase
       .from("rdv")
       .select("tarif_estime, debut")
-      .eq("tatoueur_id", userData.user!.id)
+      .eq("tatoueur_id", userId)
       .eq("annule", false)
       .gte("debut", debutMoisCourant.toISOString())
       .lt("debut", finMoisCourant.toISOString()),
     supabase
       .from("gain")
       .select("montant, date")
-      .eq("tatoueur_id", userData.user!.id)
+      .eq("tatoueur_id", userId)
       .gte("date", debutMoisIso)
       .lt("date", finMoisIso),
     supabase
       .from("depense")
       .select("montant")
-      .eq("tatoueur_id", userData.user!.id)
+      .eq("tatoueur_id", userId)
       .gte("date", debutMoisIso)
       .lt("date", finMoisIso),
     supabase
       .from("rdv")
       .select("*")
-      .eq("tatoueur_id", userData.user!.id)
+      .eq("tatoueur_id", userId)
       .eq("annule", false)
       .gte("debut", maintenant.toISOString())
       .order("debut", { ascending: true })

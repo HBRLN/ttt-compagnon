@@ -40,7 +40,10 @@ export default async function PageRdv({
   const bornesMois = mois ? limitesMois(mois) : null;
 
   const supabase = await creerClientServeur();
-  const { data: userData } = await supabase.auth.getUser();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const userId = session!.user.id;
 
   const debutAujourdhui = new Date();
   debutAujourdhui.setHours(0, 0, 0, 0);
@@ -48,7 +51,7 @@ export default async function PageRdv({
   let requete = supabase
     .from("rdv")
     .select("*")
-    .eq("tatoueur_id", userData.user!.id)
+    .eq("tatoueur_id", userId)
     .eq("annule", vue === "annules");
 
   if (bornesMois) {

@@ -6,7 +6,10 @@ import TableauCompta from "./TableauCompta";
 
 export default async function PageCompta() {
   const supabase = await creerClientServeur();
-  const { data: userData } = await supabase.auth.getUser();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const userId = session!.user.id;
 
   const anneeCourante = new Date().getFullYear();
   const debutAnnee = new Date(anneeCourante, 0, 1);
@@ -19,21 +22,21 @@ export default async function PageCompta() {
     supabase
       .from("rdv")
       .select("debut, tarif_estime")
-      .eq("tatoueur_id", userData.user!.id)
+      .eq("tatoueur_id", userId)
       .eq("annule", false)
       .gte("debut", debutAnnee.toISOString())
       .lt("debut", finAnnee.toISOString()),
     supabase
       .from("depense")
       .select("*")
-      .eq("tatoueur_id", userData.user!.id)
+      .eq("tatoueur_id", userId)
       .gte("date", debutAnneeIso)
       .lt("date", finAnneeIso)
       .order("date", { ascending: false }),
     supabase
       .from("gain")
       .select("*")
-      .eq("tatoueur_id", userData.user!.id)
+      .eq("tatoueur_id", userId)
       .gte("date", debutAnneeIso)
       .lt("date", finAnneeIso)
       .order("date", { ascending: false }),
