@@ -1,21 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  /* Mode sombre anthracite : fond gris très foncé, texte blanc-gris,
-     accents gris (jamais de noir/blanc purs), ombres légères plutôt
-     que des bordures dures. */
-  --fond: #1b1b1d;
-  --surface: #242426;
-  --surface-douce: #2e2e31;
-  --encre: #ededef;
-  --encre-douce: #9a9aa1;
-  --ligne: #38383c;
-  --accent: #55555a;
-  --sur-accent: #f2f2f3;
-  --rouge: #ff6b60;
-  --rouge-doux: #3a201d;
-  --ombre-legere: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.28);
-  --ombre-flottante: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.35);
+  /* Palette inspirée de Material Design 3 (thème sombre de Google) :
+     surfaces neutres avec élévation par superposition de blanc, un
+     bleu Google comme accent, des ombres calquées sur les niveaux
+     d'élévation officiels de Material 3. */
+  --fond: #121212;
+  --surface: #1e1e1e;
+  --surface-douce: #2a2a2a;
+  --encre: #e3e3e3;
+  --encre-douce: #9aa0a6;
+  --ligne: #444746;
+  --accent: #8ab4f8;
+  --sur-accent: #062e6f;
+  --rouge: #ff8a80;
+  --rouge-doux: #442726;
+  --ombre-legere: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --ombre-flottante: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 8px 3px rgba(0, 0, 0, 0.15);
 }
 
 @theme inline {
@@ -31,7 +32,7 @@
   --color-rouge-doux: var(--rouge-doux);
   --shadow-legere: var(--ombre-legere);
   --shadow-flottante: var(--ombre-flottante);
-  --font-sans: var(--font-archivo);
+  --font-sans: var(--font-roboto);
 }
 
 body {

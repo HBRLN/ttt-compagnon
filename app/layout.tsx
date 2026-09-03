@@ -1,13 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 
-// Founders Grotesk est une police sous licence (Klim Type Foundry) —
-// non disponible sans les fichiers achetés. Archivo est une grotesque
-// gratuite de la même famille, en attendant.
-const archivo = Archivo({
-  variable: "--font-archivo",
+// Roboto : la police maison de Google, utilisée dans tout Material Design.
+const roboto = Roboto({
+  variable: "--font-roboto",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -32,12 +31,12 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#1d1d1f",
+  themeColor: "#121212",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr" className={`${archivo.variable} h-full antialiased`}>
+    <html lang="fr" className={`${roboto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-fond text-encre font-sans">
         {children}
       </body>
