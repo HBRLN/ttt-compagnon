@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 
 type Origine = { x: number; y: number };
 
-const DUREE_MS = 400;
-const DECALAGE_BLANC_MS = 80;
+const DUREE_MS = 300;
+const DECALAGE_BLANC_MS = 50;
 
 const ContexteTransition = createContext<{
   declencher: (origine: Origine, destination: string) => void;

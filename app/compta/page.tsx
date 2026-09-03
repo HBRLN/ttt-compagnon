@@ -12,29 +12,32 @@ export default async function PageCompta() {
   const debutAnnee = new Date(anneeCourante, 0, 1);
   const finAnnee = new Date(anneeCourante + 1, 0, 1);
 
-  const { data: rdvs } = await supabase
-    .from("rdv")
-    .select("debut, tarif_estime")
-    .eq("tatoueur_id", userData.user!.id)
-    .eq("annule", false)
-    .gte("debut", debutAnnee.toISOString())
-    .lt("debut", finAnnee.toISOString());
+  const debutAnneeIso = debutAnnee.toISOString().slice(0, 10);
+  const finAnneeIso = finAnnee.toISOString().slice(0, 10);
 
-  const { data: depenses } = await supabase
-    .from("depense")
-    .select("*")
-    .eq("tatoueur_id", userData.user!.id)
-    .gte("date", debutAnnee.toISOString().slice(0, 10))
-    .lt("date", finAnnee.toISOString().slice(0, 10))
-    .order("date", { ascending: false });
-
-  const { data: gains } = await supabase
-    .from("gain")
-    .select("*")
-    .eq("tatoueur_id", userData.user!.id)
-    .gte("date", debutAnnee.toISOString().slice(0, 10))
-    .lt("date", finAnnee.toISOString().slice(0, 10))
-    .order("date", { ascending: false });
+  const [{ data: rdvs }, { data: depenses }, { data: gains }] = await Promise.all([
+    supabase
+      .from("rdv")
+      .select("debut, tarif_estime")
+      .eq("tatoueur_id", userData.user!.id)
+      .eq("annule", false)
+      .gte("debut", debutAnnee.toISOString())
+      .lt("debut", finAnnee.toISOString()),
+    supabase
+      .from("depense")
+      .select("*")
+      .eq("tatoueur_id", userData.user!.id)
+      .gte("date", debutAnneeIso)
+      .lt("date", finAnneeIso)
+      .order("date", { ascending: false }),
+    supabase
+      .from("gain")
+      .select("*")
+      .eq("tatoueur_id", userData.user!.id)
+      .gte("date", debutAnneeIso)
+      .lt("date", finAnneeIso)
+      .order("date", { ascending: false }),
+  ]);
 
   return (
     <div className="flex min-h-dvh flex-col pb-36">

@@ -10,39 +10,49 @@ export default async function PageDashboard() {
   const supabase = await creerClientServeur();
   const { data: userData } = await supabase.auth.getUser();
 
-  const { data: profil } = await supabase
-    .from("profil")
-    .select("nom_artiste")
-    .eq("id", userData.user!.id)
-    .single();
-
   const maintenant = new Date();
   const debutMoisCourant = new Date(maintenant.getFullYear(), maintenant.getMonth(), 1);
   const finMoisCourant = new Date(maintenant.getFullYear(), maintenant.getMonth() + 1, 1);
   const debutMoisIso = debutMoisCourant.toISOString().slice(0, 10);
   const finMoisIso = finMoisCourant.toISOString().slice(0, 10);
 
-  const { data: rdvsMoisCourant } = await supabase
-    .from("rdv")
-    .select("tarif_estime, debut")
-    .eq("tatoueur_id", userData.user!.id)
-    .eq("annule", false)
-    .gte("debut", debutMoisCourant.toISOString())
-    .lt("debut", finMoisCourant.toISOString());
-
-  const { data: gainsMoisCourant } = await supabase
-    .from("gain")
-    .select("montant, date")
-    .eq("tatoueur_id", userData.user!.id)
-    .gte("date", debutMoisIso)
-    .lt("date", finMoisIso);
-
-  const { data: depensesMoisCourant } = await supabase
-    .from("depense")
-    .select("montant")
-    .eq("tatoueur_id", userData.user!.id)
-    .gte("date", debutMoisIso)
-    .lt("date", finMoisIso);
+  const [
+    { data: profil },
+    { data: rdvsMoisCourant },
+    { data: gainsMoisCourant },
+    { data: depensesMoisCourant },
+    { data: prochainRdv },
+  ] = await Promise.all([
+    supabase.from("profil").select("nom_artiste").eq("id", userData.user!.id).single(),
+    supabase
+      .from("rdv")
+      .select("tarif_estime, debut")
+      .eq("tatoueur_id", userData.user!.id)
+      .eq("annule", false)
+      .gte("debut", debutMoisCourant.toISOString())
+      .lt("debut", finMoisCourant.toISOString()),
+    supabase
+      .from("gain")
+      .select("montant, date")
+      .eq("tatoueur_id", userData.user!.id)
+      .gte("date", debutMoisIso)
+      .lt("date", finMoisIso),
+    supabase
+      .from("depense")
+      .select("montant")
+      .eq("tatoueur_id", userData.user!.id)
+      .gte("date", debutMoisIso)
+      .lt("date", finMoisIso),
+    supabase
+      .from("rdv")
+      .select("*")
+      .eq("tatoueur_id", userData.user!.id)
+      .eq("annule", false)
+      .gte("debut", maintenant.toISOString())
+      .order("debut", { ascending: true })
+      .limit(1)
+      .maybeSingle(),
+  ]);
 
   const nombreRdvMois = rdvsMoisCourant?.length || 0;
 
@@ -69,16 +79,6 @@ export default async function PageDashboard() {
 
   const gainsDuMois = gainsRdvRealises + gainsManuelsRealises;
   const estimationMois = gainsRdvTotal + gainsManuelsTotal - depensesTotal;
-
-  const { data: prochainRdv } = await supabase
-    .from("rdv")
-    .select("*")
-    .eq("tatoueur_id", userData.user!.id)
-    .eq("annule", false)
-    .gte("debut", maintenant.toISOString())
-    .order("debut", { ascending: true })
-    .limit(1)
-    .maybeSingle();
 
   return (
     <div className="flex min-h-dvh flex-col pb-36">
@@ -121,7 +121,7 @@ export default async function PageDashboard() {
         <div className="grid grid-cols-2 gap-3">
           <div
             className="animate-fade-in-up rounded-2xl bg-surface p-4 shadow-legere"
-            style={{ animationDelay: "80ms" }}
+            style={{ animationDelay: "50ms" }}
           >
             <p className="text-xs font-medium text-encre-douce">RDV ce mois</p>
             <p className="mt-2 text-2xl font-semibold">
@@ -131,7 +131,7 @@ export default async function PageDashboard() {
 
           <div
             className="animate-fade-in-up rounded-2xl bg-surface p-4 shadow-legere"
-            style={{ animationDelay: "140ms" }}
+            style={{ animationDelay: "90ms" }}
           >
             <p className="text-xs font-medium text-encre-douce">Gains du mois</p>
             <p className="mt-2 text-2xl font-semibold">
@@ -142,7 +142,7 @@ export default async function PageDashboard() {
 
         <div
           className="animate-fade-in-up rounded-2xl bg-surface p-4 shadow-legere"
-          style={{ animationDelay: "200ms" }}
+          style={{ animationDelay: "130ms" }}
         >
           <p className="text-xs font-medium text-encre-douce">Estimation du mois</p>
           <p
