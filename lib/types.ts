@@ -25,7 +25,7 @@ export type Rdv = {
   tarif_estime: number | null;
   acompte_montant: number | null;
   acompte_paye: boolean;
-  photo_url: string | null;
+  photo_urls: string[];
   notes: string | null;
   annule: boolean;
   confirm_envoye_at: string | null;

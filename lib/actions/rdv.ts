@@ -47,7 +47,7 @@ export type ChampsRdv = {
   tarif_estime?: number;
   acompte_montant?: number;
   acompte_paye: boolean;
-  photo_url?: string;
+  photo_urls?: string[];
   notes?: string;
 };
 
@@ -64,7 +64,7 @@ function nettoyer(champs: ChampsRdv) {
     tarif_estime: champs.tarif_estime ?? null,
     acompte_montant: champs.acompte_montant ?? null,
     acompte_paye: champs.acompte_paye,
-    photo_url: champs.photo_url || null,
+    photo_urls: champs.photo_urls || [],
     notes: champs.notes?.trim() || null,
   };
 }

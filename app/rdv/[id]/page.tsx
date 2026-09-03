@@ -22,12 +22,14 @@ export default async function PageFicheRdv({
   const { data: rdv } = await supabase.from("rdv").select("*").eq("id", id).single();
   if (!rdv) notFound();
 
-  let urlPhoto: string | null = null;
-  if (rdv.photo_url) {
+  let urlsPhotos: string[] = [];
+  if (rdv.photo_urls.length > 0) {
     const { data } = await supabase.storage
       .from("photos")
-      .createSignedUrl(rdv.photo_url, 3600);
-    urlPhoto = data?.signedUrl || null;
+      .createSignedUrls(rdv.photo_urls, 3600);
+    urlsPhotos = (data || [])
+      .map((r) => r.signedUrl)
+      .filter((url): url is string => !!url);
   }
 
   let precedents: Rdv[] = [];
@@ -85,19 +87,26 @@ export default async function PageFicheRdv({
           </section>
         )}
 
-        {urlPhoto && (
+        {urlsPhotos.length > 0 && (
           <section>
             <h2 className="mb-1 text-sm font-medium text-neutral-500">
-              Photo de référence
+              Photos d&apos;inspiration
             </h2>
-            <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-neutral-100">
-              <Image
-                src={urlPhoto}
-                alt="Référence"
-                fill
-                unoptimized
-                className="object-cover"
-              />
+            <div className="grid grid-cols-2 gap-2">
+              {urlsPhotos.map((url) => (
+                <div
+                  key={url}
+                  className="relative aspect-square overflow-hidden rounded-xl bg-neutral-100"
+                >
+                  <Image
+                    src={url}
+                    alt="Inspiration"
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                </div>
+              ))}
             </div>
           </section>
         )}

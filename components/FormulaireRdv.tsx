@@ -2,11 +2,14 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { rechercherClientParTel, type ChampsRdv } from "@/lib/actions/rdv";
 import { creerClientNavigateur } from "@/lib/supabase/client";
 import type { Rdv } from "@/lib/types";
 
 const DUREES = [30, 60, 90, 120, 150, 180, 240, 300, 360];
+
+type Photo = { chemin: string; apercu: string };
 
 function libelleDuree(min: number) {
   if (min < 60) return `${min} min`;
@@ -51,9 +54,11 @@ export default function FormulaireRdv({
   );
   const [acomptePaye, setAcomptePaye] = useState(rdvInitial?.acompte_paye || false);
   const [notes, setNotes] = useState(rdvInitial?.notes || "");
-  const [photoUrl, setPhotoUrl] = useState(rdvInitial?.photo_url || "");
-  const [envoiPhoto, setEnvoiPhoto] = useState(false);
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [envoiPhotoEnCours, setEnvoiPhotoEnCours] = useState(false);
+  const [survolDepot, setSurvolDepot] = useState(false);
   const [plusDeDetails, setPlusDeDetails] = useState(!!rdvInitial);
+  const inputFichierRef = useRef<HTMLInputElement>(null);
 
   const [historique, setHistorique] = useState<{
     nbSeances: number;
@@ -86,27 +91,64 @@ export default function FormulaireRdv({
     return () => clearTimeout(minuteur);
   }, [tel, chercherHistorique]);
 
-  async function surChoixPhoto(e: React.ChangeEvent<HTMLInputElement>) {
-    const fichier = e.target.files?.[0];
-    if (!fichier) return;
+  // Photos déjà présentes sur un RDV existant : on récupère des aperçus
+  // (bucket privé, donc URL signée) une seule fois au chargement.
+  useEffect(() => {
+    const cheminsExistants = rdvInitial?.photo_urls;
+    if (!cheminsExistants?.length) return;
 
-    setEnvoiPhoto(true);
+    (async () => {
+      const supabase = creerClientNavigateur();
+      const { data } = await supabase.storage
+        .from("photos")
+        .createSignedUrls(cheminsExistants, 3600);
+      if (!data) return;
+      setPhotos(
+        data
+          .map((resultat, i) => ({
+            chemin: cheminsExistants[i],
+            apercu: resultat.signedUrl,
+          }))
+          .filter((p): p is Photo => !!p.apercu)
+      );
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function ajouterPhotos(fichiers: FileList | File[]) {
+    const liste = Array.from(fichiers).filter((f) => f.type.startsWith("image/"));
+    if (liste.length === 0) return;
+
+    setEnvoiPhotoEnCours(true);
     setErreur(null);
     try {
       const supabase = creerClientNavigateur();
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("Non connecté");
 
-      const chemin = `${userData.user.id}/${crypto.randomUUID()}-${fichier.name}`;
-      const { error } = await supabase.storage.from("photos").upload(chemin, fichier);
-      if (error) throw error;
-
-      setPhotoUrl(chemin);
+      const nouvelles: Photo[] = [];
+      for (const fichier of liste) {
+        const chemin = `${userData.user.id}/${crypto.randomUUID()}-${fichier.name}`;
+        const { error } = await supabase.storage.from("photos").upload(chemin, fichier);
+        if (error) throw error;
+        nouvelles.push({ chemin, apercu: URL.createObjectURL(fichier) });
+      }
+      setPhotos((p) => [...p, ...nouvelles]);
     } catch {
-      setErreur("Impossible d'envoyer la photo. Réessaie.");
+      setErreur("Impossible d'envoyer une ou plusieurs photos. Réessaie.");
     } finally {
-      setEnvoiPhoto(false);
+      setEnvoiPhotoEnCours(false);
     }
+  }
+
+  function retirerPhoto(chemin: string) {
+    setPhotos((p) => p.filter((photo) => photo.chemin !== chemin));
+  }
+
+  function surDepot(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setSurvolDepot(false);
+    if (e.dataTransfer.files?.length) ajouterPhotos(e.dataTransfer.files);
   }
 
   function soumettre(e: React.FormEvent) {
@@ -138,7 +180,7 @@ export default function FormulaireRdv({
           tarif_estime: tarif ? Number(tarif) : undefined,
           acompte_montant: acompteMontant ? Number(acompteMontant) : undefined,
           acompte_paye: acomptePaye,
-          photo_url: photoUrl || undefined,
+          photo_urls: photos.map((p) => p.chemin),
           notes: notes || undefined,
         });
       } catch (err) {
@@ -240,6 +282,68 @@ export default function FormulaireRdv({
           />
         </Champ>
 
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-medium text-neutral-600">
+            Photos d&apos;inspiration
+          </span>
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+              setSurvolDepot(true);
+            }}
+            onDragLeave={() => setSurvolDepot(false)}
+            onDrop={surDepot}
+            onClick={() => inputFichierRef.current?.click()}
+            className={`flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed p-6 text-center text-sm transition-colors ${
+              survolDepot
+                ? "border-neutral-900 bg-neutral-50"
+                : "border-neutral-300 text-neutral-500"
+            }`}
+          >
+            <span>Glisse des photos ici, ou touche pour choisir</span>
+            <input
+              ref={inputFichierRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => {
+                if (e.target.files) ajouterPhotos(e.target.files);
+                e.target.value = "";
+              }}
+              className="hidden"
+            />
+          </div>
+          {envoiPhotoEnCours && (
+            <p className="text-sm text-neutral-500">Envoi...</p>
+          )}
+          {photos.length > 0 && (
+            <div className="grid grid-cols-3 gap-2">
+              {photos.map((photo) => (
+                <div
+                  key={photo.chemin}
+                  className="relative aspect-square overflow-hidden rounded-lg bg-neutral-100"
+                >
+                  <Image
+                    src={photo.apercu}
+                    alt=""
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => retirerPhoto(photo.chemin)}
+                    className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-sm text-white"
+                    aria-label="Retirer cette photo"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         <button
           type="button"
           onClick={() => setPlusDeDetails((v) => !v)}
@@ -292,20 +396,6 @@ export default function FormulaireRdv({
               />
               <span>Acompte payé</span>
             </label>
-            <Champ label="Photo de référence">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={surChoixPhoto}
-                className="champ"
-              />
-              {envoiPhoto && (
-                <p className="mt-1 text-sm text-neutral-500">Envoi...</p>
-              )}
-              {photoUrl && !envoiPhoto && (
-                <p className="mt-1 text-sm text-neutral-500">Photo enregistrée.</p>
-              )}
-            </Champ>
             <Champ label="Notes">
               <textarea
                 rows={3}
