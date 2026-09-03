@@ -24,6 +24,20 @@ const MOIS_LABELS = [
   "Déc",
 ];
 const SEMAINE_LABELS = ["Sem 1", "Sem 2", "Sem 3", "Sem 4", "Sem 5"];
+const MOIS_COMPLETS = [
+  "Janvier",
+  "Février",
+  "Mars",
+  "Avril",
+  "Mai",
+  "Juin",
+  "Juillet",
+  "Août",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Décembre",
+];
 
 function formaterMontant(montant: number): string {
   return `${Math.round(montant).toLocaleString("fr-FR")} €`;
@@ -57,6 +71,7 @@ export default function TableauCompta({
   const [vue, setVue] = useState<Vue>("annee");
   const [barreSelectionnee, setBarreSelectionnee] = useState<number | null>(null);
   const [formulaireOuvert, setFormulaireOuvert] = useState<Formulaire>(null);
+  const [filtreMois, setFiltreMois] = useState("");
   const [enCours, startTransition] = useTransition();
 
   const moisCourant = new Date().getMonth();
@@ -119,9 +134,13 @@ export default function TableauCompta({
   const maxAbs = Math.max(...valeurs.map(Math.abs), 1);
 
   const depensesAffichees =
-    vue === "mois" ? depenses.filter((d) => moisDeLaDate(d.date) === moisCourant) : depenses;
+    filtreMois === ""
+      ? depenses
+      : depenses.filter((d) => moisDeLaDate(d.date) === Number(filtreMois));
   const gainsAffiches =
-    vue === "mois" ? gains.filter((g) => moisDeLaDate(g.date) === moisCourant) : gains;
+    filtreMois === "" ? gains : gains.filter((g) => moisDeLaDate(g.date) === Number(filtreMois));
+  const periodeListe =
+    filtreMois === "" ? "de l'année" : `— ${MOIS_COMPLETS[Number(filtreMois)]}`;
 
   function changerVue(v: Vue) {
     setVue(v);
@@ -263,9 +282,22 @@ export default function TableauCompta({
         </div>
       </div>
 
+      <select
+        value={filtreMois}
+        onChange={(e) => setFiltreMois(e.target.value)}
+        className="h-9 w-fit rounded-lg bg-surface px-2 text-sm text-encre-douce shadow-legere"
+      >
+        <option value="">Toute l&apos;année</option>
+        {MOIS_COMPLETS.map((label, i) => (
+          <option key={label} value={i}>
+            {label}
+          </option>
+        ))}
+      </select>
+
       {gainsAffiches.length > 0 && (
         <ListeMouvements
-          titre={`Gains ajoutés ${vue === "mois" ? "du mois" : "de l'année"}`}
+          titre={`Gains ajoutés ${periodeListe}`}
           lignes={gainsAffiches}
           onSupprimer={(id) => startTransition(() => supprimerGain(id))}
         />
@@ -273,10 +305,14 @@ export default function TableauCompta({
 
       {depensesAffichees.length > 0 && (
         <ListeMouvements
-          titre={`Dépenses ${vue === "mois" ? "du mois" : "de l'année"}`}
+          titre={`Dépenses ${periodeListe}`}
           lignes={depensesAffichees}
           onSupprimer={(id) => startTransition(() => supprimerDepense(id))}
         />
+      )}
+
+      {gainsAffiches.length === 0 && depensesAffichees.length === 0 && (
+        <p className="text-sm text-encre-douce">Rien à afficher pour cette période.</p>
       )}
 
       <style>{`
