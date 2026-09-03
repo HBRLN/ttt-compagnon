@@ -7,7 +7,6 @@ export type Profil = {
   adresse: string | null;
   ics_token: string;
   rappel_delai_h: number;
-  soin_actif: boolean;
   signature: string | null;
 };
 
@@ -30,7 +29,6 @@ export type Rdv = {
   annule: boolean;
   confirm_envoye_at: string | null;
   rappel_envoye_at: string | null;
-  soin_envoye_at: string | null;
   cree_le: string;
 };
 

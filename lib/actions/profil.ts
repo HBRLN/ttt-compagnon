@@ -12,7 +12,6 @@ export type ChampsProfil = {
   adresse?: string;
   signature?: string;
   rappel_delai_h: number;
-  soin_actif: boolean;
 };
 
 export async function enregistrerProfil(champs: ChampsProfil) {
@@ -30,7 +29,6 @@ export async function enregistrerProfil(champs: ChampsProfil) {
       adresse: champs.adresse?.trim() || null,
       signature: champs.signature?.trim() || null,
       rappel_delai_h: champs.rappel_delai_h,
-      soin_actif: champs.soin_actif,
     })
     .eq("id", userData.user.id);
 

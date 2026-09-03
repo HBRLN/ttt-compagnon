@@ -23,7 +23,6 @@ export default function FormulaireReglages({
   const [instagram, setInstagram] = useState(profil.instagram || "");
   const [signature, setSignature] = useState(profil.signature || "");
   const [rappelDelai, setRappelDelai] = useState(profil.rappel_delai_h);
-  const [soinActif, setSoinActif] = useState(profil.soin_actif);
   const [icsToken, setIcsToken] = useState(profil.ics_token);
 
   const [enregistre, setEnregistre] = useState(true);
@@ -43,7 +42,6 @@ export default function FormulaireReglages({
         instagram,
         signature,
         rappel_delai_h: rappelDelai,
-        soin_actif: soinActif,
       });
       setEnregistre(true);
     });
@@ -148,16 +146,6 @@ export default function FormulaireReglages({
             <option value={72}>72 h avant</option>
           </select>
         </Champ>
-
-        <label className="flex min-h-11 items-center justify-between gap-3">
-          <span>Message de soins automatique</span>
-          <input
-            type="checkbox"
-            checked={soinActif}
-            onChange={(e) => surChangement(setSoinActif)(e.target.checked)}
-            className="h-5 w-5"
-          />
-        </label>
 
         {!enregistre && (
           <button

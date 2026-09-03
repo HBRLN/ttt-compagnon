@@ -1,9 +1,9 @@
 // Fonction Edge "relances", déclenchée toutes les heures par pg_cron.
-// Deux passes : rappel J-2 et soins J+1. Voir §5 de la spec.
+// Une seule passe : rappel J-2. Voir §5 de la spec.
 //
-// Idempotence : *_envoye_at est écrit juste après le retour OK de Resend,
-// dans la même passe. Si l'écriture échoue, on retentera à la prochaine
-// heure plutôt que de risquer un doublon silencieux.
+// Idempotence : rappel_envoye_at est écrit juste après le retour OK de
+// Resend, dans la même passe. Deux exécutions du cron ne doivent jamais
+// produire deux emails.
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
@@ -14,8 +14,8 @@ type Profil = {
   nom_artiste: string | null;
   email_reponse: string | null;
   adresse: string | null;
+  instagram: string | null;
   rappel_delai_h: number;
-  soin_actif: boolean;
   signature: string | null;
 };
 
@@ -26,8 +26,6 @@ type Rdv = {
   debut: string;
   duree_min: number;
   projet: string | null;
-  acompte_montant: number | null;
-  acompte_paye: boolean;
   tatoueur_id: string;
 };
 
@@ -63,11 +61,25 @@ function signature(profil: Profil) {
   return profil.signature || profil.nom_artiste || "";
 }
 
+// Phrase de lieu construite à partir des Réglages, avec dégradation
+// gracieuse si le tatoueur n'a pas (encore) rempli son Instagram ou son
+// nom d'artiste.
+function ligneLieu(profil: Profil): string | null {
+  if (!profil.adresse) return null;
+  const insta = profil.instagram ? `@${profil.instagram.replace(/^@/, "")}` : null;
+  if (profil.nom_artiste && insta) {
+    return `Le RDV se fera au ${profil.adresse}, au salon ${profil.nom_artiste} (${insta}).`;
+  }
+  if (profil.nom_artiste) {
+    return `Le RDV se fera au ${profil.adresse}, au salon ${profil.nom_artiste}.`;
+  }
+  return `Le RDV se fera au ${profil.adresse}.`;
+}
+
 function emailRappel(rdv: Rdv, profil: Profil) {
   const jour = formaterJour(rdv.debut);
   const date = formaterDateCourte(rdv.debut);
   const heure = formaterHeure(rdv.debut);
-  const acompteDu = rdv.acompte_montant && !rdv.acompte_paye;
 
   const lignes = [
     `Salut ${rdv.client_prenom},`,
@@ -76,41 +88,32 @@ function emailRappel(rdv: Rdv, profil: Profil) {
       rdv.projet || "ton tatouage"
     }.`,
   ];
-  if (profil.adresse) lignes.push("", `Adresse : ${profil.adresse}`);
+
+  const lieu = ligneLieu(profil);
+  if (lieu) lignes.push("", lieu);
+
   lignes.push(
     "",
-    "Quelques trucs qui aident : mange avant de venir, arrive reposé, évite l'alcool la veille, et prévois des vêtements qui laissent la zone accessible."
-  );
-  if (acompteDu) {
-    lignes.push(
-      "",
-      `L'acompte de ${rdv.acompte_montant} € n'est pas encore réglé, pense à le prévoir.`
-    );
-  }
-  lignes.push("", `À ${jour},`, signature(profil), "", pied(profil));
-
-  return { objet: `Rappel — on se voit ${jour} à ${heure}`, texte: lignes.join("\n") };
-}
-
-function emailSoins(rdv: Rdv, profil: Profil) {
-  const lignes = [
-    `Salut ${rdv.client_prenom},`,
+    "Quelques conseils avant le tattoo : mange avant de venir, arrive reposé, évite l'alcool la veille, et prévois des vêtements noirs qui laissent la zone accessible et dans lesquels tu seras à l'aise.",
     "",
-    "J'espère que ça se passe bien. Un petit récap des consignes qu'on a vues hier :",
+    "À ce stade, l'acompte n'est plus remboursable. N'hésite pas à prévoir de l'espèce pour le jour J !",
     "",
-    "— Lave doucement à l'eau tiède et au savon neutre, deux fois par jour, et sèche en tamponnant.",
-    "— Une couche fine de crème, pas plus. Trop de crème étouffe la peau.",
-    "— Ça va peler et démanger : c'est normal. Ne gratte pas, ne tire pas les peaux.",
-    "— Pas de piscine, pas de bain, pas de sauna pendant deux à trois semaines.",
-    "— Pas de soleil direct sur la zone, et de la crème solaire indice élevé une fois cicatrisé.",
+    "Si tu le souhaites, tu pourras voir le dessin demain, dans ce cas envoie-moi un petit message pour me le demander !",
     "",
-    "En cas de doute — rougeur qui s'étend, chaleur, écoulement — écris-moi, envoie une photo.",
+    "Les accompagnants sont autorisés.",
     "",
+    "Si tu as des questions avant le RDV, n'hésite pas à me renvoyer un message sur insta.",
+    "",
+    `À ${jour} !`,
     signature(profil),
     "",
-    pied(profil),
-  ];
-  return { objet: "Ton tatouage — les premiers jours", texte: lignes.join("\n") };
+    pied(profil)
+  );
+
+  return {
+    objet: `RDV Tattoo — on se voit ${jour} à ${heure}`,
+    texte: lignes.join("\n"),
+  };
 }
 
 // L'adresse technique d'envoi reste unique pour toute l'appli (imposé par
@@ -169,10 +172,9 @@ Deno.serve(async (_req) => {
 
   const maintenant = new Date();
   let rappelsEnvoyes = 0;
-  let soinsEnvoyes = 0;
   const erreurs: string[] = [];
 
-  // Passe 1 — rappel J-2 (délai configurable par tatoueur)
+  // Rappel J-2 (délai configurable par tatoueur)
   const delaiMaxH = Math.max(
     ...(profils || []).map((p: Profil) => p.rappel_delai_h),
     48
@@ -218,49 +220,8 @@ Deno.serve(async (_req) => {
     }
   }
 
-  // Passe 2 — soins J+1 (fin du RDV entre 18h et 72h dans le passé)
-  const il18h = new Date(maintenant.getTime() - 18 * 3600_000);
-  const il72h = new Date(maintenant.getTime() - 72 * 3600_000);
-  // Fenêtre large côté requête (durée max raisonnable 8h), filtrage précis en JS.
-  const debutMin = new Date(il72h.getTime() - 8 * 3600_000);
-
-  const { data: candidatsSoin } = await supabase
-    .from("rdv")
-    .select("*")
-    .eq("annule", false)
-    .not("client_email", "is", null)
-    .is("soin_envoye_at", null)
-    .gte("debut", debutMin.toISOString())
-    .lte("debut", il18h.toISOString());
-
-  for (const rdv of (candidatsSoin || []) as Rdv[]) {
-    const profil = parId.get(rdv.tatoueur_id);
-    if (!profil || !profil.soin_actif) continue;
-
-    const fin = new Date(new Date(rdv.debut).getTime() + rdv.duree_min * 60_000);
-    if (fin > il18h || fin < il72h) continue;
-
-    try {
-      const { objet, texte } = emailSoins(rdv, profil);
-      await envoyerEmail(cleResend, {
-        a: rdv.client_email!,
-        de: construireExpediteur(profil),
-        repondreA: profil.email_reponse,
-        objet,
-        texte,
-      });
-      await supabase
-        .from("rdv")
-        .update({ soin_envoye_at: new Date().toISOString() })
-        .eq("id", rdv.id);
-      soinsEnvoyes++;
-    } catch (e) {
-      erreurs.push(`soin ${rdv.id}: ${e}`);
-    }
-  }
-
   return new Response(
-    JSON.stringify({ rappelsEnvoyes, soinsEnvoyes, erreurs }),
+    JSON.stringify({ rappelsEnvoyes, erreurs }),
     { headers: { "Content-Type": "application/json" } }
   );
 });

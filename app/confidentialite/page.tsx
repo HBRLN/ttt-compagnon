@@ -32,8 +32,7 @@ export default function PageConfidentialite() {
           <h2 className="font-medium text-neutral-900">Pourquoi</h2>
           <p>
             Uniquement pour organiser le rendez-vous et t&apos;envoyer les emails
-            de confirmation, de rappel et de conseils de soins qui s&apos;y
-            rapportent.
+            de confirmation et de rappel qui s&apos;y rapportent.
           </p>
         </section>
 

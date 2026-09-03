@@ -1,10 +1,5 @@
 import type { Profil, Rdv } from "@/lib/types";
-import {
-  formaterDateCourte,
-  formaterDuree,
-  formaterHeure,
-  formaterJour,
-} from "@/lib/date";
+import { formaterDateCourte, formaterDuree, formaterHeure, formaterJour } from "@/lib/date";
 
 type Email = { objet: string; texte: string };
 
@@ -34,45 +29,59 @@ function signature(profil: Profil): string {
   return profil.signature || profil.nom_artiste || "";
 }
 
+// Phrase de lieu construite à partir des Réglages, avec dégradation
+// gracieuse si le tatoueur n'a pas (encore) rempli son Instagram ou son
+// nom d'artiste.
+function ligneLieu(profil: Profil): string | null {
+  if (!profil.adresse) return null;
+  const insta = profil.instagram
+    ? `@${profil.instagram.replace(/^@/, "")}`
+    : null;
+  if (profil.nom_artiste && insta) {
+    return `Le RDV se fera au ${profil.adresse}, au salon ${profil.nom_artiste} (${insta}).`;
+  }
+  if (profil.nom_artiste) {
+    return `Le RDV se fera au ${profil.adresse}, au salon ${profil.nom_artiste}.`;
+  }
+  return `Le RDV se fera au ${profil.adresse}.`;
+}
+
 export function emailConfirmation(rdv: Rdv, profil: Profil): Email {
   const jour = formaterJour(rdv.debut);
   const date = formaterDateCourte(rdv.debut);
   const heure = formaterHeure(rdv.debut);
-  const acompteDu = rdv.acompte_montant && !rdv.acompte_paye;
 
   const lignes = [
     `Salut ${rdv.client_prenom},`,
     "",
-    `Ton rendez-vous est calé : ${jour} ${date} à ${heure}, pour environ ${formaterDuree(
+    `Ton rendez-vous tattoo est posé : ${jour} ${date} à ${heure}, pour environ ${formaterDuree(
       rdv.duree_min
     )}.`,
-    "",
-    `Le projet : ${rdv.projet || "à préciser ensemble"}`,
   ];
 
-  if (acompteDu) {
-    lignes.push(
-      "",
-      `Pour bloquer le créneau, pense à l'acompte de ${rdv.acompte_montant} €.`
-    );
-  }
-
-  if (profil.adresse) {
-    lignes.push("", `Adresse : ${profil.adresse}`);
-  }
+  const lieu = ligneLieu(profil);
+  if (lieu) lignes.push("", lieu);
 
   lignes.push(
     "",
     "Si tu as un empêchement, préviens-moi le plus tôt possible — ça me permet de proposer le créneau à quelqu'un d'autre.",
     "",
-    "À bientôt,",
+    "Je reprécise que l'acompte est non remboursable (sauf si je décide d'annuler le RDV ou que tu as une raison médicale qui t'empêche de te faire tatouer) et perdu si tu décales le RDV moins d'une semaine avant. N'hésite pas à prévoir de l'espèce pour le jour J !",
+    "",
+    "Si tu le souhaites, tu pourras voir le dessin seulement la veille du RDV, dans ce cas envoie-moi un petit message pour me le demander !",
+    "",
+    "Les accompagnants sont autorisés.",
+    "",
+    "Si tu as des questions avant le RDV, n'hésite pas à me renvoyer un message sur insta.",
+    "",
+    "MERCI ! J'ai trop hâte, à bientôt !",
     signature(profil),
     "",
     pied(profil)
   );
 
   return {
-    objet: `C'est noté — ${date} à ${heure}`,
+    objet: `RDV Tattoo — ${date} à ${heure}`,
     texte: lignes.join("\n"),
   };
 }
@@ -81,7 +90,6 @@ export function emailRappel(rdv: Rdv, profil: Profil): Email {
   const jour = formaterJour(rdv.debut);
   const date = formaterDateCourte(rdv.debut);
   const heure = formaterHeure(rdv.debut);
-  const acompteDu = rdv.acompte_montant && !rdv.acompte_paye;
 
   const lignes = [
     `Salut ${rdv.client_prenom},`,
@@ -91,51 +99,29 @@ export function emailRappel(rdv: Rdv, profil: Profil): Email {
     }.`,
   ];
 
-  if (profil.adresse) {
-    lignes.push("", `Adresse : ${profil.adresse}`);
-  }
+  const lieu = ligneLieu(profil);
+  if (lieu) lignes.push("", lieu);
 
   lignes.push(
     "",
-    "Quelques trucs qui aident : mange avant de venir, arrive reposé, évite l'alcool la veille, et prévois des vêtements qui laissent la zone accessible."
-  );
-
-  if (acompteDu) {
-    lignes.push(
-      "",
-      `L'acompte de ${rdv.acompte_montant} € n'est pas encore réglé, pense à le prévoir.`
-    );
-  }
-
-  lignes.push("", `À ${jour},`, signature(profil), "", pied(profil));
-
-  return {
-    objet: `Rappel — on se voit ${jour} à ${heure}`,
-    texte: lignes.join("\n"),
-  };
-}
-
-export function emailSoins(rdv: Rdv, profil: Profil): Email {
-  const lignes = [
-    `Salut ${rdv.client_prenom},`,
+    "Quelques conseils avant le tattoo : mange avant de venir, arrive reposé, évite l'alcool la veille, et prévois des vêtements noirs qui laissent la zone accessible et dans lesquels tu seras à l'aise.",
     "",
-    "J'espère que ça se passe bien. Un petit récap des consignes qu'on a vues hier :",
+    "À ce stade, l'acompte n'est plus remboursable. N'hésite pas à prévoir de l'espèce pour le jour J !",
     "",
-    "— Lave doucement à l'eau tiède et au savon neutre, deux fois par jour, et sèche en tamponnant.",
-    "— Une couche fine de crème, pas plus. Trop de crème étouffe la peau.",
-    "— Ça va peler et démanger : c'est normal. Ne gratte pas, ne tire pas les peaux.",
-    "— Pas de piscine, pas de bain, pas de sauna pendant deux à trois semaines.",
-    "— Pas de soleil direct sur la zone, et de la crème solaire indice élevé une fois cicatrisé.",
+    "Si tu le souhaites, tu pourras voir le dessin demain, dans ce cas envoie-moi un petit message pour me le demander !",
     "",
-    "En cas de doute — rougeur qui s'étend, chaleur, écoulement — écris-moi, envoie une photo.",
+    "Les accompagnants sont autorisés.",
     "",
+    "Si tu as des questions avant le RDV, n'hésite pas à me renvoyer un message sur insta.",
+    "",
+    `À ${jour} !`,
     signature(profil),
     "",
-    pied(profil),
-  ];
+    pied(profil)
+  );
 
   return {
-    objet: "Ton tatouage — les premiers jours",
+    objet: `RDV Tattoo — on se voit ${jour} à ${heure}`,
     texte: lignes.join("\n"),
   };
 }
