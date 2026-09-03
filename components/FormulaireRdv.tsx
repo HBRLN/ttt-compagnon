@@ -196,7 +196,7 @@ export default function FormulaireRdv({
       <header className="flex items-center gap-2 px-4 pt-6 pb-2">
         <Link
           href={rdvInitial ? `/rdv/${rdvInitial.id}` : "/"}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-encre-douce active:bg-surface-douce"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-2xl text-encre-douce active:bg-surface-douce"
           aria-label="Retour"
         >
           ←
