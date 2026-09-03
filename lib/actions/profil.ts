@@ -6,6 +6,7 @@ import { creerClientServeur } from "@/lib/supabase/server";
 
 export type ChampsProfil = {
   nom_artiste?: string;
+  nom_salon?: string;
   email_reponse?: string;
   tel?: string;
   instagram?: string;
@@ -23,6 +24,7 @@ export async function enregistrerProfil(champs: ChampsProfil) {
     .from("profil")
     .update({
       nom_artiste: champs.nom_artiste?.trim() || null,
+      nom_salon: champs.nom_salon?.trim() || null,
       email_reponse: champs.email_reponse?.trim() || null,
       tel: champs.tel?.trim() || null,
       instagram: champs.instagram?.trim() || null,

@@ -12,6 +12,7 @@ const FUSEAU = "Europe/Paris";
 type Profil = {
   id: string;
   nom_artiste: string | null;
+  nom_salon: string | null;
   email_reponse: string | null;
   adresse: string | null;
   instagram: string | null;
@@ -61,19 +62,45 @@ function signature(profil: Profil) {
   return profil.signature || profil.nom_artiste || "";
 }
 
-// Phrase de lieu construite à partir des Réglages, avec dégradation
-// gracieuse si le tatoueur n'a pas (encore) rempli son Instagram ou son
-// nom d'artiste.
+// Phrase de lieu construite à partir des Réglages. Le nom cité est celui
+// du salon (ex. "La Belle Hirondelle"), pas celui du tatoueur — avec
+// repli sur le nom d'artiste si le nom du salon n'est pas encore rempli.
 function ligneLieu(profil: Profil): string | null {
   if (!profil.adresse) return null;
+  const nomSalon = profil.nom_salon || profil.nom_artiste;
   const insta = profil.instagram ? `@${profil.instagram.replace(/^@/, "")}` : null;
-  if (profil.nom_artiste && insta) {
-    return `Le RDV se fera au ${profil.adresse}, au salon ${profil.nom_artiste} (${insta}).`;
+  if (nomSalon && insta) {
+    return `Le RDV se fera au **${profil.adresse}**, au salon **${nomSalon}** (${insta}).`;
   }
-  if (profil.nom_artiste) {
-    return `Le RDV se fera au ${profil.adresse}, au salon ${profil.nom_artiste}.`;
+  if (nomSalon) {
+    return `Le RDV se fera au **${profil.adresse}**, au salon **${nomSalon}**.`;
   }
-  return `Le RDV se fera au ${profil.adresse}.`;
+  return `Le RDV se fera au **${profil.adresse}**.`;
+}
+
+// Les lignes du corps utilisent une syntaxe **gras** minimale, convertie
+// soit en texte brut (retiré), soit en <strong> pour la version HTML.
+function versTexte(lignes: string[]): string {
+  return lignes.map((ligne) => ligne.replace(/\*\*(.+?)\*\*/g, "$1")).join("\n");
+}
+
+function echapperHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// Pas de police imposée : le client mail applique la sienne.
+function versHtml(lignes: string[]): string {
+  const paragraphes = lignes
+    .filter((ligne) => ligne !== "")
+    .map((ligne) => {
+      const echappee = echapperHtml(ligne).replace(
+        /\*\*(.+?)\*\*/g,
+        "<strong>$1</strong>"
+      );
+      return `<p style="margin:0 0 16px;">${echappee}</p>`;
+    })
+    .join("\n");
+  return `<div style="font-size:15px;line-height:1.55;">${paragraphes}</div>`;
 }
 
 function emailRappel(rdv: Rdv, profil: Profil) {
@@ -84,7 +111,7 @@ function emailRappel(rdv: Rdv, profil: Profil) {
   const lignes = [
     `Salut ${rdv.client_prenom},`,
     "",
-    `Petit rappel : on se voit ${jour} ${date} à ${heure} pour ${
+    `Petit rappel : on se voit **${jour} ${date} à ${heure}** pour ${
       rdv.projet || "ton tatouage"
     }.`,
   ];
@@ -96,7 +123,7 @@ function emailRappel(rdv: Rdv, profil: Profil) {
     "",
     "Quelques conseils avant le tattoo : mange avant de venir, arrive reposé, évite l'alcool la veille, et prévois des vêtements noirs qui laissent la zone accessible et dans lesquels tu seras à l'aise.",
     "",
-    "À ce stade, l'acompte n'est plus remboursable. N'hésite pas à prévoir de l'espèce pour le jour J !",
+    "À ce stade, **l'acompte n'est plus remboursable**. N'hésite pas à prévoir de l'espèce pour le jour J !",
     "",
     "Si tu le souhaites, tu pourras voir le dessin demain, dans ce cas envoie-moi un petit message pour me le demander !",
     "",
@@ -112,7 +139,8 @@ function emailRappel(rdv: Rdv, profil: Profil) {
 
   return {
     objet: `RDV Tattoo — on se voit ${jour} à ${heure}`,
-    texte: lignes.join("\n"),
+    texte: versTexte(lignes),
+    html: versHtml(lignes),
   };
 }
 
@@ -139,6 +167,7 @@ async function envoyerEmail(cleResend: string, params: {
   repondreA?: string | null;
   objet: string;
   texte: string;
+  html: string;
 }) {
   const reponse = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -152,6 +181,7 @@ async function envoyerEmail(cleResend: string, params: {
       reply_to: params.repondreA || undefined,
       subject: params.objet,
       text: params.texte,
+      html: params.html,
     }),
   });
 
@@ -202,13 +232,14 @@ Deno.serve(async (_req) => {
     if (new Date(rdv.debut) > seuil) continue;
 
     try {
-      const { objet, texte } = emailRappel(rdv, profil);
+      const { objet, texte, html } = emailRappel(rdv, profil);
       await envoyerEmail(cleResend, {
         a: rdv.client_email!,
         de: construireExpediteur(profil),
         repondreA: profil.email_reponse,
         objet,
         texte,
+        html,
       });
       await supabase
         .from("rdv")

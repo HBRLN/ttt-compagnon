@@ -45,7 +45,7 @@ export default function OngletsRdv({
     <div className="relative inline-flex items-center rounded-full bg-surface-douce p-1">
       {indicateur && (
         <div
-          className="absolute top-1 bottom-1 rounded-full bg-encre shadow-legere"
+          className="absolute top-1 bottom-1 rounded-full bg-accent shadow-legere"
           style={{
             left: indicateur.left,
             width: indicateur.width,
@@ -63,7 +63,7 @@ export default function OngletsRdv({
           }}
           onClick={() => surClic(onglet)}
           className={`relative z-10 flex h-8 shrink-0 items-center whitespace-nowrap rounded-full px-3 text-sm font-medium transition-colors duration-200 ${
-            actifLocal === onglet.cle ? "text-sur-encre" : "text-encre-douce"
+            actifLocal === onglet.cle ? "text-sur-accent" : "text-encre-douce"
           }`}
         >
           {onglet.label}

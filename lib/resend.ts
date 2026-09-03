@@ -6,6 +6,7 @@ export async function envoyerEmail(params: {
   repondreA?: string | null;
   objet: string;
   texte: string;
+  html: string;
 }) {
   const cleApi = process.env.RESEND_API_KEY;
   if (!cleApi) {
@@ -20,5 +21,6 @@ export async function envoyerEmail(params: {
     replyTo: params.repondreA || undefined,
     subject: params.objet,
     text: params.texte,
+    html: params.html,
   });
 }

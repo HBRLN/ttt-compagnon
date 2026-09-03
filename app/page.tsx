@@ -148,7 +148,7 @@ export default async function PageAccueil({
 
       <Link
         href="/rdv/nouveau"
-        className="fixed bottom-8 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-encre text-3xl font-light text-sur-encre shadow-flottante active:opacity-90"
+        className="fixed bottom-8 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-3xl font-light text-sur-accent shadow-flottante active:opacity-90"
         aria-label="Nouveau RDV"
       >
         +

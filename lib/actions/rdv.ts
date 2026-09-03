@@ -93,13 +93,14 @@ export async function creerRdv(champs: ChampsRdv) {
 
     if (profil) {
       try {
-        const { objet, texte } = emailConfirmation(rdv as Rdv, profil);
+        const { objet, texte, html } = emailConfirmation(rdv as Rdv, profil);
         await envoyerEmail({
           a: rdv.client_email,
           de: construireExpediteur(profil),
           repondreA: profil.email_reponse,
           objet,
           texte,
+          html,
         });
         await supabase
           .from("rdv")

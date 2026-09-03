@@ -297,7 +297,7 @@ export default function FormulaireRdv({
             onClick={() => inputFichierRef.current?.click()}
             className={`flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed p-6 text-center text-sm transition-colors ${
               survolDepot
-                ? "border-encre bg-surface-douce"
+                ? "border-accent bg-surface-douce"
                 : "border-ligne text-encre-douce"
             }`}
           >
@@ -415,7 +415,7 @@ export default function FormulaireRdv({
         <button
           type="submit"
           disabled={enCours}
-          className="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-encre text-base font-medium text-sur-encre shadow-legere disabled:opacity-50"
+          className="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-accent text-base font-medium text-sur-accent shadow-legere disabled:opacity-50"
         >
           {enCours && <Loader taille={18} />}
           {enCours ? "Enregistrement..." : "Enregistrer"}
@@ -426,6 +426,9 @@ export default function FormulaireRdv({
         .champ {
           min-height: 44px;
           width: 100%;
+          min-width: 0;
+          max-width: 100%;
+          box-sizing: border-box;
           border-radius: 0.5rem;
           border: 1px solid var(--ligne);
           background: var(--surface);
@@ -443,9 +446,17 @@ export default function FormulaireRdv({
   );
 }
 
-function Champ({ label, children }: { label: string; children: React.ReactNode }) {
+function Champ({
+  label,
+  children,
+  className = "",
+}: {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <label className="flex flex-col gap-1">
+    <label className={`flex min-w-0 flex-col gap-1 ${className}`}>
       <span className="text-sm font-medium text-encre-douce">{label}</span>
       {children}
     </label>

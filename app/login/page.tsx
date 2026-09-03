@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { creerClientNavigateur } from "@/lib/supabase/client";
 import Loader from "@/components/Loader";
+import ChampMotDePasse from "@/components/ChampMotDePasse";
 
 type Mode = "connexion" | "inscription" | "oubli";
 
@@ -129,28 +130,24 @@ function FormulaireConnexion() {
           placeholder="ton@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-12 rounded-lg border border-ligne px-4 text-base"
+          className="h-12 rounded-lg border border-ligne bg-surface px-4 text-base text-encre shadow-legere"
         />
 
         {mode !== "oubli" && (
-          <input
-            type="password"
+          <ChampMotDePasse
             required
             placeholder="Mot de passe"
             value={motDePasse}
-            onChange={(e) => setMotDePasse(e.target.value)}
-            className="h-12 rounded-lg border border-ligne px-4 text-base"
+            onChange={setMotDePasse}
           />
         )}
 
         {mode === "inscription" && (
-          <input
-            type="password"
+          <ChampMotDePasse
             required
             placeholder="Confirme le mot de passe"
             value={confirmation}
-            onChange={(e) => setConfirmation(e.target.value)}
-            className="h-12 rounded-lg border border-ligne px-4 text-base"
+            onChange={setConfirmation}
           />
         )}
 
@@ -163,7 +160,7 @@ function FormulaireConnexion() {
         <button
           type="submit"
           disabled={enCours}
-          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-encre text-base font-medium text-sur-encre shadow-legere disabled:opacity-50"
+          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-accent text-base font-medium text-sur-accent shadow-legere disabled:opacity-50"
         >
           {enCours && <Loader taille={18} />}
           {enCours

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { creerClientNavigateur } from "@/lib/supabase/client";
 import Loader from "@/components/Loader";
+import ChampMotDePasse from "@/components/ChampMotDePasse";
 
 export default function PageNouveauMotDePasse() {
   const router = useRouter();
@@ -55,28 +56,24 @@ export default function PageNouveauMotDePasse() {
     <div className="flex min-h-dvh flex-col items-center justify-center gap-8 px-6">
       <h1 className="text-2xl font-semibold">Nouveau mot de passe</h1>
       <form onSubmit={soumettre} className="flex w-full max-w-sm flex-col gap-4">
-        <input
-          type="password"
+        <ChampMotDePasse
           required
           autoFocus
           placeholder="Nouveau mot de passe"
           value={motDePasse}
-          onChange={(e) => setMotDePasse(e.target.value)}
-          className="h-12 rounded-lg border border-ligne px-4 text-base"
+          onChange={setMotDePasse}
         />
-        <input
-          type="password"
+        <ChampMotDePasse
           required
           placeholder="Confirme le mot de passe"
           value={confirmation}
-          onChange={(e) => setConfirmation(e.target.value)}
-          className="h-12 rounded-lg border border-ligne px-4 text-base"
+          onChange={setConfirmation}
         />
         {erreur && <p className="text-sm text-rouge">{erreur}</p>}
         <button
           type="submit"
           disabled={enCours}
-          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-encre text-base font-medium text-sur-encre shadow-legere disabled:opacity-50"
+          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-accent text-base font-medium text-sur-accent shadow-legere disabled:opacity-50"
         >
           {enCours && <Loader taille={18} />}
           {enCours ? "" : "Valider"}

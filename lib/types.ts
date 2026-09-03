@@ -1,6 +1,7 @@
 export type Profil = {
   id: string;
   nom_artiste: string | null;
+  nom_salon: string | null;
   email_reponse: string | null;
   tel: string | null;
   instagram: string | null;

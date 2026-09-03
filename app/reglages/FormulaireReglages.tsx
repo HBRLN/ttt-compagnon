@@ -18,6 +18,7 @@ export default function FormulaireReglages({
   email: string;
 }) {
   const [nomArtiste, setNomArtiste] = useState(profil.nom_artiste || "");
+  const [nomSalon, setNomSalon] = useState(profil.nom_salon || "");
   const [emailReponse, setEmailReponse] = useState(profil.email_reponse || "");
   const [tel, setTel] = useState(profil.tel || "");
   const [adresse, setAdresse] = useState(profil.adresse || "");
@@ -37,6 +38,7 @@ export default function FormulaireReglages({
     startTransition(async () => {
       await enregistrerProfil({
         nom_artiste: nomArtiste,
+        nom_salon: nomSalon,
         email_reponse: emailReponse,
         tel,
         adresse,
@@ -88,6 +90,15 @@ export default function FormulaireReglages({
           <input
             value={nomArtiste}
             onChange={(e) => surChangement(setNomArtiste)(e.target.value)}
+            className="champ"
+          />
+        </Champ>
+
+        <Champ label="Nom du salon">
+          <input
+            value={nomSalon}
+            onChange={(e) => surChangement(setNomSalon)(e.target.value)}
+            placeholder="La Belle Hirondelle"
             className="champ"
           />
         </Champ>
@@ -153,7 +164,7 @@ export default function FormulaireReglages({
             type="button"
             onClick={enregistrer}
             disabled={enCours}
-            className="flex h-12 items-center justify-center gap-2 rounded-lg bg-encre text-base font-medium text-sur-encre shadow-legere disabled:opacity-50"
+            className="flex h-12 items-center justify-center gap-2 rounded-lg bg-accent text-base font-medium text-sur-accent shadow-legere disabled:opacity-50"
           >
             {enCours && <Loader taille={18} />}
             {enCours ? "Enregistrement..." : "Enregistrer"}
@@ -209,6 +220,9 @@ export default function FormulaireReglages({
         .champ {
           min-height: 44px;
           width: 100%;
+          min-width: 0;
+          max-width: 100%;
+          box-sizing: border-box;
           border-radius: 0.5rem;
           border: 1px solid var(--ligne);
           background: var(--surface);
