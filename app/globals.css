@@ -3,14 +3,14 @@
 :root {
   /* Palette inspirée de Material Design 3 (thème clair) : blancs et
      gris légèrement chauds, cartes distinguées par l'ombre plutôt que
-     par un contour, accent presque noir sur fond presque blanc. */
+     par un contour, accent corail. */
   --fond: #faf8f5;
   --surface: #fffdfa;
   --surface-douce: #f2ede6;
   --encre: #2a2521;
   --encre-douce: #6b6259;
   --ligne: #e2dad0;
-  --accent: #241f1a;
+  --accent: #f0563c;
   --sur-accent: #fffdfa;
   --rouge: #d93025;
   --rouge-doux: #fce8e6;
@@ -41,4 +41,36 @@
 body {
   background: var(--fond);
   color: var(--encre);
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.animate-pop-in {
+  animation: pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out both;
 }

@@ -153,7 +153,7 @@ export default async function PageFicheRdv({
         <section className="flex gap-3">
           <Link
             href={`/rdv/${rdv.id}/modifier`}
-            className="flex h-11 flex-1 items-center justify-center rounded-lg bg-accent font-medium text-sur-accent shadow-legere"
+            className="flex h-11 flex-1 items-center justify-center rounded-lg bg-accent font-medium text-sur-accent shadow-legere transition-transform duration-150 active:scale-95"
           >
             Modifier
           </Link>

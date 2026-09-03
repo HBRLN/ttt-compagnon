@@ -160,7 +160,7 @@ function FormulaireConnexion() {
         <button
           type="submit"
           disabled={enCours}
-          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-accent text-base font-medium text-sur-accent shadow-legere disabled:opacity-50"
+          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-accent text-base font-medium text-sur-accent shadow-legere transition-transform duration-150 active:scale-95 disabled:opacity-50"
         >
           {enCours && <Loader taille={18} />}
           {enCours

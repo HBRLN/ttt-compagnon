@@ -3,10 +3,7 @@ import { creerClientServeur } from "@/lib/supabase/server";
 import { formaterDateCourte, formaterHeure } from "@/lib/date";
 import type { Rdv } from "@/lib/types";
 import NavBar from "@/components/NavBar";
-
-function formaterMontant(montant: number): string {
-  return `${Math.round(montant).toLocaleString("fr-FR")} €`;
-}
+import CompteurAnime from "@/components/CompteurAnime";
 
 export default async function PageDashboard() {
   const supabase = await creerClientServeur();
@@ -101,7 +98,7 @@ export default async function PageDashboard() {
         {prochainRdv ? (
           <Link
             href={`/rdv/${prochainRdv.id}`}
-            className="rounded-2xl bg-accent p-5 text-sur-accent shadow-legere active:opacity-90"
+            className="animate-fade-in-up rounded-2xl bg-accent p-5 text-sur-accent shadow-legere transition-transform duration-150 active:scale-[0.97] active:opacity-90"
           >
             <p className="text-sm font-medium opacity-80">Prochain RDV</p>
             <p className="mt-2 text-2xl font-semibold">
@@ -114,39 +111,52 @@ export default async function PageDashboard() {
             </p>
           </Link>
         ) : (
-          <div className="rounded-2xl bg-accent p-5 text-sur-accent shadow-legere">
+          <div className="animate-fade-in-up rounded-2xl bg-accent p-5 text-sur-accent shadow-legere">
             <p className="text-sm font-medium opacity-80">Prochain RDV</p>
             <p className="mt-2 text-lg font-semibold">Rien de prévu.</p>
           </div>
         )}
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl bg-surface p-4 shadow-legere">
+          <div
+            className="animate-fade-in-up rounded-2xl bg-surface p-4 shadow-legere"
+            style={{ animationDelay: "80ms" }}
+          >
             <p className="text-xs font-medium text-encre-douce">RDV ce mois</p>
-            <p className="mt-2 text-2xl font-semibold">{nombreRdvMois}</p>
+            <p className="mt-2 text-2xl font-semibold">
+              <CompteurAnime valeur={nombreRdvMois} />
+            </p>
           </div>
 
-          <div className="rounded-2xl bg-surface p-4 shadow-legere">
+          <div
+            className="animate-fade-in-up rounded-2xl bg-surface p-4 shadow-legere"
+            style={{ animationDelay: "140ms" }}
+          >
             <p className="text-xs font-medium text-encre-douce">Gains du mois</p>
-            <p className="mt-2 text-2xl font-semibold">{formaterMontant(gainsDuMois)}</p>
+            <p className="mt-2 text-2xl font-semibold">
+              <CompteurAnime valeur={gainsDuMois} suffixe=" €" />
+            </p>
           </div>
         </div>
 
-        <div className="rounded-2xl bg-surface p-4 shadow-legere">
+        <div
+          className="animate-fade-in-up rounded-2xl bg-surface p-4 shadow-legere"
+          style={{ animationDelay: "200ms" }}
+        >
           <p className="text-xs font-medium text-encre-douce">Estimation du mois</p>
           <p
             className={`mt-2 text-2xl font-semibold ${
               estimationMois < 0 ? "text-rouge" : ""
             }`}
           >
-            {formaterMontant(estimationMois)}
+            <CompteurAnime valeur={estimationMois} suffixe=" €" />
           </p>
         </div>
       </div>
 
       <Link
         href="/rdv/nouveau"
-        className="fixed bottom-24 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-3xl font-light text-sur-accent shadow-flottante active:opacity-90"
+        className="fixed bottom-24 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-3xl font-light text-sur-accent shadow-flottante transition-transform duration-150 active:scale-90 active:opacity-90 animate-pop-in"
         aria-label="Nouveau RDV"
       >
         +

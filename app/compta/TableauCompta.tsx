@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { ajouterDepense, supprimerDepense } from "@/lib/actions/depenses";
 import { ajouterGain, supprimerGain } from "@/lib/actions/gains";
 import Loader from "@/components/Loader";
+import CompteurAnime from "@/components/CompteurAnime";
 import type { Depense, Gain, Rdv } from "@/lib/types";
 
 type Vue = "mois" | "annee";
@@ -195,7 +196,7 @@ export default function TableauCompta({
         </p>
         <div className="mt-1 flex items-baseline gap-2">
           <p className={`text-3xl font-semibold ${net < 0 ? "text-rouge" : "text-vert"}`}>
-            {formaterMontant(net)}
+            <CompteurAnime valeur={net} suffixe=" €" />
           </p>
           {barreSelectionnee !== null && (
             <p
@@ -208,37 +209,14 @@ export default function TableauCompta({
           )}
         </div>
 
-        <div className="mt-6 flex h-32 gap-1">
-          {valeurs.map((valeur, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => surClicBarre(i)}
-              title={`${labels[i]} : ${formaterMontant(valeur)}`}
-              className={`relative flex h-full flex-1 flex-col items-center transition-opacity ${
-                barreSelectionnee !== null && barreSelectionnee !== i ? "opacity-40" : ""
-              }`}
-            >
-              <div className="flex w-full flex-1 items-end justify-center">
-                {valeur > 0 && (
-                  <div
-                    className="w-full rounded-t-md bg-vert"
-                    style={{ height: `${(valeur / maxAbs) * 100}%` }}
-                  />
-                )}
-              </div>
-              <div className="h-px w-full bg-encre-douce/25" />
-              <div className="flex w-full flex-1 items-start justify-center">
-                {valeur < 0 && (
-                  <div
-                    className="w-full rounded-b-md bg-rouge"
-                    style={{ height: `${(Math.abs(valeur) / maxAbs) * 100}%` }}
-                  />
-                )}
-              </div>
-            </button>
-          ))}
-        </div>
+        <GraphiqueBarres
+          key={vue}
+          valeurs={valeurs}
+          labels={labels}
+          maxAbs={maxAbs}
+          barreSelectionnee={barreSelectionnee}
+          onClicBarre={surClicBarre}
+        />
         <div className="mt-1 flex gap-1">
           {labels.map((label) => (
             <span key={label} className="flex-1 text-center text-[10px] text-encre-douce">
@@ -252,7 +230,7 @@ export default function TableauCompta({
         <button
           type="button"
           onClick={() => basculerFormulaire("depense")}
-          className="flex h-12 items-center justify-between rounded-2xl bg-surface px-4 font-medium shadow-legere"
+          className="flex h-12 items-center justify-between rounded-2xl bg-surface px-4 font-medium shadow-legere transition-transform duration-150 active:scale-[0.98]"
         >
           Ajouter une dépense
           <span className="text-encre-douce">{formulaireOuvert === "depense" ? "−" : "+"}</span>
@@ -274,7 +252,7 @@ export default function TableauCompta({
         <button
           type="button"
           onClick={() => basculerFormulaire("gain")}
-          className="flex h-12 items-center justify-between rounded-2xl bg-surface px-4 font-medium shadow-legere"
+          className="flex h-12 items-center justify-between rounded-2xl bg-surface px-4 font-medium shadow-legere transition-transform duration-150 active:scale-[0.98]"
         >
           Ajouter un gain
           <span className="text-encre-douce">{formulaireOuvert === "gain" ? "−" : "+"}</span>
@@ -339,6 +317,61 @@ export default function TableauCompta({
   );
 }
 
+function GraphiqueBarres({
+  valeurs,
+  labels,
+  maxAbs,
+  barreSelectionnee,
+  onClicBarre,
+}: {
+  valeurs: number[];
+  labels: string[];
+  maxAbs: number;
+  barreSelectionnee: number | null;
+  onClicBarre: (i: number) => void;
+}) {
+  const [monte, setMonte] = useState(false);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMonte(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  return (
+    <div className="mt-6 flex h-32 gap-1">
+      {valeurs.map((valeur, i) => (
+        <button
+          key={i}
+          type="button"
+          onClick={() => onClicBarre(i)}
+          title={`${labels[i]} : ${formaterMontant(valeur)}`}
+          className={`relative flex h-full flex-1 flex-col items-center transition-opacity ${
+            barreSelectionnee !== null && barreSelectionnee !== i ? "opacity-40" : ""
+          }`}
+        >
+          <div className="flex w-full flex-1 items-end justify-center">
+            {valeur > 0 && (
+              <div
+                className="w-full rounded-t-md bg-vert transition-[height] duration-700 ease-out"
+                style={{ height: monte ? `${(valeur / maxAbs) * 100}%` : "0%" }}
+              />
+            )}
+          </div>
+          <div className="h-px w-full bg-encre-douce/25" />
+          <div className="flex w-full flex-1 items-start justify-center">
+            {valeur < 0 && (
+              <div
+                className="w-full rounded-b-md bg-rouge transition-[height] duration-700 ease-out"
+                style={{ height: monte ? `${(Math.abs(valeur) / maxAbs) * 100}%` : "0%" }}
+              />
+            )}
+          </div>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function FormulaireMontant({
   placeholder,
   enCours,
@@ -390,7 +423,7 @@ function FormulaireMontant({
       <button
         type="submit"
         disabled={enCours || !libelle.trim() || !montant}
-        className="flex h-11 items-center justify-center gap-2 rounded-lg bg-accent text-sm font-medium text-sur-accent shadow-legere disabled:opacity-50"
+        className="flex h-11 items-center justify-center gap-2 rounded-lg bg-accent text-sm font-medium text-sur-accent shadow-legere transition-transform duration-150 active:scale-95 disabled:opacity-50"
       >
         {enCours && <Loader taille={16} />}
         Ajouter
