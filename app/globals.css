@@ -1,20 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  /* Palette inspirée de Material Design 3 (thème sombre de Google) :
-     surfaces neutres avec élévation par superposition de blanc, un
+  /* Palette inspirée de Material Design 3 (thème clair de Google) :
+     fond gris très pâle, cartes blanches distinguées par l'ombre, le
      bleu Google comme accent, des ombres calquées sur les niveaux
      d'élévation officiels de Material 3. */
-  --fond: #121212;
-  --surface: #1e1e1e;
-  --surface-douce: #2a2a2a;
-  --encre: #e3e3e3;
-  --encre-douce: #9aa0a6;
-  --ligne: #444746;
-  --accent: #8ab4f8;
-  --sur-accent: #062e6f;
-  --rouge: #ff8a80;
-  --rouge-doux: #442726;
+  --fond: #f8f9fa;
+  --surface: #ffffff;
+  --surface-douce: #f1f3f4;
+  --encre: #202124;
+  --encre-douce: #5f6368;
+  --ligne: #dadce0;
+  --accent: #1a73e8;
+  --sur-accent: #ffffff;
+  --rouge: #d93025;
+  --rouge-doux: #fce8e6;
   --ombre-legere: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
   --ombre-flottante: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 8px 3px rgba(0, 0, 0, 0.15);
 }

@@ -239,7 +239,7 @@ export default function FormulaireRdv({
           />
         </Champ>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-3">
           <Champ label="Date">
             <input
               type="date"
