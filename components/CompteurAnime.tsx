@@ -16,12 +16,13 @@ export default function CompteurAnime({
   useEffect(() => {
     valeurDepart.current = affiche;
     depart.current = null;
-    const duree = 700;
+    const reduitMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const duree = reduitMotion ? 0 : 700;
     let frame: number;
 
     function etape(t: number) {
       if (depart.current === null) depart.current = t;
-      const progres = Math.min(1, (t - depart.current) / duree);
+      const progres = duree === 0 ? 1 : Math.min(1, (t - depart.current) / duree);
       const facilite = 1 - Math.pow(1 - progres, 3);
       setAffiche(valeurDepart.current + (valeur - valeurDepart.current) * facilite);
       if (progres < 1) frame = requestAnimationFrame(etape);

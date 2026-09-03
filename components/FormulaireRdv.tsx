@@ -326,7 +326,7 @@ export default function FormulaireRdv({
                 >
                   <Image
                     src={photo.apercu}
-                    alt=""
+                    alt="Photo d'inspiration"
                     fill
                     unoptimized
                     className="object-cover"

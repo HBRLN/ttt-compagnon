@@ -352,8 +352,11 @@ function GraphiqueBarres({
           <div className="flex w-full flex-1 items-end justify-center">
             {valeur > 0 && (
               <div
-                className="w-full rounded-t-md bg-vert transition-[height] duration-700 ease-out"
-                style={{ height: monte ? `${(valeur / maxAbs) * 100}%` : "0%" }}
+                className="w-full origin-bottom rounded-t-md bg-vert transition-transform duration-700 ease-out"
+                style={{
+                  height: `${(valeur / maxAbs) * 100}%`,
+                  transform: `scaleY(${monte ? 1 : 0})`,
+                }}
               />
             )}
           </div>
@@ -361,8 +364,11 @@ function GraphiqueBarres({
           <div className="flex w-full flex-1 items-start justify-center">
             {valeur < 0 && (
               <div
-                className="w-full rounded-b-md bg-rouge transition-[height] duration-700 ease-out"
-                style={{ height: monte ? `${(Math.abs(valeur) / maxAbs) * 100}%` : "0%" }}
+                className="w-full origin-top rounded-b-md bg-rouge transition-transform duration-700 ease-out"
+                style={{
+                  height: `${(Math.abs(valeur) / maxAbs) * 100}%`,
+                  transform: `scaleY(${monte ? 1 : 0})`,
+                }}
               />
             )}
           </div>

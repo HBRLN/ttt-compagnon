@@ -45,7 +45,7 @@ function IconeAvecAnneau({
   return (
     <span className="relative flex h-9 w-9 items-center justify-center">
       <span
-        className={`absolute inset-0 rounded-full border-2 transition-all duration-300 ${
+        className={`absolute inset-0 rounded-full border-2 transition-[transform,opacity,border-color] duration-300 ${
           pending
             ? "animate-spin border-accent border-t-transparent opacity-100"
             : actif
