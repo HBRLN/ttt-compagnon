@@ -3,10 +3,10 @@
 import { createContext, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 
-type Phase = "inactif" | "brun" | "blanc";
 type Origine = { x: number; y: number };
 
-const DUREE_PHASE_MS = 400;
+const DUREE_MS = 400;
+const DECALAGE_BLANC_MS = 80;
 
 const ContexteTransition = createContext<{
   declencher: (origine: Origine, destination: string) => void;
@@ -24,7 +24,8 @@ export default function TransitionFabProvider({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [phase, setPhase] = useState<Phase>("inactif");
+  const [brunActif, setBrunActif] = useState(false);
+  const [blancActif, setBlancActif] = useState(false);
   const [origine, setOrigine] = useState<Origine>({ x: 0, y: 0 });
 
   function declencher(o: Origine, destination: string) {
@@ -35,12 +36,21 @@ export default function TransitionFabProvider({
     }
 
     setOrigine(o);
-    setPhase("brun");
+    setBrunActif(true);
+
+    // Le blanc suit le marron de très près (quelques frames), pas
+    // seulement une fois le marron arrivé — effet « double vague ».
+    setTimeout(() => setBlancActif(true), DECALAGE_BLANC_MS);
+
+    // La navigation a lieu quand le marron seul couvre déjà tout
+    // l'écran : l'échange de page reste invisible même si le blanc
+    // n'a pas fini de le rattraper.
+    setTimeout(() => router.push(destination), DUREE_MS);
+
     setTimeout(() => {
-      router.push(destination);
-      setPhase("blanc");
-      setTimeout(() => setPhase("inactif"), DUREE_PHASE_MS);
-    }, DUREE_PHASE_MS);
+      setBrunActif(false);
+      setBlancActif(false);
+    }, DECALAGE_BLANC_MS + DUREE_MS + 50);
   }
 
   const clipInactif = `circle(0% at ${origine.x}px ${origine.y}px)`;
@@ -53,16 +63,16 @@ export default function TransitionFabProvider({
         aria-hidden
         className="pointer-events-none fixed inset-0 z-50 bg-accent transition-[clip-path] ease-in-out"
         style={{
-          clipPath: phase === "brun" || phase === "blanc" ? clipActif : clipInactif,
-          transitionDuration: `${DUREE_PHASE_MS}ms`,
+          clipPath: brunActif ? clipActif : clipInactif,
+          transitionDuration: `${DUREE_MS}ms`,
         }}
       />
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 z-50 bg-fond transition-[clip-path] ease-in-out"
         style={{
-          clipPath: phase === "blanc" ? clipActif : clipInactif,
-          transitionDuration: `${DUREE_PHASE_MS}ms`,
+          clipPath: blancActif ? clipActif : clipInactif,
+          transitionDuration: `${DUREE_MS}ms`,
         }}
       />
     </ContexteTransition.Provider>

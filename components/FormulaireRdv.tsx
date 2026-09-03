@@ -191,6 +191,16 @@ export default function FormulaireRdv({
     });
   }
 
+  // Sur un nouveau RDV, les champs arrivent en cascade (haut en bas,
+  // opacité + léger mouvement vertical) juste après le cercle blanc
+  // de la transition du bouton +. Décalage court : ils apparaissent
+  // presque ensemble, à peine décalés.
+  const anime = !rdvInitial;
+  const classeEntree = anime ? "animate-fade-in-up" : "";
+  function styleEntree(n: number): React.CSSProperties | undefined {
+    return anime ? { animationDelay: `${100 + n * 40}ms` } : undefined;
+  }
+
   return (
     <div className="flex min-h-dvh flex-col pb-10">
       <header className="flex items-center gap-2 px-4 pt-6 pb-2">
@@ -204,11 +214,8 @@ export default function FormulaireRdv({
         <h1 className="text-lg font-semibold">{titre}</h1>
       </header>
 
-      <form
-        onSubmit={soumettre}
-        className={`flex flex-col gap-4 px-5 pt-2 ${!rdvInitial ? "animate-fade-in-up" : ""}`}
-      >
-        <Champ label="Prénom">
+      <form onSubmit={soumettre} className="flex flex-col gap-4 px-5 pt-2">
+        <Champ label="Prénom" className={classeEntree} style={styleEntree(0)}>
           <input
             required
             autoFocus={!rdvInitial}
@@ -218,7 +225,7 @@ export default function FormulaireRdv({
           />
         </Champ>
 
-        <Champ label="Téléphone">
+        <Champ label="Téléphone" className={classeEntree} style={styleEntree(1)}>
           <input
             type="tel"
             value={tel}
@@ -233,7 +240,7 @@ export default function FormulaireRdv({
           )}
         </Champ>
 
-        <Champ label="Email">
+        <Champ label="Email" className={classeEntree} style={styleEntree(2)}>
           <input
             type="email"
             value={email}
@@ -242,7 +249,10 @@ export default function FormulaireRdv({
           />
         </Champ>
 
-        <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-3">
+        <div
+          className={`flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-3 ${classeEntree}`}
+          style={styleEntree(3)}
+        >
           <Champ label="Date">
             <input
               type="date"
@@ -263,7 +273,7 @@ export default function FormulaireRdv({
           </Champ>
         </div>
 
-        <Champ label="Durée">
+        <Champ label="Durée" className={classeEntree} style={styleEntree(4)}>
           <select
             value={duree}
             onChange={(e) => setDuree(Number(e.target.value))}
@@ -277,7 +287,7 @@ export default function FormulaireRdv({
           </select>
         </Champ>
 
-        <Champ label="Projet">
+        <Champ label="Projet" className={classeEntree} style={styleEntree(5)}>
           <textarea
             rows={3}
             value={projet}
@@ -286,7 +296,7 @@ export default function FormulaireRdv({
           />
         </Champ>
 
-        <div className="flex flex-col gap-1">
+        <div className={`flex flex-col gap-1 ${classeEntree}`} style={styleEntree(6)}>
           <span className="text-sm font-medium text-encre-douce">
             Photos d&apos;inspiration
           </span>
@@ -450,13 +460,15 @@ function Champ({
   label,
   children,
   className = "",
+  style,
 }: {
   label: string;
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
-    <label className={`flex min-w-0 flex-col gap-1 ${className}`}>
+    <label className={`flex min-w-0 flex-col gap-1 ${className}`} style={style}>
       <span className="text-sm font-medium text-encre-douce">{label}</span>
       {children}
     </label>
