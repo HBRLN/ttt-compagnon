@@ -1,8 +1,8 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
+import type { ComponentType } from "react";
 
 const ONGLETS = [
   { href: "/", label: "Dashboard", icone: IconeAccueil },
@@ -12,59 +12,20 @@ const ONGLETS = [
 
 export default function NavBar() {
   const pathname = usePathname();
-  const boutonsRef = useRef<Record<string, HTMLAnchorElement | null>>({});
-  const [indicateur, setIndicateur] = useState<{
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-  } | null>(null);
-
-  const actif = ONGLETS.find((o) => o.href === pathname)?.href ?? null;
-
-  useLayoutEffect(() => {
-    const bouton = actif ? boutonsRef.current[actif] : null;
-    if (bouton) {
-      setIndicateur({
-        left: bouton.offsetLeft,
-        top: bouton.offsetTop,
-        width: bouton.offsetWidth,
-        height: bouton.offsetHeight,
-      });
-    } else {
-      setIndicateur(null);
-    }
-  }, [actif]);
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-around bg-surface px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 shadow-flottante">
-      {indicateur && (
-        <div
-          className="absolute rounded-xl bg-surface-douce"
-          style={{
-            left: indicateur.left,
-            top: indicateur.top,
-            width: indicateur.width,
-            height: indicateur.height,
-            transition:
-              "left 0.25s cubic-bezier(0.4,0,0.2,1), top 0.25s, width 0.25s, height 0.25s",
-          }}
-        />
-      )}
       {ONGLETS.map(({ href, label, icone: Icone }) => {
-        const estActif = href === actif;
+        const estActif = href === pathname;
         return (
           <Link
             key={href}
             href={href}
-            ref={(el) => {
-              boutonsRef.current[href] = el;
-            }}
-            className={`relative z-10 flex flex-col items-center gap-1 rounded-lg px-4 py-1.5 text-xs font-medium transition-colors duration-200 ${
+            className={`flex flex-col items-center gap-1 rounded-lg px-4 py-1.5 text-xs font-medium ${
               estActif ? "text-accent" : "text-encre-douce"
             }`}
           >
-            <Icone />
+            <IconeAvecAnneau Icone={Icone} actif={estActif} />
             {label}
           </Link>
         );
@@ -73,11 +34,35 @@ export default function NavBar() {
   );
 }
 
+function IconeAvecAnneau({
+  Icone,
+  actif,
+}: {
+  Icone: ComponentType;
+  actif: boolean;
+}) {
+  const { pending } = useLinkStatus();
+  return (
+    <span className="relative flex h-9 w-9 items-center justify-center">
+      <span
+        className={`absolute inset-0 rounded-full border-2 transition-all duration-300 ${
+          pending
+            ? "animate-spin border-accent border-t-transparent opacity-100"
+            : actif
+              ? "scale-100 border-accent opacity-100"
+              : "scale-75 border-transparent opacity-0"
+        }`}
+      />
+      <Icone />
+    </span>
+  );
+}
+
 function IconeAccueil() {
   return (
     <svg
-      width="22"
-      height="22"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -94,8 +79,8 @@ function IconeAccueil() {
 function IconeCalendrier() {
   return (
     <svg
-      width="22"
-      height="22"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -113,8 +98,8 @@ function IconeCalendrier() {
 function IconeCompta() {
   return (
     <svg
-      width="22"
-      height="22"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
