@@ -2,28 +2,71 @@ import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { cleJour, etiquetteJour, formaterHeure } from "@/lib/date";
 import type { Rdv } from "@/lib/types";
+import SelecteurMois from "@/components/SelecteurMois";
 
-export default async function PageAccueil() {
+type Vue = "avenir" | "passes" | "annules";
+
+const ONGLETS: { cle: Vue; label: string }[] = [
+  { cle: "avenir", label: "À venir" },
+  { cle: "passes", label: "Passés" },
+  { cle: "annules", label: "Annulés" },
+];
+
+function limitesMois(mois: string): { debut: Date; fin: Date } | null {
+  const correspondance = mois.match(/^(\d{4})-(\d{2})$/);
+  if (!correspondance) return null;
+  const annee = Number(correspondance[1]);
+  const moisIndex = Number(correspondance[2]) - 1;
+  return {
+    debut: new Date(annee, moisIndex, 1),
+    fin: new Date(annee, moisIndex + 1, 1),
+  };
+}
+
+export default async function PageAccueil({
+  searchParams,
+}: {
+  searchParams: Promise<{ vue?: string; mois?: string }>;
+}) {
+  const parametres = await searchParams;
+  const vue: Vue =
+    parametres.vue === "passes" || parametres.vue === "annules"
+      ? parametres.vue
+      : "avenir";
+  const mois = parametres.mois || "";
+  const bornesMois = mois ? limitesMois(mois) : null;
+
   const supabase = await creerClientServeur();
   const { data: userData } = await supabase.auth.getUser();
 
   const debutAujourdhui = new Date();
   debutAujourdhui.setHours(0, 0, 0, 0);
 
-  const { data: rdvs } = await supabase
+  let requete = supabase
     .from("rdv")
     .select("*")
     .eq("tatoueur_id", userData.user!.id)
-    .eq("annule", false)
-    .gte("debut", debutAujourdhui.toISOString())
-    .order("debut", { ascending: true });
+    .eq("annule", vue === "annules");
+
+  if (bornesMois) {
+    requete = requete
+      .gte("debut", bornesMois.debut.toISOString())
+      .lt("debut", bornesMois.fin.toISOString());
+  } else if (vue === "avenir") {
+    requete = requete.gte("debut", debutAujourdhui.toISOString());
+  } else if (vue === "passes") {
+    requete = requete.lt("debut", debutAujourdhui.toISOString());
+  }
+
+  const croissant = vue === "avenir";
+  const { data: rdvs } = await requete.order("debut", { ascending: croissant });
 
   const groupes = grouperParJour((rdvs as Rdv[]) || []);
 
   return (
     <div className="flex min-h-dvh flex-col pb-28">
       <header className="flex items-center justify-between px-5 pt-6 pb-2">
-        <h1 className="text-xl font-semibold">À venir</h1>
+        <h1 className="text-xl font-semibold">Compagnon</h1>
         <Link
           href="/reglages"
           className="flex h-11 w-11 items-center justify-center rounded-full text-neutral-500 active:bg-neutral-100"
@@ -33,9 +76,38 @@ export default async function PageAccueil() {
         </Link>
       </header>
 
+      <div className="flex items-center justify-between gap-2 px-5 pb-2">
+        <div className="flex gap-1">
+          {ONGLETS.map((onglet) => {
+            const params = new URLSearchParams();
+            if (onglet.cle !== "avenir") params.set("vue", onglet.cle);
+            if (mois) params.set("mois", mois);
+            const requeteParams = params.toString();
+            const href = requeteParams ? `/?${requeteParams}` : "/";
+            const actif = vue === onglet.cle;
+            return (
+              <Link
+                key={onglet.cle}
+                href={href}
+                className={`flex h-9 items-center rounded-full px-3 text-sm font-medium ${
+                  actif ? "bg-neutral-900 text-white" : "text-neutral-500"
+                }`}
+              >
+                {onglet.label}
+              </Link>
+            );
+          })}
+        </div>
+        <SelecteurMois moisActuel={mois} />
+      </div>
+
       {groupes.length === 0 ? (
         <div className="flex flex-1 items-center justify-center px-6">
-          <p className="text-neutral-500">Rien de prévu.</p>
+          <p className="text-neutral-500">
+            {vue === "avenir" && !mois
+              ? "Rien de prévu."
+              : "Aucun RDV sur cette période."}
+          </p>
         </div>
       ) : (
         <div className="flex flex-col gap-6 px-5 pt-4">
