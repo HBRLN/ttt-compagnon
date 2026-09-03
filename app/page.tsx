@@ -3,6 +3,7 @@ import { creerClientServeur } from "@/lib/supabase/server";
 import { cleJour, etiquetteJour, formaterHeure } from "@/lib/date";
 import type { Rdv } from "@/lib/types";
 import SelecteurMois from "@/components/SelecteurMois";
+import OngletsRdv from "@/components/OngletsRdv";
 
 type Vue = "avenir" | "passes" | "annules";
 
@@ -76,30 +77,21 @@ export default async function PageAccueil({
         </Link>
       </header>
 
-      <div className="flex items-center justify-between gap-2 px-5 pb-2">
-        <div className="flex gap-1">
-          {ONGLETS.map((onglet) => {
+      <div className="flex flex-wrap items-center justify-between gap-2 px-5 pb-2">
+        <OngletsRdv
+          actif={vue}
+          onglets={ONGLETS.map((onglet) => {
             const params = new URLSearchParams();
             if (onglet.cle !== "avenir") params.set("vue", onglet.cle);
             if (mois) params.set("mois", mois);
             const requeteParams = params.toString();
-            const href = requeteParams ? `/?${requeteParams}` : "/";
-            const actif = vue === onglet.cle;
-            return (
-              <Link
-                key={onglet.cle}
-                href={href}
-                className={`flex h-9 items-center rounded-full px-3 text-sm font-medium transition-shadow ${
-                  actif
-                    ? "bg-encre text-sur-encre shadow-legere"
-                    : "text-encre-douce"
-                }`}
-              >
-                {onglet.label}
-              </Link>
-            );
+            return {
+              cle: onglet.cle,
+              label: onglet.label,
+              href: requeteParams ? `/?${requeteParams}` : "/",
+            };
           })}
-        </div>
+        />
         <SelecteurMois moisActuel={mois} />
       </div>
 
