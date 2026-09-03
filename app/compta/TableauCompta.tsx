@@ -75,15 +75,34 @@ export default function TableauCompta({
     }
   }
 
+  const depensesParSemaine = Array(5).fill(0);
+  for (const d of depenses) {
+    const dd = new Date(`${d.date}T00:00:00`);
+    if (dd.getMonth() === moisCourant) {
+      const semaine = Math.min(4, Math.floor((dd.getDate() - 1) / 7));
+      depensesParSemaine[semaine] += d.montant;
+    }
+  }
+
+  const netParMois = gainsParMois.map((g, i) => g - depensesParMois[i]);
+  const netParSemaine = gainsParSemaine.map((g, i) => g - depensesParSemaine[i]);
+
+  const gainsAnnee = gainsParMois.reduce((s, v) => s + v, 0);
   const depensesAnnee = depensesParMois.reduce((s, v) => s + v, 0);
-  const depensesMoisCourant = depensesParMois[moisCourant];
+  const gainsMoisCourant = gainsParSemaine.reduce((s, v) => s + v, 0);
+  const depensesMoisCourant = depensesParSemaine.reduce((s, v) => s + v, 0);
 
   const labels = vue === "annee" ? MOIS_LABELS : SEMAINE_LABELS;
-  const valeurs = vue === "annee" ? gainsParMois : gainsParSemaine;
-  const total = valeurs.reduce((s, v) => s + v, 0);
+  const valeurs = vue === "annee" ? netParMois : netParSemaine;
+  const totalGains = vue === "annee" ? gainsAnnee : gainsMoisCourant;
   const totalDepenses = vue === "annee" ? depensesAnnee : depensesMoisCourant;
-  const net = total - totalDepenses;
-  const max = Math.max(...valeurs, 1);
+  const net = totalGains - totalDepenses;
+  const maxAbs = Math.max(...valeurs.map(Math.abs), 1);
+
+  const depensesAffichees =
+    vue === "mois"
+      ? depenses.filter((d) => new Date(`${d.date}T00:00:00`).getMonth() === moisCourant)
+      : depenses;
 
   function changerVue(v: Vue) {
     setVue(v);
@@ -119,28 +138,47 @@ export default function TableauCompta({
 
       <div className="rounded-2xl bg-surface p-4 shadow-legere">
         <p className="text-xs font-medium text-encre-douce">
-          Gains {vue === "mois" ? "du mois" : "de l'année"}
+          Net {vue === "mois" ? "du mois" : "de l'année"}
         </p>
-        <p className="mt-1 text-3xl font-semibold">{formaterMontant(total)}</p>
+        <p className={`mt-1 text-3xl font-semibold ${net < 0 ? "text-rouge" : "text-vert"}`}>
+          {formaterMontant(net)}
+        </p>
 
-        <div className="mt-5 flex h-32 items-end gap-1">
+        <div className="mt-6 flex h-32 gap-1">
           {valeurs.map((valeur, i) => (
             <button
               key={i}
               type="button"
               onClick={() => setBarreSelectionnee(i === barreSelectionnee ? null : i)}
               title={`${labels[i]} : ${formaterMontant(valeur)}`}
-              className="flex h-full flex-1 flex-col items-center justify-end gap-1"
+              className="relative flex h-full flex-1 flex-col items-center"
             >
               {barreSelectionnee === i && (
-                <span className="text-xs font-medium text-encre">
+                <span
+                  className={`absolute -top-4 inset-x-0 text-center text-xs font-medium ${
+                    valeur < 0 ? "text-rouge" : "text-vert"
+                  }`}
+                >
                   {formaterMontant(valeur)}
                 </span>
               )}
-              <div
-                className="w-full rounded-t-md bg-accent"
-                style={{ height: `${Math.max(4, (valeur / max) * 100)}%` }}
-              />
+              <div className="flex w-full flex-1 items-end justify-center">
+                {valeur > 0 && (
+                  <div
+                    className="w-full rounded-t-md bg-vert"
+                    style={{ height: `${(valeur / maxAbs) * 100}%` }}
+                  />
+                )}
+              </div>
+              <div className="h-px w-full bg-encre-douce/25" />
+              <div className="flex w-full flex-1 items-start justify-center">
+                {valeur < 0 && (
+                  <div
+                    className="w-full rounded-b-md bg-rouge"
+                    style={{ height: `${(Math.abs(valeur) / maxAbs) * 100}%` }}
+                  />
+                )}
+              </div>
             </button>
           ))}
         </div>
@@ -155,12 +193,12 @@ export default function TableauCompta({
 
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-2xl bg-surface p-4 shadow-legere">
-          <p className="text-xs font-medium text-encre-douce">Dépenses</p>
-          <p className="mt-1 text-xl font-semibold">{formaterMontant(totalDepenses)}</p>
+          <p className="text-xs font-medium text-encre-douce">Gains</p>
+          <p className="mt-1 text-xl font-semibold">{formaterMontant(totalGains)}</p>
         </div>
         <div className="rounded-2xl bg-surface p-4 shadow-legere">
-          <p className="text-xs font-medium text-encre-douce">Net</p>
-          <p className="mt-1 text-xl font-semibold">{formaterMontant(net)}</p>
+          <p className="text-xs font-medium text-encre-douce">Dépenses</p>
+          <p className="mt-1 text-xl font-semibold">{formaterMontant(totalDepenses)}</p>
         </div>
       </div>
 
@@ -203,11 +241,13 @@ export default function TableauCompta({
         </form>
       </section>
 
-      {depenses.length > 0 && (
+      {depensesAffichees.length > 0 && (
         <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium text-encre-douce">Dépenses de l&apos;année</h2>
+          <h2 className="text-sm font-medium text-encre-douce">
+            Dépenses {vue === "mois" ? "du mois" : "de l'année"}
+          </h2>
           <ul className="flex flex-col gap-2">
-            {depenses.map((d) => (
+            {depensesAffichees.map((d) => (
               <li
                 key={d.id}
                 className="flex items-center gap-3 rounded-xl bg-surface px-4 py-3 shadow-legere"
