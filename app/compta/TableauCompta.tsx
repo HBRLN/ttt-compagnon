@@ -151,6 +151,21 @@ export default function TableauCompta({
     setFormulaireOuvert((actuel) => (actuel === f ? null : f));
   }
 
+  function surClicBarre(i: number) {
+    if (i === barreSelectionnee) {
+      setBarreSelectionnee(null);
+      if (vue === "annee") setFiltreMois("");
+    } else {
+      setBarreSelectionnee(i);
+      if (vue === "annee") setFiltreMois(String(i));
+    }
+  }
+
+  function surChangementFiltre(valeur: string) {
+    setFiltreMois(valeur);
+    if (vue === "annee") setBarreSelectionnee(valeur === "" ? null : Number(valeur));
+  }
+
   return (
     <div className="flex flex-col gap-4 px-5">
       <div className="inline-flex w-fit rounded-full bg-surface-douce p-1">
@@ -172,28 +187,32 @@ export default function TableauCompta({
         <p className="text-xs font-medium text-encre-douce">
           Net {vue === "mois" ? "du mois" : "de l'année"}
         </p>
-        <p className={`mt-1 text-3xl font-semibold ${net < 0 ? "text-rouge" : "text-vert"}`}>
-          {formaterMontant(net)}
-        </p>
+        <div className="mt-1 flex items-baseline gap-2">
+          <p className={`text-3xl font-semibold ${net < 0 ? "text-rouge" : "text-vert"}`}>
+            {formaterMontant(net)}
+          </p>
+          {barreSelectionnee !== null && (
+            <p
+              className={`text-sm font-medium ${
+                valeurs[barreSelectionnee] < 0 ? "text-rouge" : "text-vert"
+              }`}
+            >
+              {labels[barreSelectionnee]} : {formaterMontant(valeurs[barreSelectionnee])}
+            </p>
+          )}
+        </div>
 
         <div className="mt-6 flex h-32 gap-1">
           {valeurs.map((valeur, i) => (
             <button
               key={i}
               type="button"
-              onClick={() => setBarreSelectionnee(i === barreSelectionnee ? null : i)}
+              onClick={() => surClicBarre(i)}
               title={`${labels[i]} : ${formaterMontant(valeur)}`}
-              className="relative flex h-full flex-1 flex-col items-center"
+              className={`relative flex h-full flex-1 flex-col items-center transition-opacity ${
+                barreSelectionnee !== null && barreSelectionnee !== i ? "opacity-40" : ""
+              }`}
             >
-              {barreSelectionnee === i && (
-                <span
-                  className={`absolute -top-4 inset-x-0 text-center text-xs font-medium ${
-                    valeur < 0 ? "text-rouge" : "text-vert"
-                  }`}
-                >
-                  {formaterMontant(valeur)}
-                </span>
-              )}
               <div className="flex w-full flex-1 items-end justify-center">
                 {valeur > 0 && (
                   <div
@@ -267,24 +286,16 @@ export default function TableauCompta({
         )}
       </section>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-surface p-4 shadow-legere">
-          <p className="text-xs font-medium text-encre-douce">
-            Récap gains {vue === "mois" ? "du mois" : "de l'année"}
-          </p>
-          <p className="mt-1 text-xl font-semibold">{formaterMontant(totalGains)}</p>
-        </div>
-        <div className="rounded-2xl bg-surface p-4 shadow-legere">
-          <p className="text-xs font-medium text-encre-douce">
-            Récap dépenses {vue === "mois" ? "du mois" : "de l'année"}
-          </p>
-          <p className="mt-1 text-xl font-semibold">{formaterMontant(totalDepenses)}</p>
-        </div>
+      <div className="rounded-2xl bg-surface p-4 shadow-legere">
+        <p className="text-xs font-medium text-encre-douce">
+          Récap dépenses {vue === "mois" ? "du mois" : "de l'année"}
+        </p>
+        <p className="mt-1 text-xl font-semibold">{formaterMontant(totalDepenses)}</p>
       </div>
 
       <select
         value={filtreMois}
-        onChange={(e) => setFiltreMois(e.target.value)}
+        onChange={(e) => surChangementFiltre(e.target.value)}
         className="h-9 w-fit rounded-lg bg-surface px-2 text-sm text-encre-douce shadow-legere"
       >
         <option value="">Toute l&apos;année</option>
