@@ -42,6 +42,8 @@ export type Depense = {
   cree_le: string;
 };
 
+export type Gain = Depense;
+
 export type Database = {
   public: {
     Tables: {
@@ -69,6 +71,16 @@ export type Database = {
           montant: number;
         };
         Update: Partial<Depense>;
+        Relationships: [];
+      };
+      gain: {
+        Row: Gain;
+        Insert: Partial<Gain> & {
+          tatoueur_id: string;
+          libelle: string;
+          montant: number;
+        };
+        Update: Partial<Gain>;
         Relationships: [];
       };
     };

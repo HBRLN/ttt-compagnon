@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
-import type { Depense, Rdv } from "@/lib/types";
+import type { Depense, Gain, Rdv } from "@/lib/types";
 import NavBar from "@/components/NavBar";
 import TableauCompta from "./TableauCompta";
 
@@ -28,6 +28,14 @@ export default async function PageCompta() {
     .lt("date", finAnnee.toISOString().slice(0, 10))
     .order("date", { ascending: false });
 
+  const { data: gains } = await supabase
+    .from("gain")
+    .select("*")
+    .eq("tatoueur_id", userData.user!.id)
+    .gte("date", debutAnnee.toISOString().slice(0, 10))
+    .lt("date", finAnnee.toISOString().slice(0, 10))
+    .order("date", { ascending: false });
+
   return (
     <div className="flex min-h-dvh flex-col pb-36">
       <header className="flex items-center justify-between px-5 pt-6 pb-2">
@@ -44,6 +52,7 @@ export default async function PageCompta() {
       <TableauCompta
         rdvs={(rdvs as Pick<Rdv, "debut" | "tarif_estime">[]) || []}
         depenses={(depenses as Depense[]) || []}
+        gains={(gains as Gain[]) || []}
       />
 
       <NavBar />
