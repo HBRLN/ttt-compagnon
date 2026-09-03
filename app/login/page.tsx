@@ -38,7 +38,10 @@ export default function PageConnexion() {
       });
       setEnCours(false);
       if (error) {
-        setMessage({ texte: "Email ou mot de passe incorrect.", erreur: true });
+        const texte = /invalid login credentials/i.test(error.message)
+          ? "Email ou mot de passe incorrect."
+          : `Connexion impossible (${error.message}).`;
+        setMessage({ texte, erreur: true });
         return;
       }
       router.push("/");
