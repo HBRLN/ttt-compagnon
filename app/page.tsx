@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase/server";
-import { cleJour, etiquetteJour, formaterHeure } from "@/lib/date";
+import { cleJour, etiquetteJour, formaterDateCourte, formaterHeure } from "@/lib/date";
 import type { Rdv } from "@/lib/types";
 import SelecteurMois from "@/components/SelecteurMois";
 import OngletsRdv from "@/components/OngletsRdv";
+
+function formaterMontant(montant: number): string {
+  return `${montant.toLocaleString("fr-FR")} €`;
+}
 
 type Vue = "avenir" | "passes" | "annules";
 
@@ -43,6 +47,36 @@ export default async function PageAccueil({
   const debutAujourdhui = new Date();
   debutAujourdhui.setHours(0, 0, 0, 0);
 
+  const maintenant = new Date();
+  const debutMoisCourant = new Date(maintenant.getFullYear(), maintenant.getMonth(), 1);
+  const finMoisCourant = new Date(maintenant.getFullYear(), maintenant.getMonth() + 1, 1);
+
+  const { data: rdvsMoisCourant } = await supabase
+    .from("rdv")
+    .select("tarif_estime, debut")
+    .eq("tatoueur_id", userData.user!.id)
+    .eq("annule", false)
+    .gte("debut", debutMoisCourant.toISOString())
+    .lt("debut", finMoisCourant.toISOString());
+
+  const gainsRealises = (rdvsMoisCourant || [])
+    .filter((r) => new Date(r.debut) <= maintenant)
+    .reduce((somme, r) => somme + (r.tarif_estime || 0), 0);
+  const gainsPrevisionnels = (rdvsMoisCourant || []).reduce(
+    (somme, r) => somme + (r.tarif_estime || 0),
+    0
+  );
+  const nombreRdvMois = rdvsMoisCourant?.length || 0;
+
+  const { data: prochains } = await supabase
+    .from("rdv")
+    .select("*")
+    .eq("tatoueur_id", userData.user!.id)
+    .eq("annule", false)
+    .gte("debut", maintenant.toISOString())
+    .order("debut", { ascending: true })
+    .limit(3);
+
   let requete = supabase
     .from("rdv")
     .select("*")
@@ -76,6 +110,54 @@ export default async function PageAccueil({
           <IconeReglages />
         </Link>
       </header>
+
+      <section className="grid grid-cols-3 gap-2 px-5 pb-3">
+        <div className="rounded-xl bg-surface p-3 shadow-legere">
+          <p className="text-xs font-medium text-encre-douce">Gains du mois</p>
+          <p className="mt-1 text-lg font-semibold">{formaterMontant(gainsRealises)}</p>
+        </div>
+        <div className="rounded-xl bg-surface p-3 shadow-legere">
+          <p className="text-xs font-medium text-encre-douce">Prévision mois</p>
+          <p className="mt-1 text-lg font-semibold">{formaterMontant(gainsPrevisionnels)}</p>
+        </div>
+        <div className="rounded-xl bg-surface p-3 shadow-legere">
+          <p className="text-xs font-medium text-encre-douce">RDV ce mois</p>
+          <p className="mt-1 text-lg font-semibold">{nombreRdvMois}</p>
+        </div>
+      </section>
+
+      {prochains && prochains.length > 0 && (
+        <section className="px-5 pb-3">
+          <h2 className="mb-2 text-sm font-medium text-encre-douce">
+            Prochains rendez-vous
+          </h2>
+          <ul className="flex flex-col gap-2">
+            {(prochains as Rdv[]).map((rdv) => (
+              <li
+                key={rdv.id}
+                className="overflow-hidden rounded-xl bg-surface shadow-legere"
+              >
+                <Link
+                  href={`/rdv/${rdv.id}`}
+                  className="flex min-h-[64px] items-center gap-3 px-4 py-3 active:bg-surface-douce"
+                >
+                  <span className="w-24 shrink-0 text-sm font-medium text-encre-douce">
+                    {formaterDateCourte(rdv.debut)} · {formaterHeure(rdv.debut)}
+                  </span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate font-medium">{rdv.client_prenom}</span>
+                    {rdv.projet && (
+                      <span className="truncate text-sm text-encre-douce">
+                        {rdv.projet}
+                      </span>
+                    )}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div className="flex flex-wrap items-center justify-between gap-2 px-5 pb-2">
         <OngletsRdv
