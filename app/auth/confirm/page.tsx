@@ -6,10 +6,15 @@ import { useRouter } from "next/navigation";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { creerClientNavigateur } from "@/lib/supabase/client";
 
-// Supabase peut renvoyer le lien magique sous deux formes selon la
-// configuration du projet : les jetons dans le fragment de l'URL
-// (#access_token=...), ou un token_hash + type dans la query string.
-// On gère les deux ici, côté client, plutôt que de parier sur l'une des deux.
+function destination(type: string | null): string {
+  return type === "recovery" ? "/auth/nouveau-mot-de-passe" : "/";
+}
+
+// Supabase peut renvoyer ce lien sous deux formes selon la configuration
+// du projet : les jetons dans le fragment de l'URL (#access_token=...),
+// ou un token_hash + type dans la query string. On gère les deux ici,
+// côté client, plutôt que de parier sur l'une des deux. Sert à la fois à
+// la réinitialisation de mot de passe et à la confirmation d'inscription.
 export default function PageConfirmation() {
   const router = useRouter();
   const [erreur, setErreur] = useState<string | null>(null);
@@ -28,7 +33,7 @@ export default function PageConfirmation() {
           refresh_token,
         });
         if (!error) {
-          router.replace("/");
+          router.replace(destination(hash.get("type")));
           return;
         }
         setErreur(error.message);
@@ -42,7 +47,7 @@ export default function PageConfirmation() {
       if (token_hash && type) {
         const { error } = await supabase.auth.verifyOtp({ token_hash, type });
         if (!error) {
-          router.replace("/");
+          router.replace(destination(type));
           return;
         }
         setErreur(error.message);
@@ -73,7 +78,7 @@ export default function PageConfirmation() {
         href="/login"
         className="mt-2 flex h-12 items-center justify-center rounded-lg bg-neutral-900 px-6 text-base font-medium text-white"
       >
-        Redemander un lien
+        Retour à la connexion
       </Link>
     </div>
   );
