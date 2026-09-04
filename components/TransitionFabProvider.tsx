@@ -1,12 +1,14 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 type Origine = { x: number; y: number };
 
 const DUREE_MS = 400;
 const DECALAGE_BLANC_MS = 80;
+const DUREE_FONDU_MS = 250;
+const DELAI_SECOURS_MS = 1500;
 
 const ContexteTransition = createContext<{
   declencher: (origine: Origine, destination: string) => void;
@@ -27,8 +29,25 @@ export default function TransitionFabProvider({
   const pathname = usePathname();
   const [brunActif, setBrunActif] = useState(false);
   const [blancActif, setBlancActif] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [origine, setOrigine] = useState<Origine>({ x: 0, y: 0 });
   const [destinationAttendue, setDestinationAttendue] = useState<string | null>(null);
+  const masqueEnCours = useRef(false);
+
+  function masquer() {
+    if (masqueEnCours.current) return;
+    masqueEnCours.current = true;
+    // Les cercles ne rétrécissent jamais vers leur point d'origine :
+    // ils s'effacent en fondu, déjà pleinement déployés, pendant que
+    // le contenu réel (déjà au-dessus) reste inchangé.
+    setVisible(false);
+    setTimeout(() => {
+      setBrunActif(false);
+      setBlancActif(false);
+      setDestinationAttendue(null);
+      masqueEnCours.current = false;
+    }, DUREE_FONDU_MS);
+  }
 
   function declencher(o: Origine, destination: string) {
     const reduitMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -37,7 +56,9 @@ export default function TransitionFabProvider({
       return;
     }
 
+    masqueEnCours.current = false;
     setOrigine(o);
+    setVisible(true);
     setBrunActif(true);
     setDestinationAttendue(destination);
 
@@ -48,18 +69,19 @@ export default function TransitionFabProvider({
     // Le blanc suit le marron de très près (quelques frames).
     setTimeout(() => setBlancActif(true), DECALAGE_BLANC_MS);
 
-    setTimeout(() => {
-      setBrunActif(false);
-      setBlancActif(false);
-      setDestinationAttendue(null);
-    }, DECALAGE_BLANC_MS + DUREE_MS + 50);
+    // Filet de sécurité si la navigation ne déclenche jamais la
+    // détection d'arrivée ci-dessous.
+    setTimeout(masquer, DELAI_SECOURS_MS);
   }
 
   // Dès que la vraie page arrivée correspond à la destination (le
   // routeur a fini de basculer), son contenu passe au-dessus des
-  // cercles : le texte n'attend pas la fin de leur animation, il
-  // apparaît par-dessus, en même temps qu'ils continuent de grandir.
+  // cercles, puis on efface ces derniers en fondu.
   const pageArrivee = destinationAttendue !== null && pathname === destinationAttendue;
+
+  useEffect(() => {
+    if (pageArrivee) masquer();
+  }, [pageArrivee]);
 
   const clipInactif = `circle(0% at ${origine.x}px ${origine.y}px)`;
   const clipActif = `circle(150% at ${origine.x}px ${origine.y}px)`;
@@ -71,18 +93,20 @@ export default function TransitionFabProvider({
       </div>
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-50 bg-accent transition-[clip-path] ease-in-out"
+        className="pointer-events-none fixed inset-0 z-50 bg-accent transition-[clip-path,opacity] ease-in-out"
         style={{
           clipPath: brunActif ? clipActif : clipInactif,
-          transitionDuration: `${DUREE_MS}ms`,
+          opacity: visible ? 1 : 0,
+          transitionDuration: `${DUREE_MS}ms, ${DUREE_FONDU_MS}ms`,
         }}
       />
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-50 bg-fond transition-[clip-path] ease-in-out"
+        className="pointer-events-none fixed inset-0 z-50 bg-fond transition-[clip-path,opacity] ease-in-out"
         style={{
           clipPath: blancActif ? clipActif : clipInactif,
-          transitionDuration: `${DUREE_MS}ms`,
+          opacity: visible ? 1 : 0,
+          transitionDuration: `${DUREE_MS}ms, ${DUREE_FONDU_MS}ms`,
         }}
       />
     </ContexteTransition.Provider>
