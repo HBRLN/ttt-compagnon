@@ -43,6 +43,13 @@ body {
   color: var(--encre);
 }
 
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 1.5px solid var(--accent);
+  outline-offset: 1px;
+}
+
 @keyframes pop-in {
   0% {
     transform: scale(0.5);

@@ -218,7 +218,6 @@ export default function FormulaireRdv({
         <Champ label="Prénom" className={classeEntree} style={styleEntree(0)}>
           <input
             required
-            autoFocus={!rdvInitial}
             value={prenom}
             onChange={(e) => setPrenom(e.target.value)}
             className="champ"

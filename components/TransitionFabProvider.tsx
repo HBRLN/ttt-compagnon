@@ -38,14 +38,16 @@ export default function TransitionFabProvider({
     setOrigine(o);
     setBrunActif(true);
 
+    // La navigation part tout de suite : la vraie page (et son texte)
+    // se prépare pendant que les cercles balaient l'écran, au lieu
+    // d'attendre que le marron ait fini de tout couvrir. Le contenu
+    // réel apparaît donc « en overlay », sous les cercles encore en
+    // mouvement, plutôt qu'après coup.
+    router.push(destination);
+
     // Le blanc suit le marron de très près (quelques frames), pas
     // seulement une fois le marron arrivé — effet « double vague ».
     setTimeout(() => setBlancActif(true), DECALAGE_BLANC_MS);
-
-    // La navigation a lieu quand le marron seul couvre déjà tout
-    // l'écran : l'échange de page reste invisible même si le blanc
-    // n'a pas fini de le rattraper.
-    setTimeout(() => router.push(destination), DUREE_MS);
 
     setTimeout(() => {
       setBrunActif(false);
