@@ -318,16 +318,19 @@ export default function TableauCompta({
       )}
 
       <style>{`
+        /* Fond blanc et non --surface : ces champs sont posés DANS une carte
+           --surface, ils seraient invisibles sinon. */
         .champ {
           min-height: 48px;
           width: 100%;
           min-width: 0;
           max-width: 100%;
           box-sizing: border-box;
-          border: 1px solid var(--ligne);
-          background: var(--surface);
+          border: none;
+          border-radius: 0.75rem;
+          background: var(--fond);
           color: var(--encre);
-          padding: 0.5rem 0.75rem;
+          padding: 0.5rem 0.875rem;
           font-size: 1rem;
           font-family: inherit;
         }
