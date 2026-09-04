@@ -210,7 +210,7 @@ export default function FormulaireRdv({
         >
           ←
         </Link>
-        <h1 className="font-serif text-2xl">{titre}</h1>
+        <h1 className="massif text-3xl">{titre}</h1>
       </header>
 
       <form onSubmit={soumettre} className="flex flex-col gap-4 px-5 pt-2">
@@ -306,8 +306,10 @@ export default function FormulaireRdv({
             onDragLeave={() => setSurvolDepot(false)}
             onDrop={surDepot}
             onClick={() => inputFichierRef.current?.click()}
-            className={`flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg p-6 text-center text-sm shadow-legere transition-colors ${
-              survolDepot ? "bg-surface text-encre" : "bg-surface-douce text-encre-douce"
+            className={`libelle flex cursor-pointer flex-col items-center justify-center gap-1 border-2 border-dashed p-6 text-center transition-colors ${
+              survolDepot
+                ? "border-accent text-accent"
+                : "border-ligne text-encre-douce"
             }`}
           >
             <span>Glisse des photos ici, ou touche pour choisir</span>
@@ -359,7 +361,7 @@ export default function FormulaireRdv({
         <button
           type="button"
           onClick={() => setPlusDeDetails((v) => !v)}
-          className="py-2 text-left text-sm font-medium text-encre-douce"
+          className="libelle py-3 text-left text-accent"
         >
           {plusDeDetails ? "− Moins de détails" : "+ Plus de détails"}
         </button>
@@ -419,12 +421,14 @@ export default function FormulaireRdv({
           </div>
         )}
 
-        {erreur && <p className="text-sm text-rouge">{erreur}</p>}
+        {erreur && (
+          <p className="libelle bg-accent px-3 py-2.5 text-sur-accent">{erreur}</p>
+        )}
 
         <button
           type="submit"
           disabled={enCours}
-          className="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-accent text-base font-medium text-sur-accent shadow-legere transition-transform duration-150 active:scale-95 disabled:opacity-50"
+          className="libelle mt-2 flex h-14 items-center justify-center gap-2 bg-accent text-sur-accent transition-transform duration-150 active:scale-95 disabled:opacity-40"
         >
           {enCours && <Loader taille={18} />}
           {enCours ? "Enregistrement..." : "Enregistrer"}
@@ -433,18 +437,17 @@ export default function FormulaireRdv({
 
       <style>{`
         .champ {
-          min-height: 44px;
+          min-height: 48px;
           width: 100%;
           min-width: 0;
           max-width: 100%;
           box-sizing: border-box;
-          border-radius: 0.5rem;
-          background: var(--surface);
+          border: 2px solid var(--ligne);
+          background: var(--fond);
           color: var(--encre);
           padding: 0.5rem 0.75rem;
           font-size: 1rem;
           font-family: inherit;
-          box-shadow: var(--ombre-legere);
         }
         .champ::placeholder {
           color: var(--encre-douce);

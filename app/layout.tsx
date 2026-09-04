@@ -1,20 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Sans, Instrument_Serif } from "next/font/google";
+import { Archivo } from "next/font/google";
 import NavigationGeste from "@/components/NavigationGeste";
 import "./globals.css";
 
-// Instrument Serif ne existe qu'en 400 : la hiérarchie se fait à la taille,
-// jamais au gras — un `font-bold` dessus déclencherait un faux gras
-// synthétisé par le navigateur.
-const policeTitre = Instrument_Serif({
-  variable: "--police-titre",
-  subsets: ["latin", "latin-ext"],
-  weight: "400",
-  style: ["normal", "italic"],
-});
-
-const policeUi = Instrument_Sans({
-  variable: "--police-ui",
+// Une seule famille sur toute l'amplitude 400→900 : le contraste vient du
+// poids et de l'échelle, pas d'un deuxième caractère. C'est ce qui tient
+// la direction brutaliste ensemble.
+const police = Archivo({
+  variable: "--police",
   subsets: ["latin", "latin-ext"],
 });
 
@@ -40,15 +33,12 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#faf8f5",
+  themeColor: "#0a0a0a",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="fr"
-      className={`${policeTitre.variable} ${policeUi.variable} h-full antialiased`}
-    >
+    <html lang="fr" className={`${police.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-fond text-encre font-sans">
         <NavigationGeste>{children}</NavigationGeste>
       </body>

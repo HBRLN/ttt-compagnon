@@ -80,7 +80,7 @@ export default function FormulaireReglages({
         >
           ←
         </Link>
-        <h1 className="font-serif text-2xl">Réglages</h1>
+        <h1 className="massif text-3xl">Réglages</h1>
       </header>
 
       <div className="flex flex-col gap-4 px-5 pt-2">
@@ -164,7 +164,7 @@ export default function FormulaireReglages({
             type="button"
             onClick={enregistrer}
             disabled={enCours}
-            className="flex h-12 items-center justify-center gap-2 rounded-lg bg-accent text-base font-medium text-sur-accent shadow-legere transition-transform duration-150 active:scale-95 disabled:opacity-50"
+            className="libelle flex h-14 items-center justify-center gap-2 bg-accent text-sur-accent transition-transform duration-150 active:scale-95 disabled:opacity-40"
           >
             {enCours && <Loader taille={18} />}
             {enCours ? "Enregistrement..." : "Enregistrer"}
@@ -175,13 +175,13 @@ export default function FormulaireReglages({
           <h2 className="libelle text-encre-douce">
             Abonnement à l&apos;agenda
           </h2>
-          <p className="break-all rounded-lg bg-surface-douce p-3 font-mono text-sm text-encre-douce">
+          <p className="border-2 border-ligne p-3 font-mono text-sm break-all text-encre-douce">
             {lienIcs}
           </p>
           <button
             type="button"
             onClick={copierLien}
-            className="h-11 rounded-lg bg-surface font-medium shadow-legere"
+            className="libelle h-12 border-2 border-encre active:bg-surface-douce"
           >
             {copie ? "Copié !" : "Copier"}
           </button>
@@ -193,7 +193,7 @@ export default function FormulaireReglages({
           <button
             type="button"
             onClick={regenererLien}
-            className="mt-1 self-start text-sm font-medium text-rouge"
+            className="libelle mt-1 self-start text-accent"
           >
             Régénérer le lien
           </button>
@@ -206,7 +206,7 @@ export default function FormulaireReglages({
         <button
           type="button"
           onClick={() => seDeconnecter()}
-          className="mt-4 h-11 rounded-lg bg-surface font-medium text-encre-douce shadow-legere"
+          className="libelle mt-4 h-12 border-2 border-ligne text-encre-douce active:bg-surface-douce"
         >
           Se déconnecter
         </button>
@@ -214,18 +214,17 @@ export default function FormulaireReglages({
 
       <style>{`
         .champ {
-          min-height: 44px;
+          min-height: 48px;
           width: 100%;
           min-width: 0;
           max-width: 100%;
           box-sizing: border-box;
-          border-radius: 0.5rem;
-          background: var(--surface);
+          border: 2px solid var(--ligne);
+          background: var(--fond);
           color: var(--encre);
           padding: 0.5rem 0.75rem;
           font-size: 1rem;
           font-family: inherit;
-          box-shadow: var(--ombre-legere);
         }
         .champ::placeholder {
           color: var(--encre-douce);

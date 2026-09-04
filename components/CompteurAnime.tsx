@@ -5,9 +5,11 @@ import { useEffect, useRef, useState } from "react";
 export default function CompteurAnime({
   valeur,
   suffixe = "",
+  prefixe = "",
 }: {
   valeur: number;
   suffixe?: string;
+  prefixe?: string;
 }) {
   const [affiche, setAffiche] = useState(0);
   const valeurDepart = useRef(0);
@@ -17,7 +19,8 @@ export default function CompteurAnime({
     valeurDepart.current = affiche;
     depart.current = null;
     const reduitMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const duree = reduitMotion ? 0 : 700;
+    // Court : dans cette direction le mouvement claque, il ne glisse pas.
+    const duree = reduitMotion ? 0 : 320;
     let frame: number;
 
     function etape(t: number) {
@@ -34,6 +37,7 @@ export default function CompteurAnime({
 
   return (
     <>
+      {prefixe}
       {Math.round(affiche).toLocaleString("fr-FR")}
       {suffixe}
     </>

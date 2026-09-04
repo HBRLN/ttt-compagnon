@@ -120,7 +120,10 @@ function FormulaireConnexion() {
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-8 px-6">
-      <h1 className="font-serif text-4xl">Compagnon</h1>
+      <div className="w-full max-w-sm">
+        <div className="tampon h-3 w-full bg-accent" />
+        <h1 className="massif mt-4 text-6xl">Compagnon</h1>
+      </div>
 
       <form onSubmit={soumettre} className="flex w-full max-w-sm flex-col gap-4">
         <input
@@ -130,7 +133,7 @@ function FormulaireConnexion() {
           placeholder="ton@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-12 rounded-lg bg-surface px-4 text-base text-encre shadow-legere"
+          className="h-12 border-2 border-ligne bg-fond px-4 text-base text-encre"
         />
 
         {mode !== "oubli" && (
@@ -152,7 +155,13 @@ function FormulaireConnexion() {
         )}
 
         {message && (
-          <p className={`text-sm ${message.erreur ? "text-rouge" : "text-vert"}`}>
+          <p
+            className={`px-3 py-2.5 text-sm ${
+              message.erreur
+                ? "bg-accent text-sur-accent"
+                : "border-2 border-encre text-encre"
+            }`}
+          >
             {message.texte}
           </p>
         )}
@@ -160,7 +169,7 @@ function FormulaireConnexion() {
         <button
           type="submit"
           disabled={enCours}
-          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-accent text-base font-medium text-sur-accent shadow-legere transition-transform duration-150 active:scale-95 disabled:opacity-50"
+          className="libelle flex h-14 items-center justify-center gap-2 bg-accent text-sur-accent transition-transform duration-150 active:scale-95 disabled:opacity-40"
         >
           {enCours && <Loader taille={18} />}
           {enCours
@@ -176,16 +185,16 @@ function FormulaireConnexion() {
       <div className="flex flex-col items-center gap-2 text-sm">
         {mode === "connexion" && (
           <>
-            <button onClick={() => changerMode("oubli")} className="text-encre-douce underline">
+            <button onClick={() => changerMode("oubli")} className="libelle text-encre-douce underline underline-offset-4">
               Mot de passe oublié ?
             </button>
-            <button onClick={() => changerMode("inscription")} className="text-encre-douce underline">
+            <button onClick={() => changerMode("inscription")} className="libelle text-encre-douce underline underline-offset-4">
               Créer un compte
             </button>
           </>
         )}
         {mode !== "connexion" && (
-          <button onClick={() => changerMode("connexion")} className="text-encre-douce underline">
+          <button onClick={() => changerMode("connexion")} className="libelle text-encre-douce underline underline-offset-4">
             Retour à la connexion
           </button>
         )}

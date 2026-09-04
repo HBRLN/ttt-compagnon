@@ -83,79 +83,97 @@ export default async function PageDashboard() {
   const gainsDuMois = gainsRdvRealises + gainsManuelsRealises;
   const estimationMois = gainsRdvTotal + gainsManuelsTotal - depensesTotal;
 
+  const prochain = prochainRdv as Rdv | null;
+
   return (
     <div className="flex min-h-dvh flex-col pb-36">
-      <header className="flex items-center justify-between px-5 pt-6 pb-4">
-        <h1 className="font-serif text-3xl">
-          Coucou {profil?.nom_artiste || ""} !
-        </h1>
+      <header className="flex items-start justify-between px-5 pt-6 pb-5">
+        <div className="animate-claque">
+          <p className="libelle text-accent">Compagnon</p>
+          <p className="libelle mt-1.5 text-encre-douce">
+            {profil?.nom_artiste || ""}
+          </p>
+        </div>
         <Link
           href="/reglages"
-          className="flex h-11 w-11 items-center justify-center rounded-full text-encre-douce active:bg-surface-douce"
+          className="-mr-2 -mt-2 flex h-11 w-11 items-center justify-center text-encre-douce active:bg-surface-douce"
           aria-label="Réglages"
         >
           <IconeReglages />
         </Link>
       </header>
 
-      <div className="flex flex-col gap-3 px-5">
-        {prochainRdv ? (
-          <Link
-            href={`/rdv/${prochainRdv.id}`}
-            className="animate-fade-in-up rounded-2xl bg-accent p-5 text-sur-accent shadow-flottante transition-transform duration-150 active:scale-[0.97] active:opacity-90"
-          >
-            <p className="libelle opacity-75">Prochain RDV</p>
-            <p className="mt-3 font-serif text-4xl">
-              {(prochainRdv as Rdv).client_prenom}
-            </p>
-            <p className="mt-2 text-sm opacity-90">
-              {formaterDateCourte((prochainRdv as Rdv).debut)} à{" "}
-              {formaterHeure((prochainRdv as Rdv).debut)}
-              {(prochainRdv as Rdv).projet ? ` · ${(prochainRdv as Rdv).projet}` : ""}
-            </p>
-          </Link>
-        ) : (
-          <div className="animate-fade-in-up rounded-2xl bg-accent p-5 text-sur-accent shadow-flottante">
-            <p className="libelle opacity-75">Prochain RDV</p>
-            <p className="mt-3 font-serif text-3xl italic opacity-90">Rien de prévu.</p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-3">
-          <div
-            className="animate-fade-in-up rounded-2xl bg-surface p-4 shadow-legere"
-            style={{ animationDelay: "50ms" }}
-          >
-            <p className="libelle text-encre-douce">RDV ce mois</p>
-            <p className="mt-3 font-serif text-4xl tabular-nums">
-              <CompteurAnime valeur={nombreRdvMois} />
-            </p>
+      <div className="flex flex-col">
+        <section className="animate-claque filet px-5 pt-4 pb-6">
+          <div className="flex items-baseline gap-3">
+            <span className="numero">01</span>
+            <span className="libelle text-encre-douce">Prochain</span>
           </div>
 
-          <div
-            className="animate-fade-in-up rounded-2xl bg-surface p-4 shadow-legere"
-            style={{ animationDelay: "90ms" }}
-          >
-            <p className="libelle text-encre-douce">Gains du mois</p>
-            <p className="mt-3 font-serif text-4xl tabular-nums">
-              <CompteurAnime valeur={gainsDuMois} suffixe=" €" />
-            </p>
-          </div>
-        </div>
+          {prochain ? (
+            <Link href={`/rdv/${prochain.id}`} className="block active:opacity-60">
+              <div className="tampon mt-4 h-2 w-full bg-accent" />
+              <p className="massif mt-4 text-6xl">{prochain.client_prenom}</p>
+              <p className="libelle mt-4 text-encre-douce">
+                {formaterDateCourte(prochain.debut)} · {formaterHeure(prochain.debut)}
+                {prochain.projet ? ` · ${prochain.projet}` : ""}
+              </p>
+            </Link>
+          ) : (
+            <>
+              <div className="tampon mt-4 h-2 w-16 bg-encre-douce" />
+              <p className="massif mt-4 text-4xl text-encre-douce">Rien de prévu</p>
+            </>
+          )}
+        </section>
 
-        <div
-          className="animate-fade-in-up rounded-2xl bg-surface p-4 shadow-legere"
-          style={{ animationDelay: "130ms" }}
+        <section
+          className="animate-claque filet px-5 pt-4 pb-6"
+          style={{ animationDelay: "60ms" }}
         >
-          <p className="libelle text-encre-douce">Estimation du mois</p>
+          <div className="flex items-baseline gap-3">
+            <span className="numero">02</span>
+            <span className="libelle text-encre-douce">Ce mois</span>
+          </div>
+
+          <div className="mt-5 grid grid-cols-2">
+            <div>
+              <p className="massif text-5xl tabular-nums">
+                <CompteurAnime valeur={nombreRdvMois} />
+              </p>
+              <p className="libelle mt-2 text-encre-douce">RDV</p>
+            </div>
+            <div className="border-l-2 border-ligne pl-5">
+              <p className="massif text-5xl tabular-nums">
+                <CompteurAnime valeur={gainsDuMois} suffixe=" €" />
+              </p>
+              <p className="libelle mt-2 text-encre-douce">Encaissé</p>
+            </div>
+          </div>
+        </section>
+
+        <section
+          className="animate-claque filet px-5 pt-4 pb-6"
+          style={{ animationDelay: "120ms" }}
+        >
+          <div className="flex items-baseline gap-3">
+            <span className="numero">03</span>
+            <span className="libelle text-encre-douce">Estimation du mois</span>
+          </div>
+          {/* Le signe porte l'information, pas seulement la couleur : un
+              daltonien lit « − » aussi bien qu'un rouge. */}
           <p
-            className={`mt-3 font-serif text-4xl tabular-nums ${
-              estimationMois < 0 ? "text-rouge" : ""
+            className={`massif mt-5 text-6xl tabular-nums ${
+              estimationMois < 0 ? "text-accent" : ""
             }`}
           >
-            <CompteurAnime valeur={estimationMois} suffixe=" €" />
+            <CompteurAnime
+              valeur={Math.abs(estimationMois)}
+              prefixe={estimationMois < 0 ? "− " : "+ "}
+              suffixe=" €"
+            />
           </p>
-        </div>
+        </section>
       </div>
 
       <BoutonNouveauRdv />

@@ -42,14 +42,14 @@ export default function OngletsRdv({
   }
 
   return (
-    <div className="relative inline-flex items-center rounded-full bg-surface-douce p-1">
+    <div className="relative inline-flex items-center border-2 border-encre">
       {indicateur && (
         <div
-          className="absolute top-1 bottom-1 left-0 rounded-full bg-accent shadow-legere"
+          className="absolute top-0 bottom-0 left-0 bg-accent"
           style={{
             width: indicateur.width,
             transform: `translateX(${indicateur.left}px)`,
-            transition: "transform 0.25s cubic-bezier(0.4,0,0.2,1)",
+            transition: "transform 0.15s cubic-bezier(0.2,0,0,1)",
           }}
         />
       )}
@@ -61,7 +61,7 @@ export default function OngletsRdv({
             boutonsRef.current[onglet.cle] = el;
           }}
           onClick={() => surClic(onglet)}
-          className={`relative z-10 flex h-8 shrink-0 items-center whitespace-nowrap rounded-full px-3 text-sm font-medium transition-colors duration-200 ${
+          className={`libelle relative z-10 flex h-9 shrink-0 items-center whitespace-nowrap px-4 ${
             actifLocal === onglet.cle ? "text-sur-accent" : "text-encre-douce"
           }`}
         >
