@@ -11,7 +11,7 @@ export default function PageConfidentialite() {
         >
           ←
         </Link>
-        <h1 className="massif text-3xl">Confidentialité</h1>
+        <h1 className="titre text-2xl">Confidentialité</h1>
       </header>
 
       <div className="flex flex-col gap-4 px-5 pt-2 text-encre-douce">

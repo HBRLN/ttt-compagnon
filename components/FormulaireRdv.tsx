@@ -191,11 +191,10 @@ export default function FormulaireRdv({
     });
   }
 
-  // Comme sur le dashboard : chaque bloc apparaît individuellement en
-  // fondu + léger mouvement (animate-fade-in-up), décalé du
-  // précédent.
+  // Comme sur le dashboard : chaque champ entre individuellement, décalé
+  // du précédent, par un glissement court le long de l'axe de la grille.
   const anime = !rdvInitial;
-  const classeEntree = anime ? "animate-fade-in-up" : "";
+  const classeEntree = anime ? "animate-glisse" : "";
   function delaiEntree(n: number): React.CSSProperties | undefined {
     return anime ? { animationDelay: `${n * 40}ms` } : undefined;
   }
@@ -210,7 +209,7 @@ export default function FormulaireRdv({
         >
           ←
         </Link>
-        <h1 className="massif text-3xl">{titre}</h1>
+        <h1 className="titre text-2xl">{titre}</h1>
       </header>
 
       <form onSubmit={soumettre} className="flex flex-col gap-4 px-5 pt-2">
@@ -306,7 +305,7 @@ export default function FormulaireRdv({
             onDragLeave={() => setSurvolDepot(false)}
             onDrop={surDepot}
             onClick={() => inputFichierRef.current?.click()}
-            className={`libelle flex cursor-pointer flex-col items-center justify-center gap-1 border-2 border-dashed p-6 text-center transition-colors ${
+            className={`libelle flex cursor-pointer flex-col items-center justify-center gap-1 border border-dashed p-6 text-center transition-colors ${
               survolDepot
                 ? "border-accent text-accent"
                 : "border-ligne text-encre-douce"
@@ -422,13 +421,13 @@ export default function FormulaireRdv({
         )}
 
         {erreur && (
-          <p className="libelle bg-accent px-3 py-2.5 text-sur-accent">{erreur}</p>
+          <p className="libelle border-l-2 border-accent bg-surface px-3 py-2.5 text-accent">{erreur}</p>
         )}
 
         <button
           type="submit"
           disabled={enCours}
-          className="libelle mt-2 flex h-14 items-center justify-center gap-2 bg-accent text-sur-accent transition-transform duration-150 active:scale-95 disabled:opacity-40"
+          className="libelle mt-2 flex h-14 items-center justify-center gap-2 bg-encre text-surface transition-transform duration-150 active:scale-[0.97] disabled:opacity-40"
         >
           {enCours && <Loader taille={18} />}
           {enCours ? "Enregistrement..." : "Enregistrer"}
@@ -442,8 +441,8 @@ export default function FormulaireRdv({
           min-width: 0;
           max-width: 100%;
           box-sizing: border-box;
-          border: 2px solid var(--ligne);
-          background: var(--fond);
+          border: 1px solid var(--ligne);
+          background: var(--surface);
           color: var(--encre);
           padding: 0.5rem 0.75rem;
           font-size: 1rem;

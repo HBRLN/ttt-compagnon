@@ -1,40 +1,40 @@
 @import "tailwindcss";
 
-/* Direction « Flash sheet » — école brutaliste (ancrages Are.na +
-   Bloomberg Businessweek ère Turley), adaptée à un outil du quotidien.
-   Gardé de l'école : contraste franc, aucun arrondi, aucune ombre, typo
-   massive, un seul accent posé comme un tampon, structure visible.
-   Écarté volontairement : grille brisée, corps à 12px, absence totale de
-   mouvement — ça casserait un outil utilisé tous les jours. */
+/* Direction « Atelier suisse » — école Architecture de l'information
+   (ancrage vignelli-swiss-helvetica), croisée avec une intention
+   « motion first » demandée par l'utilisateur.
+
+   La fiche Vignelli dit « motion : aucune, ou instantanée », et prévient
+   que le style se lit aujourd'hui comme classique/archivistique. C'est
+   précisément ce que le mouvement corrige ici : la grille apporte la
+   précision premium, le mouvement apporte la modernité. La recette donne
+   elle-même le langage à suivre — « si quelque chose bouge, ça pivote
+   comme un panneau de signalétique ». D'où le volet basculant.
+
+   Gardé de la recette : grille visible, hiérarchie par la TAILLE et non
+   par la graisse, un seul accent, angles droits, aucune ombre, chiffres
+   tabulaires, ton factuel.
+   Écarté : Helvetica (remplacée par Space Grotesk, qui lit moderne plutôt
+   qu'archivistique) et l'immobilité. */
 :root {
-  --fond: #0a0a0a;
-  --surface: #141414;
-  --surface-douce: #1e1e1e;
-  --encre: #f5f4f2;
-  --encre-douce: #9a9a95;
-  --accent: #ff3b1f;
-  --sur-accent: #0a0a0a;
-  /* Filet purement décoratif : 1.36:1 sur le fond, il ne doit JAMAIS être
-     le seul élément qui porte un état. Pour ça, utiliser --accent. */
-  --ligne: #2a2a2a;
+  --fond: #f2f2f0;
+  --surface: #ffffff;
+  --surface-douce: #e8e8e5;
+  --encre: #111111;
+  /* Vignelli donne #8a8a8a pour le secondaire : mesuré à 3.08:1 sur le
+     fond, sous le plancher AA de 4.5. Assombri dans la même teinte. */
+  --encre-douce: #6e6e6a;
+  --accent: #7a5c1e;
+  --sur-accent: #ffffff;
+  --ligne: #cfcfca;
 
-  /* Sémantique argent. Turley : 3 couleurs maximum. Le négatif prend
-     l'accent, le positif reste à l'encre — et c'est le SIGNE (+ / −) qui
-     porte le sens, pas la couleur. Bénéfice au passage : ça ne dépend plus
-     d'une distinction rouge/vert, illisible pour un daltonien. */
-  --rouge: #ff3b1f;
-  --vert: #f5f4f2;
-  --rouge-doux: #2a0f0a;
-  --vert-doux: #1e1e1e;
-
-  /* Aucune ombre dans ce système : la séparation se fait au filet, au bloc
-     plein et à l'espacement. Les tokens restent définis à `none` pour
-     qu'une classe `shadow-*` oubliée quelque part soit inoffensive. */
+  /* Aucune ombre : la profondeur vient du filet et du blanc des blocs. */
   --ombre-legere: none;
   --ombre-flottante: none;
 
-  /* Le mouvement claque, il ne glisse pas. */
-  --claque: cubic-bezier(0.2, 0, 0, 1);
+  /* Courbes reprises des recommandations de la skill motion. */
+  --sortie: cubic-bezier(0.23, 1, 0.32, 1);
+  --panneau: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @theme inline {
@@ -46,14 +46,13 @@
   --color-ligne: var(--ligne);
   --color-accent: var(--accent);
   --color-sur-accent: var(--sur-accent);
-  --color-rouge: var(--rouge);
-  --color-rouge-doux: var(--rouge-doux);
-  --color-vert: var(--vert);
-  --color-vert-doux: var(--vert-doux);
+  --color-rouge: var(--accent);
+  --color-rouge-doux: var(--surface-douce);
+  --color-vert: var(--encre);
+  --color-vert-doux: var(--surface-douce);
   --shadow-legere: var(--ombre-legere);
   --shadow-flottante: var(--ombre-flottante);
   --font-sans: var(--police);
-  --radius-none: 0px;
 }
 
 body {
@@ -61,82 +60,89 @@ body {
   color: var(--encre);
 }
 
-/* Angles droits partout. Non négociable dans cette direction : un arrondi
-   isolé fait lire l'ensemble comme une erreur, pas comme un choix. */
+/* Angles droits, toujours (règle de la recette). */
 *,
 *::before,
 *::after {
   border-radius: 0 !important;
 }
 
-/* --- Gimmicks graphiques ------------------------------------------- */
+/* --- Typographie : la hiérarchie se fait à la TAILLE ----------------- */
 
-/* Micro-libellé de poster : capitales, très espacé, gras. */
+/* Graisses plafonnées à 500 sur les titres. C'est ce qui distingue cette
+   direction du registre sportswear : un grotesque en 700+ tout en
+   capitales, c'est une marque de sport. */
+.titre {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+/* Libellé de grille : discret, jamais criard. */
 .libelle {
   font-size: 0.6875rem;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.18em;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
-/* Titre massif : la signature de la direction. Interlettrage serré,
-   interligne écrasé, capitales. */
-.massif {
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  line-height: 0.92;
-  text-transform: uppercase;
-}
-
-/* Numéro d'index façon sommaire de magazine : 01 / 02 / 03. */
+/* Numéro de section, coin supérieur gauche du bloc (signature Vignelli). */
 .numero {
   font-size: 0.6875rem;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.1em;
   font-variant-numeric: tabular-nums;
   color: var(--accent);
 }
 
-/* Filet structurel : remplace l'ombre pour séparer. */
-.filet {
-  border-top: 2px solid var(--encre);
-}
-.filet-fin {
-  border-top: 1px solid var(--ligne);
+.chiffre {
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+  letter-spacing: -0.03em;
 }
 
-/* Le tampon : bloc d'accent plein qui se déroule sous un titre.
-   Balayage en `clip-path` plutôt qu'en mise à l'échelle depuis zéro —
-   c'est un vrai balayage (le bloc ne « grandit » pas depuis rien), et ça
-   évite le motif que l'audit motion signale à juste titre. */
-.tampon {
-  animation: tampon 0.22s var(--claque) both;
+/* --- Mouvement ------------------------------------------------------- */
+
+/* Le volet : le bloc bascule en place comme un panneau de signalétique.
+   C'est le geste signature. Réservé au bloc principal d'un écran — vu
+   trente fois par jour, il ne doit pas s'appliquer à chaque ligne. */
+.perspective {
+  perspective: 900px;
 }
-
-/* --- Mouvement ------------------------------------------------------ */
-
-/* Ça arrive vite, ça dépasse d'un cheveu, ça s'arrête net. 180ms : sous le
-   budget de 300ms, donc tolérable vu 30 fois par jour. */
-@keyframes claque {
-  0% {
+@keyframes volet {
+  from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: rotateX(-72deg);
   }
-  70% {
+  to {
     opacity: 1;
-    transform: translateY(-2px);
+    transform: rotateX(0);
   }
-  100% {
+}
+.animate-volet {
+  transform-origin: top center;
+  animation: volet 0.26s var(--panneau) both;
+}
+
+/* Entrée ordinaire : glissement court le long de l'axe de la grille. */
+@keyframes glisse {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-.animate-claque {
-  animation: claque 0.18s var(--claque) both;
+.animate-glisse {
+  animation: glisse 0.2s var(--sortie) both;
 }
 
-@keyframes tampon {
+/* Le filet se trace le long de son axe. `clip-path` plutôt qu'une mise à
+   l'échelle depuis zéro, que l'audit motion signale à juste titre. */
+@keyframes trace {
   from {
     clip-path: inset(0 100% 0 0);
   }
@@ -144,18 +150,26 @@ body {
     clip-path: inset(0 0 0 0);
   }
 }
+.animate-trace {
+  animation: trace 0.36s var(--sortie) both;
+}
 
-/* Contour de focus : le filet gris est décoratif (1.36:1), il ne peut pas
-   porter un état. C'est l'accent qui le fait — 5.56:1 sur le fond. */
+/* Pas de classe squelette ici : l'app n'a volontairement pas de
+   `loading.tsx` (l'écran précédent reste affiché jusqu'à ce que le suivant
+   soit prêt), donc il n'y a aucune surface de chargement à habiller. À
+   ajouter le jour où il y en a une, pas avant. */
+
+/* Le filet gris est décoratif (1.31:1) : il ne peut pas porter un état.
+   C'est l'accent qui le fait. */
 :focus-visible {
-  outline: 3px solid var(--accent);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 input:focus,
 textarea:focus,
 select:focus {
-  outline: 3px solid var(--accent);
-  outline-offset: -3px;
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -165,5 +179,9 @@ select:focus {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  /* Le mouvement disparaît, l'état reste lisible. */
+  .animate-volet {
+    transform: none !important;
   }
 }

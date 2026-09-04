@@ -18,13 +18,14 @@ export default function BoutonNouveauRdv() {
     <Link
       href="/rdv/nouveau"
       onClick={surClic}
-      className={`fixed right-5 bottom-24 z-20 flex h-14 items-center gap-2 bg-accent px-5 text-sur-accent transition-transform duration-150 ${
-        presse ? "scale-95" : "scale-100"
+      className={`fixed right-5 bottom-24 z-20 flex h-13 items-center gap-2.5 bg-encre px-5 text-surface transition-transform duration-150 ${
+        presse ? "scale-[0.97]" : "scale-100"
       }`}
-      aria-label="Nouveau RDV"
+      style={{ height: "3.25rem" }}
+      aria-label="Nouveau rendez-vous"
     >
-      <span className="text-2xl leading-none font-black">+</span>
-      <span className="libelle">RDV</span>
+      <span className="text-xl leading-none">+</span>
+      <span className="libelle">Rendez-vous</span>
     </Link>
   );
 }

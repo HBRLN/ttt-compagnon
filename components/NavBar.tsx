@@ -14,18 +14,24 @@ export default function NavBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-3 border-t-2 border-encre bg-fond pb-[max(env(safe-area-inset-bottom),0.5rem)]">
+    <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-3 border-t border-ligne bg-surface pb-[max(env(safe-area-inset-bottom),0.5rem)]">
       {ONGLETS.map(({ href, label, icone: Icone }) => {
         const estActif = href === pathname;
         return (
           <Link
             key={href}
             href={href}
-            className={`flex flex-col items-center gap-1.5 pt-3 pb-1 active:bg-surface-douce ${
-              estActif ? "bg-accent text-sur-accent" : "text-encre-douce"
+            className={`relative flex flex-col items-center gap-1.5 pt-3 pb-1 active:bg-surface-douce ${
+              estActif ? "text-encre" : "text-encre-douce"
             }`}
           >
-            <IconeAvecEtat Icone={Icone} actif={estActif} />
+            {/* Barre de laiton pleine largeur sur l'onglet actif : le
+                « bandeau de couleur qui porte l'en-tête » de la recette,
+                réduit à l'échelle d'un onglet. */}
+            {estActif && (
+              <span className="animate-trace absolute inset-x-0 top-0 h-0.5 bg-accent" />
+            )}
+            <IconeAvecEtat Icone={Icone} />
             <span className="libelle">{label}</span>
           </Link>
         );
@@ -34,24 +40,16 @@ export default function NavBar() {
   );
 }
 
-// Onglet actif = pavé plein d'accent (traitement unique dans toute l'app).
-// Pendant la navigation, une barre de chargement claque sous l'icône plutôt
-// qu'un anneau qui tourne : cohérent avec « ça claque, ça ne glisse pas ».
-function IconeAvecEtat({
-  Icone,
-  actif,
-}: {
-  Icone: ComponentType;
-  actif: boolean;
-}) {
+// Pendant la navigation, un filet se trace sous l'icône plutôt qu'un
+// anneau qui tourne : le mouvement suit les axes de la grille.
+function IconeAvecEtat({ Icone }: { Icone: ComponentType }) {
   const { pending } = useLinkStatus();
   return (
     <span className="relative flex h-7 w-9 items-center justify-center">
       <Icone />
       {pending && (
-        <span className="tampon absolute -bottom-1 left-0 h-0.5 w-full bg-current" />
+        <span className="animate-trace absolute -bottom-1 left-0 h-0.5 w-full bg-accent" />
       )}
-      <span className="sr-only">{actif ? "Onglet actif" : ""}</span>
     </span>
   );
 }

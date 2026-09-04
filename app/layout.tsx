@@ -1,12 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import NavigationGeste from "@/components/NavigationGeste";
 import "./globals.css";
 
-// Une seule famille sur toute l'amplitude 400→900 : le contraste vient du
-// poids et de l'échelle, pas d'un deuxième caractère. C'est ce qui tient
-// la direction brutaliste ensemble.
-const police = Archivo({
+// Une seule grotesque, comme le veut la recette suisse. Space Grotesk
+// plutôt qu'une Helvetica : elle garde la neutralité de la grille mais
+// ses détails la font lire moderne, ce qui corrige le principal reproche
+// fait au style suisse aujourd'hui (« classique, archivistique »).
+// Graisses utilisées : 400 et 500 seulement — jamais au-delà, c'est le
+// garde-fou contre le registre sportswear.
+const police = Space_Grotesk({
   variable: "--police",
   subsets: ["latin", "latin-ext"],
 });
@@ -33,7 +36,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#0a0a0a",
+  themeColor: "#f2f2f0",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

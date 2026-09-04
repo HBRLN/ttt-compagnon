@@ -121,8 +121,8 @@ function FormulaireConnexion() {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-8 px-6">
       <div className="w-full max-w-sm">
-        <div className="tampon h-3 w-full bg-accent" />
-        <h1 className="massif mt-4 text-6xl">Compagnon</h1>
+        <div className="animate-trace h-0.5 w-full bg-accent" />
+        <h1 className="titre mt-4 text-4xl">Compagnon</h1>
       </div>
 
       <form onSubmit={soumettre} className="flex w-full max-w-sm flex-col gap-4">
@@ -133,7 +133,7 @@ function FormulaireConnexion() {
           placeholder="ton@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-12 border-2 border-ligne bg-fond px-4 text-base text-encre"
+          className="h-12 border border-ligne bg-surface px-4 text-base text-encre"
         />
 
         {mode !== "oubli" && (
@@ -158,8 +158,8 @@ function FormulaireConnexion() {
           <p
             className={`px-3 py-2.5 text-sm ${
               message.erreur
-                ? "bg-accent text-sur-accent"
-                : "border-2 border-encre text-encre"
+                ? "border-l-2 border-accent bg-surface text-accent"
+                : "border border-ligne bg-surface text-encre"
             }`}
           >
             {message.texte}
@@ -169,7 +169,7 @@ function FormulaireConnexion() {
         <button
           type="submit"
           disabled={enCours}
-          className="libelle flex h-14 items-center justify-center gap-2 bg-accent text-sur-accent transition-transform duration-150 active:scale-95 disabled:opacity-40"
+          className="libelle flex h-14 items-center justify-center gap-2 bg-encre text-surface transition-transform duration-150 active:scale-[0.97] disabled:opacity-40"
         >
           {enCours && <Loader taille={18} />}
           {enCours

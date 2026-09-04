@@ -80,7 +80,7 @@ export default function FormulaireReglages({
         >
           ←
         </Link>
-        <h1 className="massif text-3xl">Réglages</h1>
+        <h1 className="titre text-2xl">Réglages</h1>
       </header>
 
       <div className="flex flex-col gap-4 px-5 pt-2">
@@ -164,7 +164,7 @@ export default function FormulaireReglages({
             type="button"
             onClick={enregistrer}
             disabled={enCours}
-            className="libelle flex h-14 items-center justify-center gap-2 bg-accent text-sur-accent transition-transform duration-150 active:scale-95 disabled:opacity-40"
+            className="libelle flex h-14 items-center justify-center gap-2 bg-encre text-surface transition-transform duration-150 active:scale-[0.97] disabled:opacity-40"
           >
             {enCours && <Loader taille={18} />}
             {enCours ? "Enregistrement..." : "Enregistrer"}
@@ -175,13 +175,13 @@ export default function FormulaireReglages({
           <h2 className="libelle text-encre-douce">
             Abonnement à l&apos;agenda
           </h2>
-          <p className="border-2 border-ligne p-3 font-mono text-sm break-all text-encre-douce">
+          <p className="border border-ligne bg-surface p-3 font-mono text-sm break-all text-encre-douce">
             {lienIcs}
           </p>
           <button
             type="button"
             onClick={copierLien}
-            className="libelle h-12 border-2 border-encre active:bg-surface-douce"
+            className="libelle h-12 border border-ligne bg-surface active:bg-surface-douce"
           >
             {copie ? "Copié !" : "Copier"}
           </button>
@@ -206,7 +206,7 @@ export default function FormulaireReglages({
         <button
           type="button"
           onClick={() => seDeconnecter()}
-          className="libelle mt-4 h-12 border-2 border-ligne text-encre-douce active:bg-surface-douce"
+          className="libelle mt-4 h-12 border border-ligne bg-surface text-encre-douce active:bg-surface-douce"
         >
           Se déconnecter
         </button>
@@ -219,8 +219,8 @@ export default function FormulaireReglages({
           min-width: 0;
           max-width: 100%;
           box-sizing: border-box;
-          border: 2px solid var(--ligne);
-          background: var(--fond);
+          border: 1px solid var(--ligne);
+          background: var(--surface);
           color: var(--encre);
           padding: 0.5rem 0.75rem;
           font-size: 1rem;

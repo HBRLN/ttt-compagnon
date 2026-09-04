@@ -175,30 +175,33 @@ export default function TableauCompta({
 
   return (
     <div className="flex flex-col gap-4 px-5">
-      <div className="inline-flex w-fit border-2 border-encre">
+      <div className="inline-flex w-fit border-b border-ligne">
         {(["mois", "annee"] as Vue[]).map((v) => (
           <button
             key={v}
             type="button"
             onClick={() => changerVue(v)}
-            className={`libelle px-4 py-2.5 ${
-              vue === v ? "bg-accent text-sur-accent" : "text-encre-douce"
+            className={`libelle relative px-4 py-3 transition-colors duration-150 ${
+              vue === v ? "text-encre" : "text-encre-douce"
             }`}
           >
+            {vue === v && (
+              <span className="animate-trace absolute inset-x-0 bottom-0 h-0.5 bg-accent" />
+            )}
             {v === "mois" ? "Ce mois" : "Cette année"}
           </button>
         ))}
       </div>
 
-      <div className="filet pt-4">
-        <div className="flex items-baseline gap-3">
-          <span className="numero">01</span>
-          <span className="libelle text-encre-douce">
+      <section className="perspective flex gap-4">
+        <span className="numero w-6 shrink-0 pt-1">01</span>
+        <div className="min-w-0 flex-1 border-l border-ligne pl-4">
+          <h2 className="libelle text-encre-douce">
             Net {vue === "mois" ? "du mois" : "de l'année"}
-          </span>
-        </div>
-        <div className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <p className={`massif text-6xl tabular-nums ${net < 0 ? "text-accent" : ""}`}>
+          </h2>
+          <div className="animate-volet mt-3 bg-surface p-5">
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <p className={`chiffre text-5xl ${net < 0 ? "text-accent" : ""}`}>
             <CompteurAnime
               valeur={Math.abs(net)}
               prefixe={net < 0 ? "− " : "+ "}
@@ -224,20 +227,25 @@ export default function TableauCompta({
           barreSelectionnee={barreSelectionnee}
           onClicBarre={surClicBarre}
         />
-        <div className="mt-2 flex gap-1 pb-6">
+        <div className="mt-2 flex gap-1">
           {labels.map((label) => (
-            <span key={label} className="libelle flex-1 text-center text-[9px] text-encre-douce">
+            <span
+              key={label}
+              className="libelle flex-1 text-center text-[9px] text-encre-douce"
+            >
               {label}
             </span>
           ))}
         </div>
-      </div>
+          </div>
+        </div>
+      </section>
 
       <section className="flex flex-col gap-2">
         <button
           type="button"
           onClick={() => basculerFormulaire("depense")}
-          className="libelle flex h-12 items-center justify-between border-2 border-encre px-4 transition-transform duration-150 active:scale-[0.98]"
+          className="libelle flex h-12 items-center justify-between border border-ligne bg-surface px-4 transition-colors duration-150 active:bg-surface-douce"
         >
           Ajouter une dépense
           <span className="text-encre-douce">{formulaireOuvert === "depense" ? "−" : "+"}</span>
@@ -259,7 +267,7 @@ export default function TableauCompta({
         <button
           type="button"
           onClick={() => basculerFormulaire("gain")}
-          className="libelle flex h-12 items-center justify-between border-2 border-encre px-4 transition-transform duration-150 active:scale-[0.98]"
+          className="libelle flex h-12 items-center justify-between border border-ligne bg-surface px-4 transition-colors duration-150 active:bg-surface-douce"
         >
           Ajouter un gain
           <span className="text-encre-douce">{formulaireOuvert === "gain" ? "−" : "+"}</span>
@@ -280,7 +288,7 @@ export default function TableauCompta({
       <select
         value={filtreMois}
         onChange={(e) => surChangementFiltre(e.target.value)}
-        className="libelle h-10 w-fit border-2 border-ligne bg-fond px-2 text-encre-douce"
+        className="libelle h-10 w-fit border border-ligne bg-surface px-2 text-encre-douce"
       >
         <option value="">Toute l&apos;année</option>
         {MOIS_COMPLETS.map((label, i) => (
@@ -299,7 +307,7 @@ export default function TableauCompta({
           }
         />
       ) : (
-        <p className="massif text-2xl text-encre-douce">
+        <p className="titre text-xl text-encre-douce">
           Rien à afficher pour cette période
         </p>
       )}
@@ -311,8 +319,8 @@ export default function TableauCompta({
           min-width: 0;
           max-width: 100%;
           box-sizing: border-box;
-          border: 2px solid var(--ligne);
-          background: var(--fond);
+          border: 1px solid var(--ligne);
+          background: var(--surface);
           color: var(--encre);
           padding: 0.5rem 0.75rem;
           font-size: 1rem;
@@ -361,7 +369,7 @@ function GraphiqueBarres({
           <div className="flex w-full flex-1 items-end justify-center">
             {valeur > 0 && (
               <div
-                className="w-full origin-bottom bg-encre transition-transform duration-300 ease-out"
+                className="w-full origin-bottom bg-encre transition-transform duration-500 ease-out"
                 style={{
                   height: `${(valeur / maxAbs) * 100}%`,
                   transform: `scaleY(${monte ? 1 : 0})`,
@@ -369,11 +377,11 @@ function GraphiqueBarres({
               />
             )}
           </div>
-          <div className="h-0.5 w-full bg-encre" />
+          <div className="h-px w-full bg-ligne" />
           <div className="flex w-full flex-1 items-start justify-center">
             {valeur < 0 && (
               <div
-                className="w-full origin-top bg-accent transition-transform duration-300 ease-out"
+                className="w-full origin-top bg-accent transition-transform duration-500 ease-out"
                 style={{
                   height: `${(Math.abs(valeur) / maxAbs) * 100}%`,
                   transform: `scaleY(${monte ? 1 : 0})`,
@@ -411,7 +419,7 @@ function FormulaireMontant({
   return (
     <form
       onSubmit={soumettre}
-      className="flex flex-col gap-2 border-2 border-ligne p-4"
+      className="animate-glisse flex flex-col gap-2 border border-ligne bg-surface p-4"
     >
       <input
         value={libelle}
@@ -438,7 +446,7 @@ function FormulaireMontant({
       <button
         type="submit"
         disabled={enCours || !libelle.trim() || !montant}
-        className="libelle flex h-12 items-center justify-center gap-2 bg-accent text-sur-accent transition-transform duration-150 active:scale-95 disabled:opacity-40"
+        className="libelle flex h-12 items-center justify-center gap-2 bg-encre text-surface transition-transform duration-150 active:scale-[0.97] disabled:opacity-40"
       >
         {enCours && <Loader taille={16} />}
         Ajouter
@@ -459,18 +467,18 @@ function ListeMouvements({
   return (
     <section className="flex flex-col gap-2">
       <h2 className="libelle text-encre-douce">{titre}</h2>
-      <ul className="flex flex-col gap-2">
+      <ul className="flex flex-col bg-surface">
         {mouvements.map((m) => (
           <li
             key={`${m.type}-${m.id}`}
-            className="filet-fin flex items-center gap-3 py-3 first:border-t-0"
+            className="flex items-center gap-3 border-t border-ligne px-4 py-3 first:border-t-0"
           >
-            <span className="libelle w-12 shrink-0 text-encre-douce">
+            <span className="chiffre w-12 shrink-0 text-sm text-encre-douce">
               {formaterDateDepense(m.date)}
             </span>
-            <span className="min-w-0 flex-1 truncate font-medium">{m.libelle}</span>
+            <span className="min-w-0 flex-1 truncate">{m.libelle}</span>
             <span
-              className={`shrink-0 font-bold tabular-nums ${
+              className={`chiffre shrink-0 ${
                 m.type === "gain" ? "text-encre" : "text-accent"
               }`}
             >
