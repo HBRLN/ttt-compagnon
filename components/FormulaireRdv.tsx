@@ -191,12 +191,13 @@ export default function FormulaireRdv({
     });
   }
 
-  // Sur un nouveau RDV, le texte apparaît déjà tout formé : c'est le
-  // cercle de la transition du bouton + qui le révèle en le
-  // découpant, pas une animation propre au formulaire par-dessus.
+  // Sur un nouveau RDV, tout le contenu apparaît d'un bloc, léger
+  // fondu + mouvement vertical, par-dessus les cercles de la
+  // transition du bouton + (qui continuent d'animer en dessous).
+  const anime = !rdvInitial;
 
   return (
-    <div className="flex min-h-dvh flex-col pb-10">
+    <div className={`flex min-h-dvh flex-col pb-10 ${anime ? "animate-fade-in-up" : ""}`}>
       <header className="flex items-center gap-2 px-4 pt-6 pb-2">
         <Link
           href={rdvInitial ? `/rdv/${rdvInitial.id}` : "/rdv"}
