@@ -45,7 +45,7 @@ export default async function PageCompta() {
   return (
     <div className="flex min-h-dvh flex-col pb-36">
       <header className="flex items-center justify-between px-5 pt-6 pb-2">
-        <h1 className="text-xl font-semibold">Compta</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Compta</h1>
         <Link
           href="/reglages"
           className="flex h-11 w-11 items-center justify-center rounded-full text-encre-douce active:bg-surface-douce"

@@ -72,7 +72,7 @@ export default async function PageRdv({
   return (
     <div className="flex min-h-dvh flex-col pb-36">
       <header className="flex items-center justify-between px-5 pt-6 pb-2">
-        <h1 className="text-xl font-semibold">Rendez-vous</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Rendez-vous</h1>
         <Link
           href="/reglages"
           className="flex h-11 w-11 items-center justify-center rounded-full text-encre-douce active:bg-surface-douce"
@@ -129,7 +129,7 @@ export default async function PageRdv({
                         {formaterHeure(rdv.debut)}
                       </span>
                       <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="truncate font-medium">
+                        <span className="truncate font-semibold">
                           {rdv.client_prenom}
                         </span>
                         {rdv.projet && (

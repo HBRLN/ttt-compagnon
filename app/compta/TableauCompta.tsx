@@ -190,12 +190,12 @@ export default function TableauCompta({
         ))}
       </div>
 
-      <div className="rounded-2xl bg-surface p-4 shadow-legere">
+      <div className="rounded-2xl bg-surface p-4 shadow-flottante">
         <p className="text-xs font-medium text-encre-douce">
           Net {vue === "mois" ? "du mois" : "de l'année"}
         </p>
         <div className="mt-1 flex items-baseline gap-2">
-          <p className={`text-3xl font-semibold ${net < 0 ? "text-rouge" : "text-vert"}`}>
+          <p className={`text-4xl font-semibold tracking-tight ${net < 0 ? "text-rouge" : "text-vert"}`}>
             <CompteurAnime valeur={net} suffixe=" €" />
           </p>
           {barreSelectionnee !== null && (

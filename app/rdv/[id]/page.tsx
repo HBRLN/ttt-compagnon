@@ -54,7 +54,7 @@ export default async function PageFicheRdv({
         >
           ←
         </Link>
-        <h1 className="min-w-0 flex-1 truncate text-lg font-semibold">
+        <h1 className="min-w-0 flex-1 truncate text-xl font-semibold tracking-tight">
           {rdv.client_prenom} {rdv.client_nom || ""}
         </h1>
       </header>
@@ -67,7 +67,7 @@ export default async function PageFicheRdv({
         )}
 
         <section className="flex flex-col gap-1">
-          <p className="text-lg font-medium">
+          <p className="text-xl font-semibold tracking-tight">
             {formaterDateLongue(rdv.debut)} à {formaterHeure(rdv.debut)}
           </p>
           <p className="text-encre-douce">{formaterDuree(rdv.duree_min)}</p>

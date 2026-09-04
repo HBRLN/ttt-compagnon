@@ -30,6 +30,14 @@ No categorical/sequential/diverging palette needed — every chart is single-ser
 - Page padding `px-5`; card padding `p-4`/`p-5`; card gap `gap-2`–`gap-4`.
 - Radius: `rounded-lg` (inputs/buttons), `rounded-xl`/`rounded-2xl` (cards).
 - Shadows: `--ombre-legere` / `--ombre-flottante`, both intentionally very soft (low alpha) — no borders anywhere, cards separate by shadow + spacing only.
+- **Shadow as hierarchy, not just separation** (added during the "plus moderne" pass): the one primary/hero card per screen (Dashboard "Prochain RDV", Compta "Net") uses `shadow-flottante`; every secondary card (stat tiles, list rows, forms) stays on `shadow-legere`. Don't promote a secondary card to `shadow-flottante` — that would flatten the hierarchy back out.
+
+## Typography hierarchy (added during the "plus moderne" pass)
+- Top-level tab headers (Dashboard, RDV, Compta) : `text-2xl font-semibold tracking-tight`.
+- Sub-page headers reached via back-arrow (RDV detail, RDV form, Réglages) : `text-xl font-semibold tracking-tight`.
+- The one hero number per screen (Dashboard "Prochain RDV" name, Compta "Net") : `text-3xl`–`text-4xl font-semibold tracking-tight`.
+- Secondary numbers (Dashboard stat tiles) : `text-3xl font-semibold tracking-tight` — bumped up from `text-2xl`, still one step below the screen's hero number.
+- `tracking-tight` on every bumped header/number, not on body text — keeps the "carnet d'atelier haut de gamme" direction (thèse du `reference-board.md`) without touching type family or palette.
 
 ## Motion
 - App-shell track (not marketing/scroll-storytelling): staggered card fade-in-up on Dashboard, animated count-up numbers (`CompteurAnime`), bar-chart grow-in on Compta, tap-scale feedback on primary buttons, a ring indicator (not a sliding pill) in the bottom nav that doubles as a per-tab loading spinner via `useLinkStatus`.

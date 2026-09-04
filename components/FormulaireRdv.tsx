@@ -210,7 +210,7 @@ export default function FormulaireRdv({
         >
           ←
         </Link>
-        <h1 className="text-lg font-semibold">{titre}</h1>
+        <h1 className="text-xl font-semibold tracking-tight">{titre}</h1>
       </header>
 
       <form onSubmit={soumettre} className="flex flex-col gap-4 px-5 pt-2">
