@@ -82,6 +82,20 @@ select:focus {
   animation: fade-in-up 0.35s ease-out both;
 }
 
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-down {
+  animation: fade-in-down 0.35s ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

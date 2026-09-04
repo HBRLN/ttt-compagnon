@@ -192,7 +192,9 @@ export default function FormulaireRdv({
   }
 
   return (
-    <div className="flex min-h-dvh flex-col pb-10">
+    <div
+      className={`flex min-h-dvh flex-col pb-10 ${!rdvInitial ? "animate-fade-in-down" : ""}`}
+    >
       <header className="flex items-center gap-2 px-4 pt-6 pb-2">
         <Link
           href={rdvInitial ? `/rdv/${rdvInitial.id}` : "/rdv"}
