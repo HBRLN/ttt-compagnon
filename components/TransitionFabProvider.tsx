@@ -4,10 +4,9 @@ import { createContext, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Origine = { x: number; y: number };
-type Phase = "repos" | "ferme" | "ouvre";
 
 const DUREE_MS = 400;
-const DECALAGE_MS = 80;
+const DECALAGE_BLANC_MS = 80;
 
 const ContexteTransition = createContext<{
   declencher: (origine: Origine, destination: string) => void;
@@ -26,7 +25,7 @@ export default function TransitionFabProvider({
 }) {
   const router = useRouter();
   const [brunActif, setBrunActif] = useState(false);
-  const [phase, setPhase] = useState<Phase>("repos");
+  const [blancActif, setBlancActif] = useState(false);
   const [origine, setOrigine] = useState<Origine>({ x: 0, y: 0 });
 
   function declencher(o: Origine, destination: string) {
@@ -39,46 +38,41 @@ export default function TransitionFabProvider({
     setOrigine(o);
     setBrunActif(true);
 
-    // La vraie page se charge tout de suite : ce n'est pas une
-    // couleur factice qui se révèle ensuite, c'est la page elle-même
-    // (son propre fond, son propre contenu déjà prêt) qu'on découpe
-    // et qu'on dévoile — elle sert de fond à sa propre transition.
+    // La vraie page se charge tout de suite, pendant que les cercles
+    // balaient encore l'écran.
     router.push(destination);
 
-    setTimeout(() => {
-      setPhase("ferme");
-      requestAnimationFrame(() => setPhase("ouvre"));
-    }, DECALAGE_MS);
+    // Le blanc suit le marron de très près (quelques frames).
+    setTimeout(() => setBlancActif(true), DECALAGE_BLANC_MS);
 
+    // Les deux cercles restent de simples calques jetables au repos
+    // à 0% : ils n'ont jamais besoin de revenir à une position
+    // neutre, invisibles quel que soit leur point d'origine.
     setTimeout(() => {
       setBrunActif(false);
-      setPhase("repos");
-    }, DECALAGE_MS + DUREE_MS + 50);
+      setBlancActif(false);
+    }, DECALAGE_BLANC_MS + DUREE_MS + 50);
   }
 
-  const clipFerme = `circle(0% at ${origine.x}px ${origine.y}px)`;
-  const clipOuvert = `circle(150% at ${origine.x}px ${origine.y}px)`;
-  const clipRepos = "circle(150% at 50% 50%)";
-
-  const clipPath = phase === "repos" ? clipRepos : phase === "ferme" ? clipFerme : clipOuvert;
+  const clipInactif = `circle(0% at ${origine.x}px ${origine.y}px)`;
+  const clipActif = `circle(150% at ${origine.x}px ${origine.y}px)`;
 
   return (
     <ContexteTransition.Provider value={{ declencher }}>
-      <div
-        style={{
-          position: "relative",
-          zIndex: phase === "repos" ? undefined : 45,
-          clipPath,
-          transition: phase === "ouvre" ? `clip-path ${DUREE_MS}ms ease-in-out` : "none",
-        }}
-      >
-        {children}
-      </div>
+      {children}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-40 bg-accent transition-[clip-path] ease-in-out"
+        className="pointer-events-none fixed inset-0 z-50 bg-accent transition-[clip-path] ease-in-out"
         style={{
-          clipPath: brunActif ? clipOuvert : clipFerme,
+          clipPath: brunActif ? clipActif : clipInactif,
+          transitionDuration: `${DUREE_MS}ms`,
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 z-50 bg-fond transition-[clip-path] ease-in-out"
+        style={{
+          clipPath: blancActif ? clipActif : clipInactif,
           transitionDuration: `${DUREE_MS}ms`,
         }}
       />
