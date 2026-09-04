@@ -4,13 +4,17 @@ _Généré le 2026-09-04_
 
 ## Tâche en cours
 
-L'utilisateur veut **des ajustements visuels pour rendre l'app plus moderne**.
-C'est la demande active au moment de cette passation — à reprendre en premier.
-Avant de commencer : lire `.tastemaker/style-lock.md` (système de design
-verrouillé) pour ne pas repartir de zéro ni contredire les choix déjà faits
-(voir section Design system ci-dessous). Demander des références concrètes
-à l'utilisateur si "moderne" reste vague (une app, un style, une capture
-d'écran) plutôt que de deviner.
+Rien de bloquant. La refonte visuelle demandée ("rendre l'app plus moderne")
+a été faite : voir la section Design system ci-dessous.
+
+Deux décisions attendent une validation de l'utilisatrice une fois qu'elle
+aura vu le résultat en vrai — elles sont en `pending-review` dans
+`.tastemaker/decisions.log` :
+1. les états vides passés en sérif italique ;
+2. le refus des angles droits façon Aesop (rayons et ombres conservés).
+
+Avant tout nouveau changement visuel : lire `DESIGN.md` à la racine, puis
+`.tastemaker/style-lock.md` pour l'historique et le contrat de contraste.
 
 ## Objectif du projet
 
@@ -63,15 +67,20 @@ gauche/droite (`components/NavigationGeste.tsx`).
 
 ## Design system actuel (verrouillé)
 
-Documenté dans `.tastemaker/style-lock.md` — à lire/mettre à jour avant
-tout nouveau changement de design pour éviter de dériver.
+Documenté dans **`DESIGN.md`** (langage visuel, format lisible par un agent)
+et **`.tastemaker/style-lock.md`** (historique des décisions + contrat de
+contraste complet). À lire/mettre à jour avant tout changement de design.
 
-- Palette Material Design 3, thème clair et chaud (fond crème `#faf8f5`,
-  cartes `#fffdfa`)
+- Palette claire et chaude (fond crème `#faf8f5`, cartes `#fffdfa`)
 - Accent : marron chaud `#8c6a4f` (après plusieurs itérations : crème →
   anthracite sombre → Material bleu clair → noir/blanc → corail → marron
   final, choisi explicitement par l'utilisateur)
-- Police Roboto
+- **Typographie : Instrument Serif (400 seulement) pour les titres et les
+  chiffres, Instrument Sans pour l'interface.** Remplace Roboto, qui venait
+  de l'ancienne référence "Material Design 3" — abandonnée, c'est elle qui
+  faisait lire l'app comme un back-office. ⚠️ Le sérif n'existe qu'en 400 :
+  un `font-bold` dessus produit un faux gras.
+- Libellés en petites capitales espacées (classe `.libelle`, 11px, 0.12em)
 - **Aucune bordure nulle part** dans l'app — séparation uniquement par
   l'ombre (très légère) et l'espacement. Ne pas réintroduire de border
   sans demande explicite.

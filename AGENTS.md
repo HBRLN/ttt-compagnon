@@ -7,3 +7,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+# Design
+
+Avant toute modification visuelle, lire `DESIGN.md` à la racine : c'est le
+langage visuel de l'app (couleurs, typographie, ombres, motion) et il contient
+des règles dont l'infraction se voit immédiatement — notamment « aucune
+bordure » et « jamais de gras sur un titre sérif ».
+
+L'historique des décisions et le contrat de contraste complet vivent dans
+`.tastemaker/style-lock.md` et `.tastemaker/decisions.log`.
