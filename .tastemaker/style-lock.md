@@ -37,7 +37,7 @@ No categorical/sequential/diverging palette needed — every chart is single-ser
 - Bar-chart grow uses `transform: scaleY()` (not `height`) to avoid layout-triggering animation.
 - Global `prefers-reduced-motion: reduce` override in `globals.css` (near-instant transitions/animations); `CompteurAnime` separately skips its rAF easing under reduced motion since a CSS override can't stop a JS loop.
 - No `loading.tsx` — navigations keep the previous screen mounted until the next is ready, no full-screen blank/spinner interstitial (explicit user preference).
-- One deliberate exception to the otherwise-restrained app-shell motion: the "+" FAB (`BoutonNouveauRdv` + `TransitionFabProvider`, mounted in the root layout so it survives the route change) does a two-phase full-screen circle wipe — accent color expands from the FAB, then a second white circle expands from the same point revealing `/rdv/nouveau` underneath, timed with that form's own `animate-fade-in-up` entrance. Explicit user request, not a default to replicate on other actions.
+- The "+" FAB (`BoutonNouveauRdv`) is a plain `Link` to `/rdv/nouveau` with a tap-scale feedback (`scale-90` on press) and a 160ms delay before navigating, so the tap is visible before the page changes. An earlier two-phase full-screen circle wipe (accent circle then white circle expanding from the FAB) was tried and **abandoned** after several failed iterations (see `passation.md` for the history) — don't reintroduce it without a precise, state-by-state spec agreed first.
 
 ## Assets
 - All icons are hand-drawn inline SVG (`stroke="currentColor"`, `strokeWidth="2"`), no icon library. Intentional — keep this convention for new icons rather than introducing Iconify/Lucide.
