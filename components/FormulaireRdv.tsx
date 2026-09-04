@@ -191,13 +191,8 @@ export default function FormulaireRdv({
     });
   }
 
-  // Sur un nouveau RDV, tout le contenu apparaît d'un bloc, léger
-  // fondu + mouvement vertical, par-dessus les cercles de la
-  // transition du bouton + (qui continuent d'animer en dessous).
-  const anime = !rdvInitial;
-
   return (
-    <div className={`flex min-h-dvh flex-col pb-10 ${anime ? "animate-fade-in-up" : ""}`}>
+    <div className="flex min-h-dvh flex-col pb-10">
       <header className="flex items-center gap-2 px-4 pt-6 pb-2">
         <Link
           href={rdvInitial ? `/rdv/${rdvInitial.id}` : "/rdv"}

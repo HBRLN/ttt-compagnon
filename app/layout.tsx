@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
-import TransitionFabProvider from "@/components/TransitionFabProvider";
 import NavigationGeste from "@/components/NavigationGeste";
 import "./globals.css";
 
@@ -40,9 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" className={`${roboto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-fond text-encre font-sans">
-        <NavigationGeste>
-          <TransitionFabProvider>{children}</TransitionFabProvider>
-        </NavigationGeste>
+        <NavigationGeste>{children}</NavigationGeste>
       </body>
     </html>
   );
