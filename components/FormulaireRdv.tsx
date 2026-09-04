@@ -191,10 +191,17 @@ export default function FormulaireRdv({
     });
   }
 
+  // Comme sur le dashboard : chaque bloc apparaît individuellement en
+  // fondu + léger mouvement (animate-fade-in-up), décalé du
+  // précédent.
+  const anime = !rdvInitial;
+  const classeEntree = anime ? "animate-fade-in-up" : "";
+  function delaiEntree(n: number): React.CSSProperties | undefined {
+    return anime ? { animationDelay: `${n * 40}ms` } : undefined;
+  }
+
   return (
-    <div
-      className={`flex min-h-dvh flex-col pb-10 ${!rdvInitial ? "animate-fade-in-down" : ""}`}
-    >
+    <div className="flex min-h-dvh flex-col pb-10">
       <header className="flex items-center gap-2 px-4 pt-6 pb-2">
         <Link
           href={rdvInitial ? `/rdv/${rdvInitial.id}` : "/rdv"}
@@ -207,7 +214,7 @@ export default function FormulaireRdv({
       </header>
 
       <form onSubmit={soumettre} className="flex flex-col gap-4 px-5 pt-2">
-        <Champ label="Prénom">
+        <Champ label="Prénom" className={classeEntree} style={delaiEntree(0)}>
           <input
             required
             value={prenom}
@@ -216,7 +223,7 @@ export default function FormulaireRdv({
           />
         </Champ>
 
-        <Champ label="Téléphone">
+        <Champ label="Téléphone" className={classeEntree} style={delaiEntree(1)}>
           <input
             type="tel"
             value={tel}
@@ -231,7 +238,7 @@ export default function FormulaireRdv({
           )}
         </Champ>
 
-        <Champ label="Email">
+        <Champ label="Email" className={classeEntree} style={delaiEntree(2)}>
           <input
             type="email"
             value={email}
@@ -240,7 +247,10 @@ export default function FormulaireRdv({
           />
         </Champ>
 
-        <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-3">
+        <div
+          className={`flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-3 ${classeEntree}`}
+          style={delaiEntree(3)}
+        >
           <Champ label="Date">
             <input
               type="date"
@@ -261,7 +271,7 @@ export default function FormulaireRdv({
           </Champ>
         </div>
 
-        <Champ label="Durée">
+        <Champ label="Durée" className={classeEntree} style={delaiEntree(4)}>
           <select
             value={duree}
             onChange={(e) => setDuree(Number(e.target.value))}
@@ -275,7 +285,7 @@ export default function FormulaireRdv({
           </select>
         </Champ>
 
-        <Champ label="Projet">
+        <Champ label="Projet" className={classeEntree} style={delaiEntree(5)}>
           <textarea
             rows={3}
             value={projet}
@@ -284,7 +294,7 @@ export default function FormulaireRdv({
           />
         </Champ>
 
-        <div className="flex flex-col gap-1">
+        <div className={`flex flex-col gap-1 ${classeEntree}`} style={delaiEntree(6)}>
           <span className="text-sm font-medium text-encre-douce">
             Photos d&apos;inspiration
           </span>
