@@ -72,10 +72,10 @@ export default function FormulaireReglages({
 
   return (
     <div className="flex min-h-dvh flex-col pb-16">
-      <header className="flex items-center gap-2 px-4 pt-6 pb-2">
+      <header className="animate-apparition flex items-center gap-2 px-4 pt-8 pb-2">
         <Link
           href="/"
-          className="flex h-11 w-11 items-center justify-center rounded-full text-2xl text-encre-douce active:bg-surface-douce"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-2xl text-encre-douce transition-colors active:bg-surface"
           aria-label="Retour"
         >
           ←
@@ -83,7 +83,7 @@ export default function FormulaireReglages({
         <h1 className="titre text-2xl">Réglages</h1>
       </header>
 
-      <div className="flex flex-col gap-4 px-5 pt-2">
+      <div className="flex flex-col gap-5 px-6 pt-3">
         <p className="text-sm text-encre-douce">Connecté en tant que {email}</p>
 
         <Champ label="Nom d'artiste">
@@ -164,7 +164,7 @@ export default function FormulaireReglages({
             type="button"
             onClick={enregistrer}
             disabled={enCours}
-            className="libelle flex h-14 items-center justify-center gap-2 bg-encre text-surface transition-transform duration-150 active:scale-[0.97] disabled:opacity-40"
+            className="flex h-13 items-center justify-center gap-2 rounded-xl bg-encre text-sm font-medium text-fond transition-transform duration-200 active:scale-[0.98] disabled:opacity-40"
           >
             {enCours && <Loader taille={18} />}
             {enCours ? "Enregistrement..." : "Enregistrer"}
@@ -172,16 +172,16 @@ export default function FormulaireReglages({
         )}
 
         <section className="flex flex-col gap-2">
-          <h2 className="libelle text-encre-douce">
+          <h2 className="libelle">
             Abonnement à l&apos;agenda
           </h2>
-          <p className="border border-ligne bg-surface p-3 font-mono text-sm break-all text-encre-douce">
+          <p className="rounded-xl bg-surface p-4 font-mono text-sm break-all text-encre-douce">
             {lienIcs}
           </p>
           <button
             type="button"
             onClick={copierLien}
-            className="libelle h-12 border border-ligne bg-surface active:bg-surface-douce"
+            className="h-12 rounded-xl bg-surface text-sm font-medium transition-transform duration-200 active:scale-[0.98]"
           >
             {copie ? "Copié !" : "Copier"}
           </button>
@@ -193,7 +193,7 @@ export default function FormulaireReglages({
           <button
             type="button"
             onClick={regenererLien}
-            className="libelle mt-1 self-start text-accent"
+            className="mt-1 self-start text-sm font-medium text-alerte"
           >
             Régénérer le lien
           </button>
@@ -206,7 +206,7 @@ export default function FormulaireReglages({
         <button
           type="button"
           onClick={() => seDeconnecter()}
-          className="libelle mt-4 h-12 border border-ligne bg-surface text-encre-douce active:bg-surface-douce"
+          className="mt-4 h-12 rounded-xl bg-surface text-sm font-medium text-encre-douce transition-transform duration-200 active:scale-[0.98]"
         >
           Se déconnecter
         </button>
@@ -219,7 +219,8 @@ export default function FormulaireReglages({
           min-width: 0;
           max-width: 100%;
           box-sizing: border-box;
-          border: 1px solid var(--ligne);
+          border: none;
+          border-radius: 0.75rem;
           background: var(--surface);
           color: var(--encre);
           padding: 0.5rem 0.75rem;
@@ -237,7 +238,7 @@ export default function FormulaireReglages({
 function Champ({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="libelle text-encre-douce">{label}</span>
+      <span className="libelle">{label}</span>
       {children}
     </label>
   );

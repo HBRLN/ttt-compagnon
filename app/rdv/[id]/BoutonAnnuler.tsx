@@ -16,7 +16,7 @@ export default function BoutonAnnuler({ id }: { id: string }) {
       type="button"
       onClick={annuler}
       disabled={enCours}
-      className="libelle flex h-12 flex-1 items-center justify-center border border-accent bg-surface text-accent disabled:opacity-40"
+      className="flex h-12 flex-1 items-center justify-center rounded-xl bg-surface text-sm font-medium text-alerte transition-transform duration-200 active:scale-[0.98] disabled:opacity-40"
     >
       Annuler
     </button>

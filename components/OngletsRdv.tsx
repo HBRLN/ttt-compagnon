@@ -43,15 +43,14 @@ export default function OngletsRdv({
 
   return (
     <div className="relative inline-flex items-center border-b border-ligne">
-      {/* L'indicateur est un filet de laiton qui coulisse le long de la
-          ligne de base — un mouvement d'axe, pas un pavé qui saute. */}
+      {/* Filet d'encre qui coulisse sous l'onglet actif. */}
       {indicateur && (
         <div
-          className="absolute bottom-0 left-0 h-0.5 bg-accent"
+          className="absolute -bottom-px left-0 h-0.5 bg-encre"
           style={{
             width: indicateur.width,
             transform: `translateX(${indicateur.left}px)`,
-            transition: "transform 0.24s cubic-bezier(0.23,1,0.32,1)",
+            transition: "transform 0.28s cubic-bezier(0.16,1,0.3,1)",
           }}
         />
       )}
@@ -63,7 +62,7 @@ export default function OngletsRdv({
             boutonsRef.current[onglet.cle] = el;
           }}
           onClick={() => surClic(onglet)}
-          className={`libelle relative z-10 flex h-10 shrink-0 items-center whitespace-nowrap px-4 transition-colors duration-150 ${
+          className={`relative z-10 flex h-11 shrink-0 items-center px-4 text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
             actifLocal === onglet.cle ? "text-encre" : "text-encre-douce"
           }`}
         >

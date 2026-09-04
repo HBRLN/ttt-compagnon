@@ -28,14 +28,14 @@ export default function NotesEditables({
 
   return (
     <section>
-      <h2 className="mb-1 text-sm font-medium text-encre-douce">Notes</h2>
+      <h2 className="libelle mb-2">Notes</h2>
       <textarea
         rows={3}
         value={notes}
         onChange={(e) => surChangement(e.target.value)}
         onBlur={enregistrer}
         placeholder="Rien pour l'instant"
-        className="w-full resize-none border border-ligne bg-surface p-3 text-base"
+        className="w-full resize-none rounded-xl bg-surface p-4 text-base"
       />
       {!enregistre && (
         <p className="mt-1 text-sm text-encre-douce">

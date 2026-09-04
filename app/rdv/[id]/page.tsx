@@ -46,10 +46,10 @@ export default async function PageFicheRdv({
 
   return (
     <div className="flex min-h-dvh flex-col pb-10">
-      <header className="flex items-center gap-2 px-4 pt-6 pb-2">
+      <header className="animate-apparition flex items-center gap-2 px-4 pt-8 pb-2">
         <Link
           href="/rdv"
-          className="flex h-11 w-11 items-center justify-center rounded-full text-2xl text-encre-douce active:bg-surface-douce"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-2xl text-encre-douce transition-colors active:bg-surface"
           aria-label="Retour"
         >
           ←
@@ -59,39 +59,37 @@ export default async function PageFicheRdv({
         </h1>
       </header>
 
-      <div className="flex flex-col gap-5 px-5 pt-2">
+      <div className="flex flex-col gap-7 px-6 pt-3">
         {rdv.annule && (
-          <p className="libelle border-l-2 border-accent bg-surface px-3 py-2.5 text-accent">
+          <p className="rounded-xl bg-surface px-4 py-3 text-sm font-medium text-alerte">
             Rendez-vous annulé
           </p>
         )}
 
-        <section className="perspective">
-          <div className="animate-volet bg-surface p-5">
-            <p className="titre text-3xl">{formaterDateLongue(rdv.debut)}</p>
-            <p className="libelle mt-3 text-encre-douce">
-              {formaterHeure(rdv.debut)} · {formaterDuree(rdv.duree_min)}
-            </p>
-          </div>
+        <section className="animate-pose">
+          <p className="titre text-4xl">{formaterDateLongue(rdv.debut)}</p>
+          <p className="legende mt-3">
+            {formaterHeure(rdv.debut)} · {formaterDuree(rdv.duree_min)}
+          </p>
         </section>
 
         {rdv.projet && (
           <section>
-            <h2 className="libelle mb-2 text-encre-douce">Projet</h2>
+            <h2 className="libelle mb-2">Projet</h2>
             <p className="whitespace-pre-wrap">{rdv.projet}</p>
           </section>
         )}
 
         {rdv.emplacement && (
           <section>
-            <h2 className="libelle mb-2 text-encre-douce">Emplacement</h2>
+            <h2 className="libelle mb-2">Emplacement</h2>
             <p>{rdv.emplacement}</p>
           </section>
         )}
 
         {urlsPhotos.length > 0 && (
           <section>
-            <h2 className="libelle mb-2 text-encre-douce">
+            <h2 className="libelle mb-2">
               Photos d&apos;inspiration
             </h2>
             <div className="grid grid-cols-2 gap-2">
@@ -114,18 +112,18 @@ export default async function PageFicheRdv({
         )}
 
         <section className="flex flex-col gap-2">
-          <h2 className="libelle text-encre-douce">Contact</h2>
+          <h2 className="libelle">Contact</h2>
           {rdv.client_tel && <p>{rdv.client_tel}</p>}
           {rdv.client_email && <p>{rdv.client_email}</p>}
         </section>
 
         <section className="flex flex-col gap-2">
-          <h2 className="libelle text-encre-douce">Tarif</h2>
+          <h2 className="libelle">Tarif</h2>
           <p>
             {rdv.tarif_estime ? `${rdv.tarif_estime} € estimé` : "Non estimé"}
           </p>
           {rdv.acompte_montant ? (
-            <p className={rdv.acompte_paye ? "text-encre-douce" : "text-rouge"}>
+            <p className={rdv.acompte_paye ? "text-encre-douce" : "text-alerte"}>
               Acompte {rdv.acompte_montant} € — {rdv.acompte_paye ? "payé" : "non payé"}
             </p>
           ) : null}
@@ -137,7 +135,7 @@ export default async function PageFicheRdv({
           {rdv.client_tel && (
             <a
               href={`tel:${rdv.client_tel}`}
-              className="libelle flex h-12 flex-1 items-center justify-center border border-ligne bg-surface active:bg-surface-douce"
+              className="flex h-12 flex-1 items-center justify-center rounded-xl bg-surface text-sm font-medium transition-transform duration-200 active:scale-[0.98]"
             >
               Appeler
             </a>
@@ -145,7 +143,7 @@ export default async function PageFicheRdv({
           {rdv.client_tel && (
             <a
               href={`sms:${rdv.client_tel}`}
-              className="libelle flex h-12 flex-1 items-center justify-center border border-ligne bg-surface active:bg-surface-douce"
+              className="flex h-12 flex-1 items-center justify-center rounded-xl bg-surface text-sm font-medium transition-transform duration-200 active:scale-[0.98]"
             >
               Écrire
             </a>
@@ -155,7 +153,7 @@ export default async function PageFicheRdv({
         <section className="flex gap-3">
           <Link
             href={`/rdv/${rdv.id}/modifier`}
-            className="libelle flex h-12 flex-1 items-center justify-center bg-encre text-surface transition-transform duration-150 active:scale-[0.97]"
+            className="flex h-12 flex-1 items-center justify-center rounded-xl bg-encre text-sm font-medium text-fond transition-transform duration-200 active:scale-[0.98]"
           >
             Modifier
           </Link>
@@ -164,15 +162,15 @@ export default async function PageFicheRdv({
 
         {precedents.length > 0 && (
           <section>
-            <h2 className="libelle mb-3 text-encre-douce">
+            <h2 className="libelle mb-3">
               Séances précédentes
             </h2>
-            <ul className="flex flex-col bg-surface">
+            <ul className="flex flex-col overflow-hidden rounded-2xl bg-surface">
               {precedents.map((p) => (
                 <li key={p.id} className="border-t border-ligne first:border-t-0">
                   <Link
                     href={`/rdv/${p.id}`}
-                    className="flex min-h-14 flex-col justify-center px-4 py-3 active:bg-surface-douce"
+                    className="flex min-h-14 flex-col justify-center px-4 py-3.5 transition-colors active:bg-surface-douce"
                   >
                     <span className="titre text-lg">
                       {formaterDateLongue(p.debut)}

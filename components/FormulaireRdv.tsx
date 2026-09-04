@@ -194,17 +194,17 @@ export default function FormulaireRdv({
   // Comme sur le dashboard : chaque champ entre individuellement, décalé
   // du précédent, par un glissement court le long de l'axe de la grille.
   const anime = !rdvInitial;
-  const classeEntree = anime ? "animate-glisse" : "";
+  const classeEntree = anime ? "animate-apparition" : "";
   function delaiEntree(n: number): React.CSSProperties | undefined {
     return anime ? { animationDelay: `${n * 40}ms` } : undefined;
   }
 
   return (
     <div className="flex min-h-dvh flex-col pb-10">
-      <header className="flex items-center gap-2 px-4 pt-6 pb-2">
+      <header className="animate-apparition flex items-center gap-2 px-4 pt-8 pb-2">
         <Link
           href={rdvInitial ? `/rdv/${rdvInitial.id}` : "/rdv"}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-2xl text-encre-douce active:bg-surface-douce"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-2xl text-encre-douce transition-colors active:bg-surface"
           aria-label="Retour"
         >
           ←
@@ -212,7 +212,7 @@ export default function FormulaireRdv({
         <h1 className="titre text-2xl">{titre}</h1>
       </header>
 
-      <form onSubmit={soumettre} className="flex flex-col gap-4 px-5 pt-2">
+      <form onSubmit={soumettre} className="flex flex-col gap-5 px-6 pt-3">
         <Champ label="Prénom" className={classeEntree} style={delaiEntree(0)}>
           <input
             required
@@ -294,7 +294,7 @@ export default function FormulaireRdv({
         </Champ>
 
         <div className={`flex flex-col gap-1 ${classeEntree}`} style={delaiEntree(6)}>
-          <span className="libelle text-encre-douce">
+          <span className="libelle">
             Photos d&apos;inspiration
           </span>
           <div
@@ -307,7 +307,7 @@ export default function FormulaireRdv({
             onClick={() => inputFichierRef.current?.click()}
             className={`libelle flex cursor-pointer flex-col items-center justify-center gap-1 border border-dashed p-6 text-center transition-colors ${
               survolDepot
-                ? "border-accent text-accent"
+                ? "border-encre text-encre"
                 : "border-ligne text-encre-douce"
             }`}
           >
@@ -360,7 +360,7 @@ export default function FormulaireRdv({
         <button
           type="button"
           onClick={() => setPlusDeDetails((v) => !v)}
-          className="libelle py-3 text-left text-accent"
+          className="py-3 text-left text-sm font-medium text-encre"
         >
           {plusDeDetails ? "− Moins de détails" : "+ Plus de détails"}
         </button>
@@ -421,13 +421,13 @@ export default function FormulaireRdv({
         )}
 
         {erreur && (
-          <p className="libelle border-l-2 border-accent bg-surface px-3 py-2.5 text-accent">{erreur}</p>
+          <p className="rounded-xl bg-surface px-4 py-3 text-sm font-medium text-alerte">{erreur}</p>
         )}
 
         <button
           type="submit"
           disabled={enCours}
-          className="libelle mt-2 flex h-14 items-center justify-center gap-2 bg-encre text-surface transition-transform duration-150 active:scale-[0.97] disabled:opacity-40"
+          className="mt-3 flex h-13 items-center justify-center gap-2 rounded-xl bg-encre text-sm font-medium text-fond transition-transform duration-200 active:scale-[0.98] disabled:opacity-40"
         >
           {enCours && <Loader taille={18} />}
           {enCours ? "Enregistrement..." : "Enregistrer"}
@@ -441,7 +441,8 @@ export default function FormulaireRdv({
           min-width: 0;
           max-width: 100%;
           box-sizing: border-box;
-          border: 1px solid var(--ligne);
+          border: none;
+          border-radius: 0.75rem;
           background: var(--surface);
           color: var(--encre);
           padding: 0.5rem 0.75rem;
@@ -469,7 +470,7 @@ function Champ({
 }) {
   return (
     <label className={`flex min-w-0 flex-col gap-1 ${className}`} style={style}>
-      <span className="libelle text-encre-douce">{label}</span>
+      <span className="libelle">{label}</span>
       {children}
     </label>
   );

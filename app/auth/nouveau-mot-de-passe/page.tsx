@@ -70,12 +70,12 @@ export default function PageNouveauMotDePasse() {
           onChange={setConfirmation}
         />
         {erreur && (
-          <p className="libelle border-l-2 border-accent bg-surface px-3 py-2.5 text-accent">{erreur}</p>
+          <p className="rounded-xl bg-surface px-4 py-3 text-sm font-medium text-alerte">{erreur}</p>
         )}
         <button
           type="submit"
           disabled={enCours}
-          className="libelle flex h-14 items-center justify-center gap-2 bg-encre text-surface transition-transform duration-150 active:scale-[0.97] disabled:opacity-40"
+          className="flex h-13 items-center justify-center gap-2 rounded-xl bg-encre text-sm font-medium text-fond transition-transform duration-200 active:scale-[0.98] disabled:opacity-40"
         >
           {enCours && <Loader taille={18} />}
           {enCours ? "" : "Valider"}

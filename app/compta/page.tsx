@@ -43,12 +43,12 @@ export default async function PageCompta() {
   ]);
 
   return (
-    <div className="flex min-h-dvh flex-col pb-36">
-      <header className="flex items-center justify-between px-5 pt-6 pb-2">
+    <div className="flex min-h-dvh flex-col pb-32">
+      <header className="animate-apparition flex items-center justify-between px-6 pt-8 pb-4">
         <h1 className="titre text-3xl">Compta</h1>
         <Link
           href="/reglages"
-          className="flex h-11 w-11 items-center justify-center rounded-full text-encre-douce active:bg-surface-douce"
+          className="-mr-2 flex h-11 w-11 items-center justify-center rounded-full text-encre-douce transition-colors active:bg-surface"
           aria-label="Réglages"
         >
           <IconeReglages />

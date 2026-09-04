@@ -1,40 +1,42 @@
 @import "tailwindcss";
 
-/* Direction « Atelier suisse » — école Architecture de l'information
-   (ancrage vignelli-swiss-helvetica), croisée avec une intention
-   « motion first » demandée par l'utilisateur.
+/* Direction « Galerie » — école Éditorial/Minimaliste, ancrage apple-hig,
+   croisée avec l'intention « motion first ».
 
-   La fiche Vignelli dit « motion : aucune, ou instantanée », et prévient
-   que le style se lit aujourd'hui comme classique/archivistique. C'est
-   précisément ce que le mouvement corrige ici : la grille apporte la
-   précision premium, le mouvement apporte la modernité. La recette donne
-   elle-même le langage à suivre — « si quelque chose bouge, ça pivote
-   comme un panneau de signalétique ». D'où le volet basculant.
+   Le premium vient de l'espace et de la retenue, pas d'un effet : blanc,
+   beaucoup d'air vertical, filets capillaires, un seul sujet par écran,
+   bas-de-casse, ombres à peine perceptibles.
 
-   Gardé de la recette : grille visible, hiérarchie par la TAILLE et non
-   par la graisse, un seul accent, angles droits, aucune ombre, chiffres
-   tabulaires, ton factuel.
-   Écarté : Helvetica (remplacée par Space Grotesk, qui lit moderne plutôt
-   qu'archivistique) et l'immobilité. */
+   Gardé de la recette : blanc papier, encre presque-noire, gris de
+   légende, filets #d2d2d7 et rien de plus lourd, rayons doux (12/18/22),
+   élévation par le blanc et l'espace plutôt que par l'ombre, sections
+   verticales longues (une idée chacune) plutôt que des grilles de cartes.
+   Écarté : la photographie produit, sur laquelle repose la moitié de la
+   recette — l'app n'en a aucune. C'est la donnée, mise à l'échelle
+   display, qui occupe la scène à sa place. */
 :root {
-  --fond: #f2f2f0;
-  --surface: #ffffff;
-  --surface-douce: #e8e8e5;
-  --encre: #111111;
-  /* Vignelli donne #8a8a8a pour le secondaire : mesuré à 3.08:1 sur le
-     fond, sous le plancher AA de 4.5. Assombri dans la même teinte. */
-  --encre-douce: #6e6e6a;
-  --accent: #7a5c1e;
+  --fond: #ffffff;
+  --surface: #f5f5f7;
+  --surface-douce: #ebebed;
+  --encre: #1d1d1f;
+  /* Apple donne #86868b : mesuré à 3.62:1 sur blanc, sous le plancher AA
+     de 4.5. Assombri dans la même teinte → 5.07:1. */
+  --encre-douce: #6e6e73;
+  --accent: #1d1d1f;
   --sur-accent: #ffffff;
-  --ligne: #cfcfca;
+  --ligne: #d2d2d7;
 
-  /* Aucune ombre : la profondeur vient du filet et du blanc des blocs. */
-  --ombre-legere: none;
-  --ombre-flottante: none;
+  /* Une seule couleur chromatique dans tout le système, réservée au
+     négatif et au destructif. Ailleurs : encre, gris, blanc. */
+  --alerte: #b3261e;
 
-  /* Courbes reprises des recommandations de la skill motion. */
-  --sortie: cubic-bezier(0.23, 1, 0.32, 1);
-  --panneau: cubic-bezier(0.32, 0.72, 0, 1);
+  /* « Élévation par le blanc et le contraste, pas par l'ombre » : les
+     ombres existent mais sont à la limite du perceptible. */
+  --ombre-legere: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --ombre-flottante: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.04);
+
+  /* Expo-out : la courbe Apple. Rapide au départ, longue détente. */
+  --expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @theme inline {
@@ -46,10 +48,11 @@
   --color-ligne: var(--ligne);
   --color-accent: var(--accent);
   --color-sur-accent: var(--sur-accent);
-  --color-rouge: var(--accent);
-  --color-rouge-doux: var(--surface-douce);
+  --color-alerte: var(--alerte);
+  --color-rouge: var(--alerte);
+  --color-rouge-doux: var(--surface);
   --color-vert: var(--encre);
-  --color-vert-doux: var(--surface-douce);
+  --color-vert-doux: var(--surface);
   --shadow-legere: var(--ombre-legere);
   --shadow-flottante: var(--ombre-flottante);
   --font-sans: var(--police);
@@ -60,88 +63,75 @@ body {
   color: var(--encre);
 }
 
-/* Angles droits, toujours (règle de la recette). */
-*,
-*::before,
-*::after {
-  border-radius: 0 !important;
-}
+/* --- Typographie ----------------------------------------------------- */
 
-/* --- Typographie : la hiérarchie se fait à la TAILLE ----------------- */
-
-/* Graisses plafonnées à 500 sur les titres. C'est ce qui distingue cette
-   direction du registre sportswear : un grotesque en 700+ tout en
-   capitales, c'est une marque de sport. */
+/* Bas-de-casse, graisse 600 maximum, interlettrage resserré aux grandes
+   tailles. La hiérarchie se fait à la taille et à l'espace. */
 .titre {
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  line-height: 1.08;
 }
 
-/* Libellé de grille : discret, jamais criard. */
+/* Légende Apple : petite, grise, jamais en capitales espacées — c'est ce
+   qui gardait les noms de mois illisibles dans la version précédente. */
+.legende {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--encre-douce);
+}
+
+/* Micro-libellé de section. Discret : pas de capitales criardes. */
 .libelle {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-/* Numéro de section, coin supérieur gauche du bloc (signature Vignelli). */
-.numero {
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  font-variant-numeric: tabular-nums;
-  color: var(--accent);
+  letter-spacing: 0.01em;
+  color: var(--encre-douce);
 }
 
 .chiffre {
   font-variant-numeric: tabular-nums;
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: -0.03em;
 }
 
 /* --- Mouvement ------------------------------------------------------- */
 
-/* Le volet : le bloc bascule en place comme un panneau de signalétique.
-   C'est le geste signature. Réservé au bloc principal d'un écran — vu
-   trente fois par jour, il ne doit pas s'appliquer à chaque ligne. */
-.perspective {
-  perspective: 900px;
-}
-@keyframes volet {
+/* Apple ne fait jamais basculer un élément : ça monte, ça fond, ça se
+   pose. Aucun `perspective` ni `rotateX` dans ce système — c'était la
+   cause du footer qui décrochait (un ancêtre avec `perspective` crée un
+   bloc conteneur pour les descendants `fixed`). */
+@keyframes apparition {
   from {
     opacity: 0;
-    transform: rotateX(-72deg);
-  }
-  to {
-    opacity: 1;
-    transform: rotateX(0);
-  }
-}
-.animate-volet {
-  transform-origin: top center;
-  animation: volet 0.26s var(--panneau) both;
-}
-
-/* Entrée ordinaire : glissement court le long de l'axe de la grille. */
-@keyframes glisse {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-.animate-glisse {
-  animation: glisse 0.2s var(--sortie) both;
+.animate-apparition {
+  animation: apparition 0.3s var(--expo) both;
 }
 
-/* Le filet se trace le long de son axe. `clip-path` plutôt qu'une mise à
-   l'échelle depuis zéro, que l'audit motion signale à juste titre. */
+/* Le bloc principal se pose en s'installant légèrement — le geste
+   « premium » de la direction, réservé à un bloc par écran. */
+@keyframes pose {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animate-pose {
+  animation: pose 0.3s var(--expo) both;
+}
+
+/* Filet qui se trace (onglet actif, chargement). */
 @keyframes trace {
   from {
     clip-path: inset(0 100% 0 0);
@@ -151,24 +141,38 @@ body {
   }
 }
 .animate-trace {
-  animation: trace 0.36s var(--sortie) both;
+  animation: trace 0.28s var(--expo) both;
 }
 
-/* Pas de classe squelette ici : l'app n'a volontairement pas de
-   `loading.tsx` (l'écran précédent reste affiché jusqu'à ce que le suivant
-   soit prêt), donc il n'y a aucune surface de chargement à habiller. À
-   ajouter le jour où il y en a une, pas avant. */
+/* Barre de navigation translucide : signature Apple. Repli propre si le
+   navigateur ne gère pas le flou, ou si l'utilisateur réduit la
+   transparence. */
+.barre-verre {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .barre-verre {
+    background: var(--fond);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .barre-verre {
+    background: var(--fond);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
 
-/* Le filet gris est décoratif (1.31:1) : il ne peut pas porter un état.
-   C'est l'accent qui le fait. */
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--encre);
   outline-offset: 2px;
 }
 input:focus,
 textarea:focus,
 select:focus {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--encre);
   outline-offset: -2px;
 }
 
@@ -179,9 +183,5 @@ select:focus {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-  /* Le mouvement disparaît, l'état reste lisible. */
-  .animate-volet {
-    transform: none !important;
   }
 }

@@ -86,75 +86,74 @@ export default async function PageDashboard() {
   const prochain = prochainRdv as Rdv | null;
 
   return (
-    <div className="perspective flex min-h-dvh flex-col pb-36">
-      <header className="animate-glisse flex items-start justify-between px-5 pt-6 pb-5">
+    <div className="flex min-h-dvh flex-col pb-36">
+      <header className="animate-apparition flex items-start justify-between px-6 pt-8 pb-7">
         <div>
-          <p className="libelle text-encre-douce">Compagnon</p>
-          <p className="titre mt-1 text-xl">{profil?.nom_artiste || ""}</p>
+          <p className="libelle">Compagnon</p>
+          <p className="titre mt-1.5 text-2xl">{profil?.nom_artiste || ""}</p>
         </div>
         <Link
           href="/reglages"
-          className="-mt-1 -mr-2 flex h-11 w-11 items-center justify-center text-encre-douce active:bg-surface-douce"
+          className="-mt-1 -mr-2 flex h-11 w-11 items-center justify-center rounded-full text-encre-douce transition-colors active:bg-surface"
           aria-label="Réglages"
         >
           <IconeReglages />
         </Link>
       </header>
 
-      <div className="flex flex-col gap-5 px-5">
-        <SectionGrille numero="01" titre="Prochain">
+      <div className="flex flex-col px-6">
+        <Section titre="Prochain rendez-vous">
           {prochain ? (
             <Link
               href={`/rdv/${prochain.id}`}
-              className="animate-volet block bg-surface p-5 active:bg-surface-douce"
+              className="animate-pose block transition-transform duration-200 active:scale-[0.98]"
             >
-              <p className="titre text-4xl">{prochain.client_prenom}</p>
-              <p className="mt-3 text-sm text-encre-douce">
-                {formaterDateCourte(prochain.debut)} · {formaterHeure(prochain.debut)}
+              <p className="titre text-5xl">{prochain.client_prenom}</p>
+              <p className="legende mt-3">
+                {formaterDateCourte(prochain.debut)} à{" "}
+                {formaterHeure(prochain.debut)}
                 {prochain.projet ? ` · ${prochain.projet}` : ""}
               </p>
             </Link>
           ) : (
-            <div className="animate-volet bg-surface p-5">
-              <p className="titre text-2xl text-encre-douce">Rien de prévu</p>
-            </div>
+            <p className="animate-pose titre text-3xl text-encre-douce">
+              Rien de prévu
+            </p>
           )}
-        </SectionGrille>
+        </Section>
 
-        <SectionGrille numero="02" titre="Ce mois" delai={80}>
-          <div className="grid grid-cols-2 bg-surface">
-            <div className="p-5">
+        <Section titre="Ce mois" delai={90}>
+          <div className="flex gap-10">
+            <div>
               <p className="chiffre text-4xl">
                 <CompteurAnime valeur={nombreRdvMois} />
               </p>
-              <p className="libelle mt-2 text-encre-douce">Rendez-vous</p>
+              <p className="legende mt-1.5">Rendez-vous</p>
             </div>
-            <div className="border-l border-ligne p-5">
+            <div>
               <p className="chiffre text-4xl">
                 <CompteurAnime valeur={gainsDuMois} suffixe=" €" />
               </p>
-              <p className="libelle mt-2 text-encre-douce">Encaissé</p>
+              <p className="legende mt-1.5">Encaissé</p>
             </div>
           </div>
-        </SectionGrille>
+        </Section>
 
-        <SectionGrille numero="03" titre="Estimation du mois" delai={160}>
+        <Section titre="Estimation du mois" delai={180} dernier>
           {/* Le signe porte l'information, pas seulement la couleur : un
               daltonien lit « − » aussi bien qu'une teinte. */}
-          <div className="bg-surface p-5">
-            <p
-              className={`chiffre text-4xl ${
-                estimationMois < 0 ? "text-accent" : ""
-              }`}
-            >
-              <CompteurAnime
-                valeur={Math.abs(estimationMois)}
-                prefixe={estimationMois < 0 ? "− " : "+ "}
-                suffixe=" €"
-              />
-            </p>
-          </div>
-        </SectionGrille>
+          <p
+            className={`chiffre text-4xl ${
+              estimationMois < 0 ? "text-alerte" : ""
+            }`}
+          >
+            <CompteurAnime
+              valeur={Math.abs(estimationMois)}
+              prefixe={estimationMois < 0 ? "− " : "+ "}
+              suffixe=" €"
+            />
+          </p>
+        </Section>
       </div>
 
       <BoutonNouveauRdv />
@@ -164,29 +163,26 @@ export default async function PageDashboard() {
   );
 }
 
-/* Le rail numéroté à gauche, avec son filet vertical : c'est la grille
-   rendue visible, signature de la recette suisse. */
-function SectionGrille({
-  numero,
+/* Anatomie de section Apple : un libellé discret, puis le contenu, et un
+   filet capillaire pour séparer — jamais plus lourd, jamais une carte. */
+function Section({
   titre,
   delai = 0,
+  dernier = false,
   children,
 }: {
-  numero: string;
   titre: string;
   delai?: number;
+  dernier?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <section
-      className="animate-glisse flex gap-4"
+      className={`animate-apparition py-7 ${dernier ? "" : "border-b border-ligne"}`}
       style={delai ? { animationDelay: `${delai}ms` } : undefined}
     >
-      <span className="numero w-6 shrink-0 pt-1">{numero}</span>
-      <div className="min-w-0 flex-1 border-l border-ligne pl-4">
-        <h2 className="libelle text-encre-douce">{titre}</h2>
-        <div className="mt-3">{children}</div>
-      </div>
+      <h2 className="libelle">{titre}</h2>
+      <div className="mt-4">{children}</div>
     </section>
   );
 }

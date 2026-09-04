@@ -121,7 +121,7 @@ function FormulaireConnexion() {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-8 px-6">
       <div className="w-full max-w-sm">
-        <div className="animate-trace h-0.5 w-full bg-accent" />
+        <div className="animate-trace h-0.5 w-full bg-encre" />
         <h1 className="titre mt-4 text-4xl">Compagnon</h1>
       </div>
 
@@ -133,7 +133,7 @@ function FormulaireConnexion() {
           placeholder="ton@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-12 border border-ligne bg-surface px-4 text-base text-encre"
+          className="h-12 rounded-xl bg-surface px-4 text-base text-encre"
         />
 
         {mode !== "oubli" && (
@@ -158,8 +158,8 @@ function FormulaireConnexion() {
           <p
             className={`px-3 py-2.5 text-sm ${
               message.erreur
-                ? "border-l-2 border-accent bg-surface text-accent"
-                : "border border-ligne bg-surface text-encre"
+                ? "rounded-xl bg-surface px-4 py-3 text-alerte"
+                : "rounded-xl bg-surface px-4 py-3 text-encre"
             }`}
           >
             {message.texte}
@@ -169,7 +169,7 @@ function FormulaireConnexion() {
         <button
           type="submit"
           disabled={enCours}
-          className="libelle flex h-14 items-center justify-center gap-2 bg-encre text-surface transition-transform duration-150 active:scale-[0.97] disabled:opacity-40"
+          className="flex h-13 items-center justify-center gap-2 rounded-xl bg-encre text-sm font-medium text-fond transition-transform duration-200 active:scale-[0.98] disabled:opacity-40"
         >
           {enCours && <Loader taille={18} />}
           {enCours
@@ -185,16 +185,16 @@ function FormulaireConnexion() {
       <div className="flex flex-col items-center gap-2 text-sm">
         {mode === "connexion" && (
           <>
-            <button onClick={() => changerMode("oubli")} className="libelle text-encre-douce underline underline-offset-4">
+            <button onClick={() => changerMode("oubli")} className="libelle underline underline-offset-4">
               Mot de passe oublié ?
             </button>
-            <button onClick={() => changerMode("inscription")} className="libelle text-encre-douce underline underline-offset-4">
+            <button onClick={() => changerMode("inscription")} className="libelle underline underline-offset-4">
               Créer un compte
             </button>
           </>
         )}
         {mode !== "connexion" && (
-          <button onClick={() => changerMode("connexion")} className="libelle text-encre-douce underline underline-offset-4">
+          <button onClick={() => changerMode("connexion")} className="libelle underline underline-offset-4">
             Retour à la connexion
           </button>
         )}

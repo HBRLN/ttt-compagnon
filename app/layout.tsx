@@ -1,15 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Geist } from "next/font/google";
 import NavigationGeste from "@/components/NavigationGeste";
 import "./globals.css";
 
-// Une seule grotesque, comme le veut la recette suisse. Space Grotesk
-// plutôt qu'une Helvetica : elle garde la neutralité de la grille mais
-// ses détails la font lire moderne, ce qui corrige le principal reproche
-// fait au style suisse aujourd'hui (« classique, archivistique »).
-// Graisses utilisées : 400 et 500 seulement — jamais au-delà, c'est le
-// garde-fou contre le registre sportswear.
-const police = Space_Grotesk({
+// La recette Apple s'appuie sur SF Pro, qui n'est pas distribuable.
+// Geist en est l'équivalent le plus proche disponible : même neutralité
+// géométrique, mêmes chiffres, dessinée pour l'écran. Graisses utilisées :
+// 400, 500 et 600 — jamais au-delà.
+const police = Geist({
   variable: "--police",
   subsets: ["latin", "latin-ext"],
 });
@@ -36,7 +34,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#f2f2f0",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

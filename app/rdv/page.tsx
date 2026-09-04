@@ -71,18 +71,18 @@ export default async function PageRdv({
 
   return (
     <div className="flex min-h-dvh flex-col pb-36">
-      <header className="flex items-center justify-between px-5 pt-6 pb-2">
+      <header className="animate-apparition flex items-center justify-between px-6 pt-8 pb-4">
         <h1 className="titre text-3xl">Rendez-vous</h1>
         <Link
           href="/reglages"
-          className="flex h-11 w-11 items-center justify-center rounded-full text-encre-douce active:bg-surface-douce"
+          className="-mr-2 flex h-11 w-11 items-center justify-center rounded-full text-encre-douce transition-colors active:bg-surface"
           aria-label="Réglages"
         >
           <IconeReglages />
         </Link>
       </header>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 px-5 pb-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-6 pb-2">
         <OngletsRdv
           actif={vue}
           onglets={ONGLETS.map((onglet) => {
@@ -102,59 +102,52 @@ export default async function PageRdv({
 
       {groupes.length === 0 ? (
         <div className="flex flex-1 items-center justify-center px-6">
-          <p className="titre text-2xl text-encre-douce">
+          <p className="titre animate-pose text-2xl text-encre-douce">
             {vue === "avenir" && !mois
               ? "Rien de prévu"
               : "Aucun RDV sur cette période"}
           </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-5 px-5 pt-4">
+        <div className="flex flex-col gap-7 px-6 pt-5">
           {groupes.map(([jour, rdvsDuJour], indexJour) => (
             <section
               key={jour}
-              className="animate-glisse flex gap-4"
+              className="animate-apparition"
               style={
-                indexJour ? { animationDelay: `${indexJour * 60}ms` } : undefined
+                indexJour ? { animationDelay: `${indexJour * 70}ms` } : undefined
               }
             >
-              <span className="numero w-6 shrink-0 pt-1">
-                {String(indexJour + 1).padStart(2, "0")}
-              </span>
-              <div className="min-w-0 flex-1 border-l border-ligne pl-4">
-                <h2 className="libelle text-encre-douce">
-                  {etiquetteJour(rdvsDuJour[0].debut)}
-                </h2>
-                <ul className="mt-3 flex flex-col bg-surface">
-                  {rdvsDuJour.map((rdv) => (
-                    <li key={rdv.id} className="border-t border-ligne first:border-t-0">
-                      <Link
-                        href={`/rdv/${rdv.id}`}
-                        className="flex min-h-16 items-center gap-4 px-4 py-3 active:bg-surface-douce"
-                      >
-                        <span className="chiffre w-12 shrink-0 text-sm text-encre-douce">
-                          {formaterHeure(rdv.debut)}
+              <h2 className="libelle">{etiquetteJour(rdvsDuJour[0].debut)}</h2>
+              <ul className="mt-3 flex flex-col overflow-hidden rounded-2xl bg-surface">
+                {rdvsDuJour.map((rdv) => (
+                  <li key={rdv.id} className="border-t border-ligne first:border-t-0">
+                    <Link
+                      href={`/rdv/${rdv.id}`}
+                      className="flex min-h-16 items-center gap-4 px-4 py-3.5 transition-colors active:bg-surface-douce"
+                    >
+                      <span className="w-12 shrink-0 text-sm tabular-nums text-encre-douce">
+                        {formaterHeure(rdv.debut)}
+                      </span>
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <span className="titre truncate text-lg">
+                          {rdv.client_prenom}
                         </span>
-                        <span className="flex min-w-0 flex-1 flex-col">
-                          <span className="titre truncate text-lg">
-                            {rdv.client_prenom}
+                        {rdv.projet && (
+                          <span className="mt-0.5 truncate text-sm text-encre-douce">
+                            {rdv.projet}
                           </span>
-                          {rdv.projet && (
-                            <span className="mt-0.5 truncate text-sm text-encre-douce">
-                              {rdv.projet}
-                            </span>
-                          )}
+                        )}
+                      </span>
+                      {rdv.acompte_montant && !rdv.acompte_paye ? (
+                        <span className="shrink-0 rounded-full bg-fond px-2.5 py-1 text-[11px] font-medium text-alerte">
+                          Acompte dû
                         </span>
-                        {rdv.acompte_montant && !rdv.acompte_paye ? (
-                          <span className="libelle shrink-0 border border-accent px-2 py-1 text-accent">
-                            Acompte dû
-                          </span>
-                        ) : null}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                      ) : null}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </section>
           ))}
         </div>
