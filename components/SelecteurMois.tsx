@@ -31,7 +31,7 @@ export default function SelecteurMois({ moisActuel }: { moisActuel: string }) {
     if (valeur) params.set("mois", valeur);
     else params.delete("mois");
     const requete = params.toString();
-    router.push(requete ? `/?${requete}` : "/");
+    router.push(requete ? `/rdv?${requete}` : "/rdv");
   }
 
   return (

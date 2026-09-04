@@ -45,12 +45,11 @@ export default function OngletsRdv({
     <div className="relative inline-flex items-center rounded-full bg-surface-douce p-1">
       {indicateur && (
         <div
-          className="absolute top-1 bottom-1 rounded-full bg-accent shadow-legere"
+          className="absolute top-1 bottom-1 left-0 rounded-full bg-accent shadow-legere"
           style={{
-            left: indicateur.left,
             width: indicateur.width,
-            transition:
-              "left 0.25s cubic-bezier(0.4,0,0.2,1), width 0.25s cubic-bezier(0.4,0,0.2,1)",
+            transform: `translateX(${indicateur.left}px)`,
+            transition: "transform 0.25s cubic-bezier(0.4,0,0.2,1)",
           }}
         />
       )}

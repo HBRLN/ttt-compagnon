@@ -14,7 +14,9 @@
   --sur-accent: #fffdfa;
   --rouge: #d93025;
   --rouge-doux: #fce8e6;
-  --vert: #1e8e3e;
+  /* #1e8e3e (Google green) tombait à 4.14:1 sur --surface, sous le seuil
+     WCAG AA de 4.5:1 ; assombri dans la même teinte → 5.13:1. */
+  --vert: #1a7d36;
   --vert-doux: #e6f4ea;
   --ombre-legere: 0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.04);
   --ombre-flottante: 0 2px 8px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.06);
