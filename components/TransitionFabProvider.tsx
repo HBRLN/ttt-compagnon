@@ -4,9 +4,10 @@ import { createContext, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Origine = { x: number; y: number };
+type Phase = "repos" | "ferme" | "ouvre";
 
 const DUREE_MS = 400;
-const DECALAGE_BLANC_MS = 80;
+const DECALAGE_MS = 80;
 
 const ContexteTransition = createContext<{
   declencher: (origine: Origine, destination: string) => void;
@@ -25,7 +26,7 @@ export default function TransitionFabProvider({
 }) {
   const router = useRouter();
   const [brunActif, setBrunActif] = useState(false);
-  const [blancActif, setBlancActif] = useState(false);
+  const [phase, setPhase] = useState<Phase>("repos");
   const [origine, setOrigine] = useState<Origine>({ x: 0, y: 0 });
 
   function declencher(o: Origine, destination: string) {
@@ -38,42 +39,46 @@ export default function TransitionFabProvider({
     setOrigine(o);
     setBrunActif(true);
 
-    // La navigation part tout de suite : la vraie page (et son texte)
-    // se prépare pendant que les cercles balaient l'écran, au lieu
-    // d'attendre que le marron ait fini de tout couvrir. Le contenu
-    // réel apparaît donc « en overlay », sous les cercles encore en
-    // mouvement, plutôt qu'après coup.
+    // La vraie page se charge tout de suite : ce n'est pas une
+    // couleur factice qui se révèle ensuite, c'est la page elle-même
+    // (son propre fond, son propre contenu déjà prêt) qu'on découpe
+    // et qu'on dévoile — elle sert de fond à sa propre transition.
     router.push(destination);
 
-    // Le blanc suit le marron de très près (quelques frames), pas
-    // seulement une fois le marron arrivé — effet « double vague ».
-    setTimeout(() => setBlancActif(true), DECALAGE_BLANC_MS);
+    setTimeout(() => {
+      setPhase("ferme");
+      requestAnimationFrame(() => setPhase("ouvre"));
+    }, DECALAGE_MS);
 
     setTimeout(() => {
       setBrunActif(false);
-      setBlancActif(false);
-    }, DECALAGE_BLANC_MS + DUREE_MS + 50);
+      setPhase("repos");
+    }, DECALAGE_MS + DUREE_MS + 50);
   }
 
-  const clipInactif = `circle(0% at ${origine.x}px ${origine.y}px)`;
-  const clipActif = `circle(150% at ${origine.x}px ${origine.y}px)`;
+  const clipFerme = `circle(0% at ${origine.x}px ${origine.y}px)`;
+  const clipOuvert = `circle(150% at ${origine.x}px ${origine.y}px)`;
+  const clipRepos = "circle(150% at 50% 50%)";
+
+  const clipPath = phase === "repos" ? clipRepos : phase === "ferme" ? clipFerme : clipOuvert;
 
   return (
     <ContexteTransition.Provider value={{ declencher }}>
-      {children}
       <div
-        aria-hidden
-        className="pointer-events-none fixed inset-0 z-50 bg-accent transition-[clip-path] ease-in-out"
         style={{
-          clipPath: brunActif ? clipActif : clipInactif,
-          transitionDuration: `${DUREE_MS}ms`,
+          position: "relative",
+          zIndex: phase === "repos" ? undefined : 45,
+          clipPath,
+          transition: phase === "ouvre" ? `clip-path ${DUREE_MS}ms ease-in-out` : "none",
         }}
-      />
+      >
+        {children}
+      </div>
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-50 bg-fond transition-[clip-path] ease-in-out"
+        className="pointer-events-none fixed inset-0 z-40 bg-accent transition-[clip-path] ease-in-out"
         style={{
-          clipPath: blancActif ? clipActif : clipInactif,
+          clipPath: brunActif ? clipOuvert : clipFerme,
           transitionDuration: `${DUREE_MS}ms`,
         }}
       />
