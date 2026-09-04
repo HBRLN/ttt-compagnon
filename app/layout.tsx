@@ -1,13 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Roboto } from "next/font/google";
+import { Instrument_Sans, Instrument_Serif } from "next/font/google";
 import NavigationGeste from "@/components/NavigationGeste";
 import "./globals.css";
 
-// Roboto : la police maison de Google, utilisée dans tout Material Design.
-const roboto = Roboto({
-  variable: "--font-roboto",
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
+// Instrument Serif ne existe qu'en 400 : la hiérarchie se fait à la taille,
+// jamais au gras — un `font-bold` dessus déclencherait un faux gras
+// synthétisé par le navigateur.
+const policeTitre = Instrument_Serif({
+  variable: "--police-titre",
+  subsets: ["latin", "latin-ext"],
+  weight: "400",
+  style: ["normal", "italic"],
+});
+
+const policeUi = Instrument_Sans({
+  variable: "--police-ui",
+  subsets: ["latin", "latin-ext"],
 });
 
 export const metadata: Metadata = {
@@ -32,12 +40,15 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#f8f9fa",
+  themeColor: "#faf8f5",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr" className={`${roboto.variable} h-full antialiased`}>
+    <html
+      lang="fr"
+      className={`${policeTitre.variable} ${policeUi.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col bg-fond text-encre font-sans">
         <NavigationGeste>{children}</NavigationGeste>
       </body>

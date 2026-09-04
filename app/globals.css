@@ -37,7 +37,20 @@
   --color-vert-doux: var(--vert-doux);
   --shadow-legere: var(--ombre-legere);
   --shadow-flottante: var(--ombre-flottante);
-  --font-sans: var(--font-roboto);
+  --font-sans: var(--police-ui);
+  --font-serif: var(--police-titre);
+}
+
+/* Petites capitales espacées : le libellé qui coiffe un chiffre ou une
+   section. La couleur n'est pas fixée ici — elle change selon le fond
+   (encre-douce sur carte claire, sur-accent sur la carte marron). */
+.libelle {
+  font-family: var(--police-ui);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 body {

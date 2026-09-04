@@ -86,7 +86,7 @@ export default async function PageDashboard() {
   return (
     <div className="flex min-h-dvh flex-col pb-36">
       <header className="flex items-center justify-between px-5 pt-6 pb-4">
-        <h1 className="text-2xl font-semibold tracking-tight">
+        <h1 className="font-serif text-3xl">
           Coucou {profil?.nom_artiste || ""} !
         </h1>
         <Link
@@ -104,11 +104,11 @@ export default async function PageDashboard() {
             href={`/rdv/${prochainRdv.id}`}
             className="animate-fade-in-up rounded-2xl bg-accent p-5 text-sur-accent shadow-flottante transition-transform duration-150 active:scale-[0.97] active:opacity-90"
           >
-            <p className="text-sm font-medium opacity-80">Prochain RDV</p>
-            <p className="mt-2 text-3xl font-semibold tracking-tight">
+            <p className="libelle opacity-75">Prochain RDV</p>
+            <p className="mt-3 font-serif text-4xl">
               {(prochainRdv as Rdv).client_prenom}
             </p>
-            <p className="mt-1 text-sm opacity-90">
+            <p className="mt-2 text-sm opacity-90">
               {formaterDateCourte((prochainRdv as Rdv).debut)} à{" "}
               {formaterHeure((prochainRdv as Rdv).debut)}
               {(prochainRdv as Rdv).projet ? ` · ${(prochainRdv as Rdv).projet}` : ""}
@@ -116,8 +116,8 @@ export default async function PageDashboard() {
           </Link>
         ) : (
           <div className="animate-fade-in-up rounded-2xl bg-accent p-5 text-sur-accent shadow-flottante">
-            <p className="text-sm font-medium opacity-80">Prochain RDV</p>
-            <p className="mt-2 text-xl font-semibold tracking-tight">Rien de prévu.</p>
+            <p className="libelle opacity-75">Prochain RDV</p>
+            <p className="mt-3 font-serif text-3xl italic opacity-90">Rien de prévu.</p>
           </div>
         )}
 
@@ -126,8 +126,8 @@ export default async function PageDashboard() {
             className="animate-fade-in-up rounded-2xl bg-surface p-4 shadow-legere"
             style={{ animationDelay: "50ms" }}
           >
-            <p className="text-xs font-medium text-encre-douce">RDV ce mois</p>
-            <p className="mt-2 text-3xl font-semibold tracking-tight">
+            <p className="libelle text-encre-douce">RDV ce mois</p>
+            <p className="mt-3 font-serif text-4xl tabular-nums">
               <CompteurAnime valeur={nombreRdvMois} />
             </p>
           </div>
@@ -136,8 +136,8 @@ export default async function PageDashboard() {
             className="animate-fade-in-up rounded-2xl bg-surface p-4 shadow-legere"
             style={{ animationDelay: "90ms" }}
           >
-            <p className="text-xs font-medium text-encre-douce">Gains du mois</p>
-            <p className="mt-2 text-3xl font-semibold tracking-tight">
+            <p className="libelle text-encre-douce">Gains du mois</p>
+            <p className="mt-3 font-serif text-4xl tabular-nums">
               <CompteurAnime valeur={gainsDuMois} suffixe=" €" />
             </p>
           </div>
@@ -147,9 +147,9 @@ export default async function PageDashboard() {
           className="animate-fade-in-up rounded-2xl bg-surface p-4 shadow-legere"
           style={{ animationDelay: "130ms" }}
         >
-          <p className="text-xs font-medium text-encre-douce">Estimation du mois</p>
+          <p className="libelle text-encre-douce">Estimation du mois</p>
           <p
-            className={`mt-2 text-3xl font-semibold tracking-tight ${
+            className={`mt-3 font-serif text-4xl tabular-nums ${
               estimationMois < 0 ? "text-rouge" : ""
             }`}
           >

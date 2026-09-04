@@ -72,7 +72,7 @@ export default async function PageRdv({
   return (
     <div className="flex min-h-dvh flex-col pb-36">
       <header className="flex items-center justify-between px-5 pt-6 pb-2">
-        <h1 className="text-2xl font-semibold tracking-tight">Rendez-vous</h1>
+        <h1 className="font-serif text-3xl">Rendez-vous</h1>
         <Link
           href="/reglages"
           className="flex h-11 w-11 items-center justify-center rounded-full text-encre-douce active:bg-surface-douce"
@@ -102,7 +102,7 @@ export default async function PageRdv({
 
       {groupes.length === 0 ? (
         <div className="flex flex-1 items-center justify-center px-6">
-          <p className="text-encre-douce">
+          <p className="font-serif text-2xl italic text-encre-douce">
             {vue === "avenir" && !mois
               ? "Rien de prévu."
               : "Aucun RDV sur cette période."}
@@ -112,7 +112,7 @@ export default async function PageRdv({
         <div className="flex flex-col gap-6 px-5 pt-4">
           {groupes.map(([jour, rdvsDuJour]) => (
             <section key={jour}>
-              <h2 className="mb-2 text-sm font-medium text-encre-douce">
+              <h2 className="libelle mb-3 text-encre-douce">
                 {etiquetteJour(rdvsDuJour[0].debut)}
               </h2>
               <ul className="flex flex-col gap-2">
@@ -129,7 +129,7 @@ export default async function PageRdv({
                         {formaterHeure(rdv.debut)}
                       </span>
                       <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="truncate font-semibold">
+                        <span className="truncate font-serif text-lg">
                           {rdv.client_prenom}
                         </span>
                         {rdv.projet && (

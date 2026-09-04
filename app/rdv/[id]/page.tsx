@@ -54,7 +54,7 @@ export default async function PageFicheRdv({
         >
           ←
         </Link>
-        <h1 className="min-w-0 flex-1 truncate text-xl font-semibold tracking-tight">
+        <h1 className="min-w-0 flex-1 truncate font-serif text-2xl">
           {rdv.client_prenom} {rdv.client_nom || ""}
         </h1>
       </header>
@@ -67,7 +67,7 @@ export default async function PageFicheRdv({
         )}
 
         <section className="flex flex-col gap-1">
-          <p className="text-xl font-semibold tracking-tight">
+          <p className="font-serif text-2xl">
             {formaterDateLongue(rdv.debut)} à {formaterHeure(rdv.debut)}
           </p>
           <p className="text-encre-douce">{formaterDuree(rdv.duree_min)}</p>
@@ -75,21 +75,21 @@ export default async function PageFicheRdv({
 
         {rdv.projet && (
           <section>
-            <h2 className="mb-1 text-sm font-medium text-encre-douce">Projet</h2>
+            <h2 className="libelle mb-2 text-encre-douce">Projet</h2>
             <p className="whitespace-pre-wrap">{rdv.projet}</p>
           </section>
         )}
 
         {rdv.emplacement && (
           <section>
-            <h2 className="mb-1 text-sm font-medium text-encre-douce">Emplacement</h2>
+            <h2 className="libelle mb-2 text-encre-douce">Emplacement</h2>
             <p>{rdv.emplacement}</p>
           </section>
         )}
 
         {urlsPhotos.length > 0 && (
           <section>
-            <h2 className="mb-1 text-sm font-medium text-encre-douce">
+            <h2 className="libelle mb-2 text-encre-douce">
               Photos d&apos;inspiration
             </h2>
             <div className="grid grid-cols-2 gap-2">
@@ -112,13 +112,13 @@ export default async function PageFicheRdv({
         )}
 
         <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium text-encre-douce">Contact</h2>
+          <h2 className="libelle text-encre-douce">Contact</h2>
           {rdv.client_tel && <p>{rdv.client_tel}</p>}
           {rdv.client_email && <p>{rdv.client_email}</p>}
         </section>
 
         <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium text-encre-douce">Tarif</h2>
+          <h2 className="libelle text-encre-douce">Tarif</h2>
           <p>
             {rdv.tarif_estime ? `${rdv.tarif_estime} € estimé` : "Non estimé"}
           </p>
@@ -162,7 +162,7 @@ export default async function PageFicheRdv({
 
         {precedents.length > 0 && (
           <section>
-            <h2 className="mb-2 text-sm font-medium text-encre-douce">
+            <h2 className="libelle mb-3 text-encre-douce">
               Séances précédentes
             </h2>
             <ul className="flex flex-col gap-2">
@@ -175,7 +175,7 @@ export default async function PageFicheRdv({
                     href={`/rdv/${p.id}`}
                     className="flex min-h-[56px] flex-col justify-center px-4 py-2 active:bg-surface-douce"
                   >
-                    <span className="font-medium">
+                    <span className="font-serif text-lg">
                       {formaterDateLongue(p.debut)}
                     </span>
                     {p.projet && (

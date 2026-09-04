@@ -46,7 +46,7 @@ export default function PageNouveauMotDePasse() {
   if (reussi) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-3 px-6 text-center">
-        <h1 className="text-xl font-semibold">Mot de passe changé</h1>
+        <h1 className="font-serif text-3xl">Mot de passe changé</h1>
         <p className="text-encre-douce">On t&apos;emmène sur l&apos;appli...</p>
       </div>
     );
@@ -54,7 +54,7 @@ export default function PageNouveauMotDePasse() {
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-8 px-6">
-      <h1 className="text-2xl font-semibold">Nouveau mot de passe</h1>
+      <h1 className="font-serif text-3xl">Nouveau mot de passe</h1>
       <form onSubmit={soumettre} className="flex w-full max-w-sm flex-col gap-4">
         <ChampMotDePasse
           required

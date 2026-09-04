@@ -120,7 +120,7 @@ function FormulaireConnexion() {
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-8 px-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Compagnon</h1>
+      <h1 className="font-serif text-4xl">Compagnon</h1>
 
       <form onSubmit={soumettre} className="flex w-full max-w-sm flex-col gap-4">
         <input

@@ -210,7 +210,7 @@ export default function FormulaireRdv({
         >
           ←
         </Link>
-        <h1 className="text-xl font-semibold tracking-tight">{titre}</h1>
+        <h1 className="font-serif text-2xl">{titre}</h1>
       </header>
 
       <form onSubmit={soumettre} className="flex flex-col gap-4 px-5 pt-2">
@@ -295,7 +295,7 @@ export default function FormulaireRdv({
         </Champ>
 
         <div className={`flex flex-col gap-1 ${classeEntree}`} style={delaiEntree(6)}>
-          <span className="text-sm font-medium text-encre-douce">
+          <span className="libelle text-encre-douce">
             Photos d&apos;inspiration
           </span>
           <div
@@ -467,7 +467,7 @@ function Champ({
 }) {
   return (
     <label className={`flex min-w-0 flex-col gap-1 ${className}`} style={style}>
-      <span className="text-sm font-medium text-encre-douce">{label}</span>
+      <span className="libelle text-encre-douce">{label}</span>
       {children}
     </label>
   );

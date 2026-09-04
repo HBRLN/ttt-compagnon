@@ -191,11 +191,11 @@ export default function TableauCompta({
       </div>
 
       <div className="rounded-2xl bg-surface p-4 shadow-flottante">
-        <p className="text-xs font-medium text-encre-douce">
+        <p className="libelle text-encre-douce">
           Net {vue === "mois" ? "du mois" : "de l'année"}
         </p>
-        <div className="mt-1 flex items-baseline gap-2">
-          <p className={`text-4xl font-semibold tracking-tight ${net < 0 ? "text-rouge" : "text-vert"}`}>
+        <div className="mt-2 flex items-baseline gap-2">
+          <p className={`font-serif text-5xl tabular-nums ${net < 0 ? "text-rouge" : "text-vert"}`}>
             <CompteurAnime valeur={net} suffixe=" €" />
           </p>
           {barreSelectionnee !== null && (
@@ -219,7 +219,7 @@ export default function TableauCompta({
         />
         <div className="mt-1 flex gap-1">
           {labels.map((label) => (
-            <span key={label} className="flex-1 text-center text-[10px] text-encre-douce">
+            <span key={label} className="libelle flex-1 text-center text-[10px] text-encre-douce">
               {label}
             </span>
           ))}
@@ -292,7 +292,9 @@ export default function TableauCompta({
           }
         />
       ) : (
-        <p className="text-sm text-encre-douce">Rien à afficher pour cette période.</p>
+        <p className="font-serif text-xl italic text-encre-douce">
+          Rien à afficher pour cette période.
+        </p>
       )}
 
       <style>{`
@@ -449,7 +451,7 @@ function ListeMouvements({
 }) {
   return (
     <section className="flex flex-col gap-2">
-      <h2 className="text-sm font-medium text-encre-douce">{titre}</h2>
+      <h2 className="libelle text-encre-douce">{titre}</h2>
       <ul className="flex flex-col gap-2">
         {mouvements.map((m) => (
           <li
@@ -461,7 +463,7 @@ function ListeMouvements({
             </span>
             <span className="min-w-0 flex-1 truncate font-medium">{m.libelle}</span>
             <span
-              className={`shrink-0 font-medium ${
+              className={`shrink-0 font-medium tabular-nums ${
                 m.type === "gain" ? "text-vert" : "text-rouge"
               }`}
             >

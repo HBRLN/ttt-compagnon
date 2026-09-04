@@ -80,7 +80,7 @@ export default function FormulaireReglages({
         >
           ←
         </Link>
-        <h1 className="text-xl font-semibold tracking-tight">Réglages</h1>
+        <h1 className="font-serif text-2xl">Réglages</h1>
       </header>
 
       <div className="flex flex-col gap-4 px-5 pt-2">
@@ -172,7 +172,7 @@ export default function FormulaireReglages({
         )}
 
         <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium text-encre-douce">
+          <h2 className="libelle text-encre-douce">
             Abonnement à l&apos;agenda
           </h2>
           <p className="break-all rounded-lg bg-surface-douce p-3 font-mono text-sm text-encre-douce">
@@ -238,7 +238,7 @@ export default function FormulaireReglages({
 function Champ({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-sm font-medium text-encre-douce">{label}</span>
+      <span className="libelle text-encre-douce">{label}</span>
       {children}
     </label>
   );
